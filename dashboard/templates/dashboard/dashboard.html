@@ -1,0 +1,158 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+
+{% block title %}Pagina Index{% endblock title %}
+
+{% block styles %}
+    <style>
+        body {
+            background: url("{% static 'imgs/fondo.png' %}") no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #e1e1e1
+        }
+
+        th {
+            color: rgb(165, 27, 27);
+        }
+
+        .bdtable {
+            border: 2px solid #b4b4b4;
+            border-radius: 15px;
+            box-shadow: 0px 1px;
+            margin-left: 100px;
+            margin-right: 100px;
+  
+        }
+        .punto {
+            margin-right: 100px;
+        }
+        
+        #myInput {
+            background-position: 10px 10px;
+            background-repeat: no-repeat;
+            width: 45%;
+            font-size: 16px;
+            padding: 12px 10px 12px 40px;
+            border: 1px solid #ddd;
+            margin-left: 12%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+          }
+          
+          .flex-container {
+            display: flex;
+            align-items: stretch;
+            }
+
+            .flex-container > div {
+                margin: 10px;
+                text-align: center;
+                line-height: 20px;
+                font-size: 15px;
+            }
+
+            .overlay { 
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(0, 0, 0, 0.7);
+                transition: opacity 500ms;
+                visibility: hidden;
+                opacity: 0;
+            }
+
+            .overlay:target{
+                visibility: visible;
+                opacity: 1;
+            }
+
+            #popupBody{
+                width: 46%;
+                padding: 2%;
+                border-radius: 15px;
+                box-shadow: 0 0 5px #CCC;
+                background: #FFF;
+                position: relative;
+                margin: 20% auto;
+                transition: all 5s ease-in-out;
+
+            }
+
+
+            #cerrar{
+                position: absolute;
+                top: 20px;
+                right: 30px;
+                font-size: 30px;
+                font-weight: bold;
+                text-decoration: none;
+                color: #F00;
+                transition: all 100ms;
+            }
+
+
+
+
+    </style>
+    {% endblock styles %}
+    
+{% block content %}
+<!-- <section class="grow bg-gray-50 dark:bg-gray-900"> -->
+    <br><br><br>
+
+    <div class="ground w-full h-full">
+        <div class="bdtable bg-inm-marron-100">
+            <table id="myTable">
+                <tr class="header">
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Término</th>
+                    <th>Rubro</th>
+                    <th>Descripción</th>
+                </tr>
+                {% for item in registro %}
+                    <tr>
+                        <td>{{ item.fecha_inicio }}</td>
+                        <td>{{ item.fecha_termino }}</td>
+                        <td>{{ item.rubro }}</td>
+                        <td>
+                            <a href="" class="py-2 px-6 bg-inm-verde-200 rounded-xl text-white hover:bg-inm-marron-100">
+                                Editar
+                            </a>
+                            
+                        </td>
+                        <td>
+                            <a href="" class="
+                            py-2 px-6 mx-1 bg-inm-rojo-300 hover:bg-inm-marron-100 rounded-xl text-white">
+                                Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+
+    </div>
+
+
+{% endblock content %}

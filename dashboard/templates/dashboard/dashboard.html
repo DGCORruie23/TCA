@@ -122,33 +122,48 @@
 
     <div class="ground w-full h-full">
         <div class="bdtable bg-inm-marron-100">
+
+
+
+
+            
+
             <table id="myTable">
-                <tr class="header">
-                    <th>Fecha Inicio</th>
-                    <th>Fecha Término</th>
-                    <th>Rubro</th>
-                    <th>Descripción</th>
-                </tr>
-                {% for item in registro %}
-                    <tr>
-                        <td>{{ item.fecha_inicio }}</td>
-                        <td>{{ item.fecha_termino }}</td>
-                        <td>{{ item.rubro }}</td>
-                        <td>
-                            <a href="" class="py-2 px-6 bg-inm-verde-200 rounded-xl text-white hover:bg-inm-marron-100">
-                                Editar
-                            </a>
-                            
-                        </td>
-                        <td>
-                            <a href="" class="
-                            py-2 px-6 mx-1 bg-inm-rojo-300 hover:bg-inm-marron-100 rounded-xl text-white">
-                                Eliminar
-                            </a>
-                        </td>
+
+                    <tr class="header">
+                        <th>Fecha Inicio</th>
+                        <th>Fecha Término</th>
+                        <th>Rubro</th>
+                        <th>Descripción</th>
+                        <th>Área</th>
+                        <th>Estatus</th>
                     </tr>
-                {% endfor %}
+
+                    {% for registro in registros %}
+                    <tr>
+                      <td>{{ registro.fecha_inicio }}</td>
+                      <td>{{ registro.fecha_termino }}</td>
+                      <td>
+                        {% for rubro in registro.rubro.all %}
+                        {{ rubro.tipo }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                      </td>
+                      <td>
+                        {% for accion in registro.accionR.all %}
+                          {{ accion.descripcion }}
+                        {% endfor %}
+                      </td>
+                      <td>
+                        {% for area in registro.area.all %}
+                        {{ area.nickname }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                      </td>
+                      <td>{{ registro.get_estado_display }}</td>
+                    </tr>
+                    {% endfor %}
+
             </table>
+            
         </div>
 
 

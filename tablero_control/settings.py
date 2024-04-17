@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'usuarios',
     'dashboard',
+    'tailwind',
 ]
 
 MIDDLEWARE = [

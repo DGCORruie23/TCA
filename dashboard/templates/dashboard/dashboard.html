@@ -6,12 +6,7 @@
 
 {% block styles %}
     <style>
-        body {
-            background: url("{% static 'imgs/fondo.png' %}") no-repeat center center fixed;
-            background-size: cover;
-            display: flex;
-            flex-direction: column;
-        }
+
 
 
         table {
@@ -23,14 +18,20 @@
         td {
             text-align: left;
             padding: 8px;
+            max-width: 400px;
+            word-wrap: break-word;
         }
 
         tr:nth-child(even) {
             background-color: #e1e1e1
         }
 
+        td:nth-child(4) {
+            text-align: justify;
+        }
+
         th {
-            color: rgb(165, 27, 27);
+            color: rgb(255, 255, 255);
         }
 
         .bdtable {
@@ -86,17 +87,22 @@
                 opacity: 1;
             }
 
-            #popupBody{
-                width: 46%;
-                padding: 2%;
-                border-radius: 15px;
-                box-shadow: 0 0 5px #CCC;
-                background: #FFF;
-                position: relative;
-                margin: 20% auto;
-                transition: all 5s ease-in-out;
+            #popupBody {
+            width: 60%;
+            max-height: 80vh;
+            overflow-y: auto; 
+            padding: 2%;
+            border-radius: 15px;
+            box-shadow: 0 0 5px #CCC;
+            background: #FFF;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 5s ease-in-out;
+        }
 
-            }
+
 
 
             #cerrar{
@@ -112,6 +118,14 @@
 
 
 
+    tr.header {
+        background-color: #235B4E;
+        color: white;
+    }
+
+
+
+
 
     </style>
     {% endblock styles %}
@@ -120,54 +134,122 @@
 <!-- <section class="grow bg-gray-50 dark:bg-gray-900"> -->
     <br><br><br>
 
-    <div class="ground w-full h-full">
-        <div class="bdtable bg-inm-marron-100">
 
+        <div class="bdtable bg-inm-marron-100  ">
 
+            <!-- <div id="popup" class="overlay">
+                <div id="popupBody">
+                    <a href="" id="cerrar">&times;</a>
+                    <div class="popupContent">
+                        <p>holaaa</p>
+                    </div>
+                </div>
+            </div> -->
 
-
-            
 
             <table id="myTable">
-
-                    <tr class="header">
-                        <th>Fecha Inicio</th>
-                        <th>Fecha Término</th>
-                        <th>Rubro</th>
-                        <th>Descripción</th>
-                        <th>Área</th>
-                        <th>Estatus</th>
-                    </tr>
-
-                    {% for registro in registros %}
-                    <tr>
-                      <td>{{ registro.fecha_inicio }}</td>
-                      <td>{{ registro.fecha_termino }}</td>
-                      <td>
-                        {% for rubro in registro.rubro.all %}
+                <tr class="header">
+                    <th class="text-center">Fecha Inicio</th>
+                    <th class="text-center">Fecha Término</th>
+                    <th class="text-center">Rubro</th>
+                    <th class="text-center">Descripción</th>
+                    <th class="text-center">Área</th>
+                    <th class="text-center">Estatus</th>
+                </tr>
+            
+                {% for registro, diferencia in registrosConFechas %}
+            
+                <tr>
+                    <td>{{ registro.0.fecha_inicio|date:"d-m-Y" }}</td>
+                    <td>{{ registro.0.fecha_termino|date:"d-m-Y" }}</td>
+                    <td>
+                        {% for rubro in registro.0.rubro.all %}
                         {{ rubro.tipo }}{% if not forloop.last %}, {% endif %}
                         {% endfor %}
-                      </td>
-                      <td>
-                        {% for accion in registro.accionR.all %}
-                          {{ accion.descripcion }}
+                    </td>
+                    <!-- <td>
+                        {% for accion in registro.0.accionR.all %}
+                        {{ accion.descripcion }}
+                        <div class="text-right">
+                            <a href="#popup" class=" text-inm-rojo-200 hover:text-inm-marron-200 font-bold ml-2">Ver más</a></div> 
+                        </div>
+                        
                         {% endfor %}
-                      </td>
-                      <td>
-                        {% for area in registro.area.all %}
+                    </td> -->
+                    <td>
+                        {% for accion in registro.0.accionR.all %}
+                            {{ accion.descripcion }}
+                            <div class="text-right">
+                                <a href="#popup{{ accion.idAccion }}{{ pruebas.idPruebas }}" class="text-inm-rojo-200 hover:text-inm-marron-200 font-bold ml-2">Ver más</a>
+                            </div>
+
+                            <div id="popup{{ accion.idAccion }}{{ pruebas.idPruebas }}" class="overlay">
+                                <div id="popupBody">
+                                    <a href="" id="cerrar">&times;</a>
+                                    <div class="popupContent">
+                                        <u><p>Área 1:</p></u>
+                                        <ul>
+                                            {% for area1 in accion.area1.all %}
+                                                <li>{{ area1.nickname }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                        <u><p>Área 2:</p></u>
+                                        <ul>
+                                            {% for area2 in accion.area2.all %}
+                                                <li>{{ area2.nickname }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                        <u><p>Descripción:</p></u>
+                                        {{ accion.descripcion }}
+                                        <u><p>URL de la imagen:</p></u>
+                                        {% for prueba in pruebas.archivo_url.all %}
+                                        <img src="{% static 'imgs/' %}{{ prueba.archivo_url }}" alt="Imagen de prueba">
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for area in registro.0.area.all %}
                         {{ area.nickname }}{% if not forloop.last %}, {% endif %}
                         {% endfor %}
-                      </td>
-                      <td>{{ registro.get_estado_display }}</td>
-                    </tr>
-                    {% endfor %}
-
+                    </td>
+                    <td>
+                        {% if registro.0.estado == '1' %}
+                            {% if diferencia >= 60 %}
+                                <div class="text-center py-2" style="background-color: green; color: white; border-radius: 5px;">
+                                    <span>{{ registro.0.get_estado_display }}</span>
+                                </div>
+                            {% elif diferencia >= 30 %}
+                                <div class="text-center py-2" style="background-color: rgb(255, 255, 11); color: rgb(0, 0, 0); border-radius: 5px;">
+                                    <span>{{ registro.0.get_estado_display }}</span>
+                                </div>            
+                            {% elif diferencia >= 15 %}
+                                <div class="text-center py-2" style="background-color: red; color: white; border-radius: 5px;">
+                                    <span>{{ registro.0.get_estado_display }}</span>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-2" style="background-color: darkred; color: white; border-radius: 5px;">
+                                    <span>{{ registro.0.get_estado_display }}</span>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-center py-2" style="background-color: green; color: white; border-radius: 5px;">
+                                <span >{{ registro.0.get_estado_display }}</span>
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
             </table>
             
+            
+            
+            
         </div>
+        <br><br><br>
 
-
-    </div>
 
 
 {% endblock content %}

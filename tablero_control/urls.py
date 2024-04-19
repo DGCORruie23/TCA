@@ -30,5 +30,6 @@ urlpatterns = [
     path('log-in/', viewsL.LoginView.as_view(template_name= 'base/log_in.html'), name='log-in'),
     path('log-out/', viewsL.LogoutView.as_view(), name="logout"),
     path('dashboard/', vDash.dashboard ,name="dashboard" ),
+    path('crear_registro/', vDash.crear_registro ,name="crear_registro" ),
 
 ]

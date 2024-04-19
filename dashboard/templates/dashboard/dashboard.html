@@ -124,8 +124,20 @@
     }
 
 
+    .responsive-image {
 
+        max-width: 100%;
+        height: 300px;
+        display: block;
+        margin: 0 auto;
+    }
 
+    .respI {
+        width: auto;
+        height: 300px;
+        display: block;
+        margin: 0 auto;
+    }
 
     </style>
     {% endblock styles %}
@@ -134,6 +146,9 @@
 <!-- <section class="grow bg-gray-50 dark:bg-gray-900"> -->
     <br><br><br>
 
+    <div style="margin: 0 auto; margin-bottom: 1%;">
+        <a href="{% url 'crear_registro' %}" class="basis-1/8 py-3 px-6 mx-1 bg-inm-verde-100 hover:bg-inm-verde-200 rounded-xl text-white " type="submit">Agregar Registro</a>
+    </div>
 
         <div class="bdtable bg-inm-marron-100  ">
 
@@ -202,8 +217,17 @@
                                         <u><p>Descripción:</p></u>
                                         {{ accion.descripcion }}
                                         <u><p>URL de la imagen:</p></u>
-                                        {% for prueba in pruebas.archivo_url.all %}
-                                        <img src="{% static 'imgs/' %}{{ prueba.archivo_url }}" alt="Imagen de prueba">
+                                        {% for prueba in accion.accionP.all %} 
+                                            {% if prueba.tipo == 1 %}
+                                                <div class=" respI">
+                                                    <img class="responsive-image" src="{{  prueba.archivo_url }}" alt="Imagen de prueba">
+                                                </div>
+                                            {% else %}
+                                                <div class=" respI">
+                                                    <img class="responsive-image" src="{% static 'imgs/' %}{{ prueba.archivo_url }}" alt="Imagen de prueba">
+                                                </div>
+                                            {% endif %}
+                                            
                                         {% endfor %}
                                     </div>
                                 </div>

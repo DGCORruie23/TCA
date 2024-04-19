@@ -1,0 +1,50 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+
+{% block title %}Registro{% endblock title %}
+
+{% block styles %}
+    <style>
+
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+
+
+        border: 2px solid #f2eddf;
+            background-color: #235B4E;
+            box-shadow: 0px 1px;
+            opacity: 0.90;
+            color: white;
+    }
+
+
+    input[type="text"], input[type="date"], select, textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    </style>
+    {% endblock styles %}
+    
+    {% block content %}
+
+    <div class="container">
+        <h1>Crear Nuevo Registro</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ registro_form.as_p }}
+            <button class="py-3 px-6 mx-1 bg-inm-marron-200 hover:bg-inm-marron-100 rounded-xl text-white" type="submit">Guardar Registro con Acción y Prueba</button>
+        </form>
+    </div>
+    {% endblock content %}

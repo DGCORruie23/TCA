@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}Pagina Index{% endblock title %}
+{% block title %}Dashboard{% endblock title %}
 
 {% block styles %}
     <style>
@@ -170,6 +170,7 @@
                     <th class="text-center">Descripción</th>
                     <th class="text-center">Área</th>
                     <th class="text-center">Estatus</th>
+                    <th class="text-center">Acciones</th>
                 </tr>
             
                 {% for registro, diferencia in registrosConFechas %}
@@ -264,6 +265,11 @@
                             </div>
                         {% endif %}
                     </td>
+                    <td>
+                        <!-- Botón de editar -->
+                        <a href="{% url 'editar_registro' registro.0.idRegistro %}" class="basis-1/8 py-3 px-6 mx-1 bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white ">Editar</a>
+                    </td>
+                    
                 </tr>
                 {% endfor %}
             </table>

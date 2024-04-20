@@ -31,5 +31,5 @@ urlpatterns = [
     path('log-out/', viewsL.LogoutView.as_view(), name="logout"),
     path('dashboard/', vDash.dashboard ,name="dashboard" ),
     path('crear_registro/', vDash.crear_registro ,name="crear_registro" ),
-
+    path('editar_registro/<int:registro_id>/', vDash.editar_registro , name='editar_registro'),
 ]

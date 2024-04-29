@@ -106,13 +106,28 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/i18n/jquery-ui-i18n.min.js"></script>
 
 {% block content %}
-    <div class="container" style="width: 50%; max-width: 600px;">
+    <!-- <div class="container" style="width: 50%; max-width: 600px;">
         <h1>Editar Registro</h1>
         <form method="post">
             {% csrf_token %}
 
             {{ registro_form.as_p }}
 
+            <button class="py-3 px-6 mx-1 bg-inm-marron-200 hover:bg-inm-marron-100 rounded-xl text-white" type="submit">Guardar Cambios</button>
+        </form>
+    </div> -->
+
+    <div class="container" style="width: 50%; max-width: 600px;">
+        <h1>Editar Registro</h1>
+        <form method="post"> 
+            {% csrf_token %}
+                <input type="hidden" name="idRegistro" value="{{ registro.idRegistro }}" class="elegant-input" id="idRegistro">
+
+                <label for="fname" class="elegant-input-label">Fecha Inicio:</label><br>
+                <input type="text" name="idfecha_inicio" value="{{ registro.id_fecha_inicio }}" class="elegant-input" id="id_fecha_inicio">
+
+                <label for="fname" class="elegant-input-label">Fecha Término:</label><br>
+                <input type="text" name="idfecha_inicio" value="{{ registro.id_fecha_inicio }}" class="elegant-input" id="id_fecha_inicio">
             <button class="py-3 px-6 mx-1 bg-inm-marron-200 hover:bg-inm-marron-100 rounded-xl text-white" type="submit">Guardar Cambios</button>
         </form>
     </div>

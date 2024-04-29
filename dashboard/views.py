@@ -110,37 +110,62 @@ def crear_registro(request):
 
 
 
-def editar_registro(request, registro_id):
-    registro = get_object_or_404(Registro, idRegistro=registro_id)
+# def editar_registro(request, registro_id):
+#     registro = get_object_or_404(Registro, idRegistro=registro_id)
     
+#     if request.method == 'POST':
+#         registro_form = RegistroConAccionesYPruebasForm(request.POST, instance=registro)
+#         if registro_form.is_valid():
+#             registro = registro_form.save(commit=False)
+
+#             areas1 = registro_form.cleaned_data['accion1_area1']
+#             areas2 = registro_form.cleaned_data['accion1_area2']
+
+#             accion = Acciones.objects.create(
+#                 descripcion=request.POST['accion1_descripcion']
+#             )
+#             accion.area1.set(areas1)
+#             accion.area2.set(areas2)
+#             accion.save()
+#             registro.accionR.add(accion)
+
+#             prueba = Pruebas.objects.create(
+#                 nom_archivo=request.POST['prueba1_nom_archivo'],
+#                 tipo=request.POST['prueba1_tipo'],
+#                 archivo_url=request.POST['prueba1_archivo_url']
+#             )
+#             prueba.acciones.add(accion)
+
+#             return redirect('dashboard')
+#     else:
+#         registro_form = RegistroConAccionesYPruebasForm(instance=registro)
+
+#     return render(request, 'dashboard/editar_registro.html', {
+#         'registro_form': registro_form,
+#         'registro_id': registro_id,
+#     })
+
+
+def editar_registro(request, registro_id):
+
+    registro = get_object_or_404(Registro, idRegistro=registro_id)
+    data = {
+        'form': registro
+    }
     if request.method == 'POST':
-        registro_form = RegistroConAccionesYPruebasForm(request.POST, instance=registro)
-        if registro_form.is_valid():
-            registro = registro_form.save(commit=False)
+        print("Entró al POST")
+        formulario = RegistroConAccionesYPruebasForm(data = request.POST, instance=registro)
 
-            areas1 = registro_form.cleaned_data['accion1_area1']
-            areas2 = registro_form.cleaned_data['accion1_area2']
-
-            accion = Acciones.objects.create(
-                descripcion=request.POST['accion1_descripcion']
-            )
-            accion.area1.set(areas1)
-            accion.area2.set(areas2)
-            accion.save()
-            registro.accionR.add(accion)
-
-            prueba = Pruebas.objects.create(
-                nom_archivo=request.POST['prueba1_nom_archivo'],
-                tipo=request.POST['prueba1_tipo'],
-                archivo_url=request.POST['prueba1_archivo_url']
-            )
-            prueba.acciones.add(accion)
-
+        if formulario.is_valid():
+            print("Entró a la validación")
+            formulario.save()
+            data['message'] = "Datos Modificados correctamente"
+            data['form'] = formulario
             return redirect('dashboard')
-    else:
-        registro_form = RegistroConAccionesYPruebasForm(instance=registro)
+        else:
+            print("Entró al ELSE")
+            print(formulario.errors)
 
-    return render(request, 'dashboard/editar_registro.html', {
-        'registro_form': registro_form,
-        'registro_id': registro_id,
-    })
+
+
+    return render(request, 'dashboard/editar_registro.html', context= data)

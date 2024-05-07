@@ -144,8 +144,9 @@
     
 {% block content %}
 <!-- <section class="grow bg-gray-50 dark:bg-gray-900"> -->
+    {% if request.user.is_superuser %}
     <br><br><br>
-
+    
     <div style="margin: 0 auto; margin-bottom: 1%;">
         <a href="{% url 'crear_registro' %}" class="basis-1/8 py-3 px-6 mx-1 bg-inm-verde-100 hover:bg-inm-verde-200 rounded-xl text-white " type="submit">Agregar Registro</a>
     </div>
@@ -267,7 +268,8 @@
                     </td>
                     <td>
                         <!-- Botón de editar -->
-                        <a href="{% url 'editar_registro' registro.0.idRegistro %}" class="basis-1/8 py-3 px-6 mx-1 bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white ">Editar</a>
+                        <!-- <a href="{% url 'editar_registro' registro.0.idRegistro %}" class="basis-1/8 py-3 px-6 mx-1 bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white ">Editar</a> -->
+                        <a href="{% url 'detalles' registro.0.idRegistro %}" class="basis-1/8 py-3 px-6 mx-1 bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white ">Detalles</a>
                     </td>
                     
                 </tr>
@@ -280,6 +282,14 @@
         </div>
         <br><br><br>
 
+        {% else %}
+                {% if user.is_authenticated %}
+                    <h1 style="text-align: end; padding-right: 10px">Logeado como : {{ user.username }}</h1>
+                    <input type="hidden" id="logged-in-user" value="{{ user.id }}">
+                {% endif %}
 
+
+
+        {% endif %}
 
 {% endblock content %}

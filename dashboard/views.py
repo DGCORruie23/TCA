@@ -169,3 +169,8 @@ def editar_registro(request, registro_id):
 
 
     return render(request, 'dashboard/editar_registro.html', context= data)
+
+
+def detalles(request,registro_id):
+
+    return render(request,'dashboard/detalles.html')

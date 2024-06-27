@@ -139,6 +139,97 @@
         margin: 0 auto;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+    .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: none; /* Eliminar transición */
+}
+
+.popupBody {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    max-width: 80%;
+    max-height: 80%;
+    overflow-y: auto;
+    border: 2px solid #235B4E;
+}
+
+.popupContent {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #10312B;
+}
+
+.popupTitle {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #DDC9A3;
+    text-align: center;
+}
+
+.popupSection {
+    margin-bottom: 20px;
+}
+
+.popupSection h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #235B4E;
+    text-transform: uppercase;
+    border-bottom: 2px solid #691C32;
+    padding-bottom: 5px;
+}
+
+.respI {
+    margin-bottom: 15px;
+}
+
+.responsive-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-height: 300px; /* Ajustar el tamaño de la imagen */
+}
+
+.cerrar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: #9F2241;
+    text-decoration: none;
+}
+
+.cerrar:hover {
+    color: #C30E2E;
+    transition: color 0.3s ease;
+}
+
+
+
     </style>
     {% endblock styles %}
     
@@ -201,39 +292,49 @@
                             </div>
 
                             <div id="popup{{ accion.idAccion }}{{ pruebas.idPruebas }}" class="overlay">
-                                <div id="popupBody">
-                                    <a href="" id="cerrar">&times;</a>
+                                <div id="popupBody" class="popupBody">
+                                    <a href="#" id="cerrar" class="cerrar">&times;</a>
                                     <div class="popupContent">
-                                        <u><p>Área 1:</p></u>
-                                        <ul>
-                                            {% for area1 in accion.area1.all %}
-                                                <li>{{ area1.nickname }}</li>
+                                        <h2 class="popupTitle verde">Detalles del Registro</h2>
+                                        <div class="popupSection">
+                                            <h3 class="marron">Área 1:</h3>
+                                            <ul>
+                                                {% for area1 in accion.area1.all %}
+                                                    <li>{{ area1.nickname }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                        <div class="popupSection">
+                                            <h3 class="marron">Área 2:</h3>
+                                            <ul>
+                                                {% for area2 in accion.area2.all %}
+                                                    <li>{{ area2.nickname }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                        <div class="popupSection">
+                                            <h3 class="marron">Descripción:</h3>
+                                            <p>{{ accion.descripcion }}</p>
+                                        </div>
+                                        <div class="popupSection">
+                                            <h3 class="marron">Imágenes de Prueba:</h3>
+                                            {% for prueba in accion.accionP.all %} 
+                                                {% if prueba.tipo == 1 %}
+                                                    <div class="respI">
+                                                        <img class="responsive-image" src="{{ prueba.archivo_url }}" alt="Imagen de prueba">
+                                                    </div>
+                                                {% else %}
+                                                    <div class="respI">
+                                                        <img class="responsive-image" src="{% static 'imgs/' %}{{ prueba.archivo_url }}" alt="Imagen de prueba">
+                                                    </div>
+                                                {% endif %}
                                             {% endfor %}
-                                        </ul>
-                                        <u><p>Área 2:</p></u>
-                                        <ul>
-                                            {% for area2 in accion.area2.all %}
-                                                <li>{{ area2.nickname }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                        <u><p>Descripción:</p></u>
-                                        {{ accion.descripcion }}
-                                        <u><p>URL de la imagen:</p></u>
-                                        {% for prueba in accion.accionP.all %} 
-                                            {% if prueba.tipo == 1 %}
-                                                <div class=" respI">
-                                                    <img class="responsive-image" src="{{  prueba.archivo_url }}" alt="Imagen de prueba">
-                                                </div>
-                                            {% else %}
-                                                <div class=" respI">
-                                                    <img class="responsive-image" src="{% static 'imgs/' %}{{ prueba.archivo_url }}" alt="Imagen de prueba">
-                                                </div>
-                                            {% endif %}
-                                            
-                                        {% endfor %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            
+                            
                         {% endfor %}
                     </td>
                     <td>

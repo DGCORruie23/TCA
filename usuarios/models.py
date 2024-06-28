@@ -116,6 +116,7 @@ class Registro(models.Model):
     ]
 
     idRegistro = models.AutoField(primary_key=True)
+    claveAcuerdo = models.TextField(default="Clave de Acuerdo")
     fecha_inicio = models.DateField()
     fecha_termino = models.DateField()
     rubro = models.ManyToManyField(Rubro, related_name='registroR')
@@ -123,7 +124,7 @@ class Registro(models.Model):
     estado = models.CharField(max_length=1, choices=types_estado, default="1")
 
     def __str__(self):
-        return f"Registro: {self.idRegistro}, Fecha de inicio: {self.fecha_inicio}, Fecha de término: {self.fecha_termino}, Rubro: {', '.join([rubro.tipo for rubro in self.rubro.all()])}, Áreas: {', '.join([area.nickname for area in self.area.all()])}, Estado: {self.get_estado_display()}"
+        return f"Registro: {self.idRegistro}, Clave de Acuerdo: {self.claveAcuerdo}, Fecha de inicio: {self.fecha_inicio}, Fecha de término: {self.fecha_termino}, Rubro: {', '.join([rubro.tipo for rubro in self.rubro.all()])}, Áreas: {', '.join([area.nickname for area in self.area.all()])}, Estado: {self.get_estado_display()}"
 
 
 class Acciones(models.Model):

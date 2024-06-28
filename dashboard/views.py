@@ -48,7 +48,7 @@ def dashboard(request):
 
             fecha_inicio_dt = datetime.strptime(fecha_inicio, '%d-%m-%Y') 
             fecha_termino_dt = datetime.strptime(fecha_termino, '%d-%m-%Y')
-            diferencia = fecha_termino_dt - fecha_inicio_dt
+            diferencia = datetime.now() - fecha_termino_dt
             dias = diferencia.days
             dif.append(dias)
 

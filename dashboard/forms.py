@@ -10,7 +10,7 @@ from usuarios.models import Registro, Acciones, Pruebas, Area
 class RegistroConAccionesYPruebasForm(forms.ModelForm):
     class Meta:
         model = Registro
-        fields = ['fecha_inicio', 'fecha_termino', 'rubro', 'area', 'estado']
+        fields = ['claveAcuerdo','fecha_inicio', 'fecha_termino', 'rubro', 'area', 'estado']
     
     accion1_area1 = forms.ModelMultipleChoiceField(queryset=Area.objects.all(), label="Área 1")
     accion1_area2 = forms.ModelMultipleChoiceField(queryset=Area.objects.all(), label="Área 2")

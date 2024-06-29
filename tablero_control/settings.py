@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-)t!cpic2ec%*0__ao4j5@ykor_65s%0dzu*vavdf@s*b9p9i99
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["http://0.0.0.0:8080/", '127.0.0.1']
+ALLOWED_HOSTS = ['ruie.dgcor.com', 'www.ruie.dgcor.com', "192.168.8.2","192.168.8.15", "localhost", "172.22.13.148","127.0.0.1","192.168.42.123"]
 
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGIN_URL = 'log-in'

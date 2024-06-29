@@ -186,10 +186,12 @@
         margin-bottom: 15px;
         color: #DDC9A3;
         text-align: center;
+        text-justify: auto;
     }
 
     .popupSection {
         margin-bottom: 20px;
+        text-align: justify;
     }
 
     .popupSection h3 {
@@ -199,6 +201,7 @@
         text-transform: uppercase;
         border-bottom: 2px solid #691C32;
         padding-bottom: 5px;
+        
     }
 
     .respI {
@@ -314,9 +317,9 @@
                                     {% endfor %}
                                 </ul>
                             </div>
-                            <div class="popupSection">
+                            <div class="popupSection" style="text-align: justify;">
                                 <h3 class="marron">Descripción:</h3>
-                                <p>{{ accion.descripcion }}</p>
+                                <p style="text-align: justify;">{{ accion.descripcion }}</p>
                             </div>
                             <div class="popupSection">
                                 <h3 class="marron">Imágenes de Prueba:</h3>
@@ -352,26 +355,17 @@
             </td>
             <td>
                 {% if registro.0.estado == '1' %}
-                {% if diferencia <= 0 %}
+                {% if diferencia >= -5 %}
                 <div class="text-center py-2" style="background-color: #C30E2E; color: white; border-radius: 5px;">
                     <span>{{ registro.0.get_estado_display }}</span>
                 </div>
-                {% elif diferencia >= 60 %}
-                <div class="text-center py-2" style="background-color: #BC955C; color: white; border-radius: 5px;">
+                {% elif diferencia >= -15 %}
+                <div class="text-center py-2" style="background-color: #FFFF00; color: #000000; border-radius: 5px;">
                     <span>{{ registro.0.get_estado_display }}</span>
                 </div>
-                {% elif diferencia >= 30 %}
-                <div class="text-center py-2"
-                    style="background-color: #FFFF00; color: rgb(0, 0, 0); border-radius: 5px;">
-                    <span>{{ registro.0.get_estado_display }}</span>
-                </div>
-                {% elif diferencia >= 15 %}
-                <div class="text-center py-2"
-                    style="background-color: #FFFF00; color: rgb(0, 0, 0); border-radius: 5px;">
-                    <span>{{ registro.0.get_estado_display }}</span>
-                </div>
+
                 {% else %}
-                <div class="text-center py-2" style="background-color: #C30E2E; color: white; border-radius: 5px;">
+                <div class="text-center py-2" style="background-color: #BC955C; color: white; border-radius: 5px;">
                     <span>{{ registro.0.get_estado_display }}</span>
                 </div>
                 {% endif %}

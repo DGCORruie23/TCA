@@ -349,7 +349,7 @@
                         {% endfor %} -->
                 {% for accion in registro.0.accionR.all %}
                     {% for area2 in accion.area2.all %}
-                        {{ area2.nickname }}
+                        - {{ area2.abrevArea }} 
                     {% endfor %}
                 {% endfor %}
             </td>

@@ -100,170 +100,65 @@
     }
 
 
-/* Estilo base para los checkboxes */
-.checkbox-custom {
-    display: none;
-}
-
-.checkbox-custom-label {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 5px;
-    cursor: pointer;
-    border: 2px solid transparent;
-    border-radius: 5px;
-    transition: background-color 0.3s, border-color 0.3s;
-    background-color: #DDC9A3; /* marron */
-    color: white;
-}
-
-/* Estilo cuando el checkbox está seleccionado */
-.checkbox-custom:checked + .checkbox-custom-label {
-    border-color: #235B4E; /* verde */
-    background-color: #235B4E; /* verde */
-}
-
-/* Estilo al pasar el mouse por encima del checkbox */
-.checkbox-custom-label:hover {
-    border-color: #047832; /* verde_claro */
-    background-color: #047832; /* verde_claro */
-}
-
-    
-
-
-
-
-/* Estilo base para los checkboxes */
-.checkbox-custom {
-    display: none;
-}
-
-.checkbox-custom-label {
-    display: block;
-    padding: 10px;
-    margin: 5px;
-    cursor: pointer;
-    border: 2px solid #DDC9A3; /* Bordes predeterminados */
-    border-radius: 5px;
-    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
-    background-color: #DDC9A3; /* Color marrón predeterminado */
-    color: rgb(0, 0, 0); /* Color de texto predeterminado */
-}
-
-/* Estilo cuando el checkbox está seleccionado */
-.checkbox-custom:checked + .checkbox-custom-label {
-    border-color: #235B4E; /* verde */
-    background-color: #235B4E; /* verde */
-    color: rgb(255, 255, 255); /* Color de texto negro */
-}
-
-/* Estilo al pasar el mouse por encima del checkbox */
-.checkbox-custom-label:hover {
-    border-color: #047832; /* verde_claro */
-    background-color: #047832; /* verde_claro */
-    color: rgb(255, 255, 255); /* Color de texto negro */
-}
-
-/* Contenedor con scroll */
-.checkbox-container {
-    max-height: 200px; /* Ajusta esta altura según sea necesario */
-    overflow-y: auto;
-    border: 1px solid #ddd;
-    padding: 10px;
-    border-radius: 5px;
-    width: 100%; /* Ocupa el ancho completo del contenedor */
-    box-sizing: border-box; /* Incluye el padding y border en el ancho total */
-}
-
-
     </style>
 {% endblock styles %}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/i18n/jquery-ui-i18n.min.js"></script>
 
     
-{% block content %}
-<div class="container" style="width: 50%; max-width: 600px;">
-    <h1>Crear Nuevo Registro</h1>
-    <form method="post">
-        {% csrf_token %}
+    {% block content %}
 
-        {{ registro_form.non_field_errors }}
-        {{ registro_form.claveAcuerdo.errors }}
-        {{ registro_form.fecha_inicio.errors }}
-        {{ registro_form.fecha_termino.errors }}
-        {{ registro_form.rubro.errors }}
-        {{ registro_form.area.errors }}
-        {{ registro_form.estado.errors }}
-        
-        {{ registro_form.claveAcuerdo.label_tag }} {{ registro_form.claveAcuerdo }}
-        {{ registro_form.fecha_inicio.label_tag }} {{ registro_form.fecha_inicio }}
-        {{ registro_form.fecha_termino.label_tag }} {{ registro_form.fecha_termino }}
-        {{ registro_form.rubro.label_tag }} {{ registro_form.rubro }}
-        {{ registro_form.area.label_tag }} {{ registro_form.area }}
-        {{ registro_form.estado.label_tag }} {{ registro_form.estado }}
+    
+    <div class="container" style="width: 50%; max-width: 600px;">
+        <h1>Crear Nuevo Registro</h1>
+        <form method="post">
+            {% csrf_token %}
 
-        <div>
-            <label>{{ registro_form.accion1_area1.label }}</label> {{ registro_form.accion1_area1 }}
-        </div>
+            {{ registro_form.as_p }}
 
-        <div>
-            <label>{{ registro_form.accion1_area2.label }}</label>
-            <div class="checkbox-container">
-                {% for checkbox in registro_form.accion1_area2 %}
-                    <div>
-                        <input type="checkbox" id="{{ checkbox.id_for_label }}" class="checkbox-custom" name="{{ checkbox.name }}" value="{{ checkbox.choice_value }}" {% if checkbox.choice_value == checkbox.value %}checked{% endif %}>
-                        <label for="{{ checkbox.id_for_label }}" class="checkbox-custom-label">{{ checkbox.choice_label }}</label>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
+            <button class="py-3 px-6 mx-1 bg-inm-marron-200 hover:bg-inm-marron-100 rounded-xl text-white" type="submit">Guardar Registro con Acción y Prueba</button>
+        </form>
+    </div>
 
-        <label>{{ registro_form.accion1_descripcion.label }}</label> {{ registro_form.accion1_descripcion }}
 
-        <label>{{ registro_form.prueba1_nom_archivo.label }}</label> {{ registro_form.prueba1_nom_archivo }}
-        <label>{{ registro_form.prueba1_tipo.label }}</label> {{ registro_form.prueba1_tipo }}
-        <label>{{ registro_form.prueba1_archivo_url.label }}</label> {{ registro_form.prueba1_archivo_url }}
-
-        <button class="py-3 px-6 mx-1 bg-inm-marron-200 hover:bg-inm-marron-100 rounded-xl text-white" type="submit">Guardar Registro con Acción y Prueba</button>
-    </form>
-</div>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $("#id_fecha_inicio").datepicker({
-            dateFormat: 'dd/mm/yy',
-            dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-            firstDay: 1,
-            prevText: 'Anterior',
-            nextText: 'Siguiente',
-            currentText: 'Hoy',
-            closeText: 'Cerrar',
-            showButtonPanel: false,
-            buttonText: 'Seleccionar fecha',
-            showAnim: 'slideDown',
-            showOtherMonths: true, 
-            selectOtherMonths: true 
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#id_fecha_inicio").datepicker({
+                dateFormat: 'dd/mm/yy',
+                dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                firstDay: 1,
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                currentText: 'Hoy',
+                closeText: 'Cerrar',
+                showButtonPanel: false,
+                buttonText: 'Seleccionar fecha',
+                showAnim: 'slideDown',
+                showOtherMonths: true, 
+                selectOtherMonths: true 
+            });
+    
+            $("#id_fecha_termino").datepicker({
+                dateFormat: 'dd/mm/yy', 
+                dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                currentText: 'Hoy',
+                closeText: 'Cerrar',
+                showButtonPanel: false,
+                buttonText: 'Seleccionar fecha',
+                showAnim: 'slideDown',
+                showOtherMonths: true,
+                selectOtherMonths: true
+            });
         });
+    </script>
+      
+    
 
-        $("#id_fecha_termino").datepicker({
-            dateFormat: 'dd/mm/yy', 
-            dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-            prevText: 'Anterior',
-            nextText: 'Siguiente',
-            currentText: 'Hoy',
-            closeText: 'Cerrar',
-            showButtonPanel: false,
-            buttonText: 'Seleccionar fecha',
-            showAnim: 'slideDown',
-            showOtherMonths: true,
-            selectOtherMonths: true
-        });
-    });
-</script>
-{% endblock content %}
+    {% endblock content %}

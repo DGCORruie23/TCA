@@ -80,34 +80,53 @@ def dashboard(request):
 def crear_registro(request):
     if request.method == 'POST':
         registro_form = RegistroConAccionesYPruebasForm(request.POST)
+        print("Entró al POST")
         if registro_form.is_valid():
-            registro = registro_form.save()
+            print("Registro es válido")
+            registro = registro_form.save(commit=False)  # Guardamos el formulario pero no lo enviamos a la base de datos todavía
+            registro.save()
 
+            # Guardamos las áreas seleccionadas
             areas1 = registro_form.cleaned_data['accion1_area1']
-            areas2 = registro_form.cleaned_data['accion1_area2']
+            areas2 = registro_form.cleaned_data.get('accion1_area2', [])  # Puede ser None si no hay selecciones
 
+            # Creamos la acción
             accion = Acciones.objects.create(
                 descripcion=request.POST['accion1_descripcion']
             )
-            accion.area1.set(areas1)
-            accion.area2.set(areas2)
+
+            # Asignamos las áreas a la acción
+            accion.area1.add(*areas1)
+            accion.area2.add(*areas2)
+            print(accion)
+            # Guardamos la acción
             accion.save()
+
+            # Relacionamos la acción con el registro
             registro.accionR.add(accion)
 
+            # Creamos la prueba
             prueba = Pruebas.objects.create(
                 nom_archivo=request.POST['prueba1_nom_archivo'],
                 tipo=request.POST['prueba1_tipo'],
                 archivo_url=request.POST['prueba1_archivo_url']
             )
+
+            # Relacionamos la prueba con la acción
             prueba.acciones.add(accion)
 
+            # Redireccionamos al dashboard u otra página
             return redirect('dashboard')
+        else:
+            print("Registro form es inválido")
+            print(registro_form.errors)  # Esto imprimirá los errores del formulario en la consola
     else:
         registro_form = RegistroConAccionesYPruebasForm()
 
     return render(request, 'dashboard/crear_registro.html', {
         'registro_form': registro_form,
     })
+
 
 
 

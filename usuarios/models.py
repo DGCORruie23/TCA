@@ -161,80 +161,12 @@ class usuarioL(models.Model):
     def __str__(self):
         return  " {nombre}".format(nombre = self.user)
     
-
 # class usuarioA(models.Model):
 #     user = models.ForeignKey(usuarioL, on_delete=models.CASCADE)
 #     Area = models.ForeignKey(Area, on_delete=models.CASCADE)
 
 #     def __str__(self):
 #         return "{user}, {area}".format(user = self.user, area = self.Area)
-
-class Message(models.Model):
-    sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
-    receiver = models.ForeignKey(User, related_name='received_messages', on_delete=models.CASCADE)
-    content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-class Attachment(models.Model):
-    message = models.ForeignKey(Message, related_name='attachments', on_delete=models.CASCADE)
-    file = models.FileField(upload_to='attachments/')
-    uploaded_at = models.DateTimeField(auto_now_add=True)
-
-# class Usuario(models.Model):
-#     types_ORS = [
-#         ("1", "AGUASCALIENTES"),
-#         ("2", "BAJA CALIFORNIA"),
-#         ("3", "BAJA CALIFORNIA SUR"),
-#         ("4", "CAMPECHE"),
-#         ("5", "COAHUILA"),
-#         ("6", "COLIMA"),
-#         ("7", "CHIAPAS"),
-#         ("8", "CHIHUAHUA"),
-#         ("9", "CDMX"),
-#         ("10", "DURANGO"),
-#         ("11", "GUANAJUATO"),
-#         ("12", "GUERRERO"),
-#         ("13", "HIDALGO"),
-#         ("14", "JALISCO"),
-#         ("15", "EDOMEX"),
-#         ("16", "MICHOACÁN"),
-#         ("17", "MORELOS"),
-#         ("18", "NAYARIT"),
-#         ("19", "NUEVO LEÓN"),
-#         ("20", "OAXACA"),
-#         ("21", "PUEBLA"),
-#         ("22", "QUERÉTARO"),
-#         ("23", "QUINTANA ROO"),
-#         ("24", "SAN LUIS POTOSÍ"),
-#         ("25", "SINALOA"),
-#         ("26", "SONORA"),
-#         ("27", "TABASCO"),
-#         ("28", "TAMAULIPAS"),
-#         ("29", "TLAXCALA"),
-#         ("30", "VERACRUZ"),
-#         ("31", "YUCATÁN"),
-#         ("32", "ZACATECAS"),
-#     ]
-#     types_user = [
-#         ("1" , "Administrador"),
-#         ("2", "Validador"),
-#         ("3", "Capturador"),
-#     ]
-#     idUser = models.AutoField(primary_key=True)
-#     nickname = models.CharField(max_length = 20)
-#     nombre = models.CharField(max_length=100)
-#     apellido = models.CharField(max_length=200)
-#     password = models.CharField(max_length=250)
-#     estado = models.CharField(max_length=2, choices=types_ORS, default="9")
-#     tipo = models.CharField(max_length=1, choices=types_user, default="3")
-
-#     def save(self, *args, **kwargs):
-#         self.password = make_password(self.password)
-#         super(Usuario, self).save(*args, **kwargs)
-
-#     def __str__(self):
-#         return  " {id}, {nickname}, {state}, {type}".format(id = self.idUser, nickname = self.nickname, state = self.estado, type = self.tipo)
-
 
 
 class Usuario(models.Model):
@@ -273,50 +205,21 @@ class Usuario(models.Model):
         ("32", "ZACATECAS"),
     ]
     types_user = [
-        ("1", "Administrador"),
+        ("1" , "Administrador"),
         ("2", "Validador"),
         ("3", "Capturador"),
     ]
     idUser = models.AutoField(primary_key=True)
-    nickname = models.CharField(max_length=20)
+    nickname = models.CharField(max_length = 20)
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=200)
     password = models.CharField(max_length=250)
     estado = models.CharField(max_length=2, choices=types_ORS, default="9")
     tipo = models.CharField(max_length=1, choices=types_user, default="3")
-    areas = models.ManyToManyField(Area, related_name='usuarios')
 
     def save(self, *args, **kwargs):
         self.password = make_password(self.password)
         super(Usuario, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.idUser}, {self.nickname}, {self.estado}, {self.tipo}"
-    
-
-
-
-class Usuario(models.Model):
-    user = models.OneToOneField(User, related_name="usuarioL", on_delete=models.CASCADE)
-    area = models.ManyToManyField(Area, related_name="usuarios")
-
-    def __str__(self):
-        return f"{self.user.username}, {', '.join([area.nickname for area in self.area.all()])}"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return  " {id}, {nickname}, {state}, {type}".format(id = self.idUser, nickname = self.nickname, state = self.estado, type = self.tipo)

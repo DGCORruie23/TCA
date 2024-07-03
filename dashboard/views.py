@@ -3,14 +3,11 @@ from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth.models import User
 from usuarios.models import usuarioL
-from usuarios.models import Usuario, Message, Attachment
-from usuarios.models import Registro, Acciones, Pruebas, Area
+from usuarios.models import Usuario
+from usuarios.models import Registro, Acciones, Pruebas
 from datetime import datetime
-from .forms import RegistroConAccionesYPruebasForm, AccionForm, PruebaForm, MessageForm, AttachmentForm
+from .forms import RegistroConAccionesYPruebasForm, AccionForm, PruebaForm
 from django.forms import inlineformset_factory
-
-
-from django.db.models import Q
 
 
 
@@ -175,46 +172,6 @@ def editar_registro(request, registro_id):
     return render(request, 'dashboard/editar_registro.html', context= data)
 
 
-# def detalles(request,registro_id):
+def detalles(request,registro_id):
 
-#     return render(request,'dashboard/detalles.html')
-
-
-
-@login_required
-def detalles(request, registro_id):
-    registro = get_object_or_404(Registro, pk=registro_id)
-    areas = registro.area.all()
-
-    # Obtener usuarios relacionados con las áreas del registro
-    usuarios = User.objects.filter(usuarioL__area__in=areas).distinct()
-
-    if request.method == 'POST':
-        message_form = MessageForm(request.POST)
-        attachment_form = AttachmentForm(request.POST, request.FILES)
-        if message_form.is_valid():
-            message = message_form.save(commit=False)
-            message.sender = request.user
-            message.save()
-            if attachment_form.is_valid():
-                attachment = attachment_form.save(commit=False)
-                attachment.message = message
-                attachment.save()
-            return redirect('detalles', registro_id=registro_id)
-    else:
-        message_form = MessageForm()
-        attachment_form = AttachmentForm()
-
-    # Filtrar los mensajes relacionados con los usuarios obtenidos
-    messages = Message.objects.filter(
-        Q(sender=request.user) | Q(receiver=request.user),
-        Q(receiver__in=usuarios) | Q(sender__in=usuarios)
-    ).order_by('timestamp')
-
-    return render(request, 'dashboard/detalles.html', {
-        'registro': registro,
-        'message_form': message_form,
-        'attachment_form': attachment_form,
-        'messages': messages,
-        'usuarios': usuarios,
-    })
+    return render(request,'dashboard/detalles.html')

@@ -33,4 +33,5 @@ urlpatterns = [
     path('crear_registro/', vDash.crear_registro ,name="crear_registro" ),
     path('editar_registro/<int:registro_id>/', vDash.editar_registro , name='editar_registro'),
     path('detalles/<int:registro_id>/', vDash.detalles , name='detalles'),
+
 ]

@@ -157,7 +157,7 @@ class Pruebas(models.Model):
 
 class usuarioL(models.Model):
     user = models.OneToOneField(User, related_name="usuarioL", on_delete=models.CASCADE)
-    
+
     def __str__(self):
         return  " {nombre}".format(nombre = self.user)
     
@@ -206,8 +206,7 @@ class Usuario(models.Model):
     ]
     types_user = [
         ("1" , "Administrador"),
-        ("2", "Validador"),
-        ("3", "Capturador"),
+        ("2", "Editor"),
     ]
     idUser = models.AutoField(primary_key=True)
     nickname = models.CharField(max_length = 20)

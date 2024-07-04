@@ -18,3 +18,15 @@ admin.site.register(Pruebas)
 # admin.site.register(usuarioA)
 
 # Register your models here.
+
+from django.contrib import admin
+from .models import Usuario
+
+class UsuarioAdmin(admin.ModelAdmin):
+    list_display = ('idUser', 'nickname', 'nombre', 'apellido', 'estado', 'tipo')
+    list_filter = ('estado', 'tipo')
+    search_fields = ('nickname', 'nombre', 'apellido')
+    # Especifica los campos editables en el formulario de edición
+    fields = ('nickname', 'nombre', 'apellido', 'estado', 'tipo')
+
+admin.site.register(Usuario, UsuarioAdmin)

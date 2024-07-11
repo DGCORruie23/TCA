@@ -95,10 +95,10 @@ from django.contrib.auth.models import User
 class Area(models.Model):
     idArea = models.AutoField(primary_key=True)
     nickname = models.CharField(max_length=150)
-    abrevArea = models.CharField(max_length=15, default="abreviatura")
+    # abrevArea = models.CharField(max_length=15, default="abreviatura")
 
     def __str__(self):
-        return f"{self.idArea}, {self.nickname},{self.abrevArea}"
+        return f"{self.idArea},{self.nickname},"
 
 
 class Rubro(models.Model):
@@ -125,41 +125,40 @@ class Registro(models.Model):
     estado = models.CharField(max_length=1, choices=types_estado, default="1")
 
     def __str__(self):
-        return f"Registro: {self.idRegistro}, Clave de Acuerdo: {self.claveAcuerdo}, Fecha de inicio: {self.fecha_inicio}, Fecha de término: {self.fecha_termino}, Rubro: {', '.join([rubro.tipo for rubro in self.rubro.all()])}, Áreas: {', '.join([area.abrevArea for area in self.area.all()])}, Estado: {self.get_estado_display()}"
+        return f"Registro: {self.idRegistro}, Clave de Acuerdo: {self.claveAcuerdo}, Fecha de inicio: {self.fecha_inicio}, Fecha de término: {self.fecha_termino}, Rubro: {', '.join([rubro.tipo for rubro in self.rubro.all()])}, Áreas: {', '.join([area.nickname for area in self.area.all()])}, Estado: {self.get_estado_display()}"
 
 
 class Acciones(models.Model):
     idAccion = models.AutoField(primary_key=True)
     idRegistro = models.ManyToManyField(Registro, related_name='accionR')
-    area1 = models.ManyToManyField(Area, related_name='accionA1')
     area2 = models.ManyToManyField(Area, related_name='accionA2')
     descripcion = models.TextField()
 
     def __str__(self):
-        return f"Acción: {self.idAccion}, Registros: {', '.join([str(registro.idRegistro) for registro in self.idRegistro.all()])}, Área 1: {', '.join([area.nickname for area in self.area1.all()])}, Área 2: {', '.join([area.nickname for area in self.area2.all()])}, Descripción: {self.descripcion}"
+        return f"Acción: {self.idAccion}, Registros: {', '.join([str(registro.idRegistro) for registro in self.idRegistro.all()])}, Área 2: {', '.join([area.nickname for area in self.area2.all()])}, Descripción: {self.descripcion}"
 
 
-class Pruebas(models.Model):
-    types_archivo = [
-        ("1", "URL"),
-        ("2", "Local"),
-    ]
-    idPruebas = models.AutoField(primary_key=True)
-    nom_archivo = models.TextField()
-    tipo = models.CharField(max_length=1, choices=types_archivo, default="1")
-    archivo_url = models.TextField()
-    acciones = models.ManyToManyField(Acciones, related_name='accionP')
+# class Pruebas(models.Model):
+#     types_archivo = [
+#         ("1", "URL"),
+#         ("2", "Local"),
+#     ]
+#     idPruebas = models.AutoField(primary_key=True)
+#     nom_archivo = models.TextField()
+#     tipo = models.CharField(max_length=1, choices=types_archivo, default="1")
+#     archivo_url = models.TextField()
+#     acciones = models.ManyToManyField(Acciones, related_name='accionP')
 
-    def __str__(self):
-        return f"Prueba: {self.idPruebas}, Nombre de Archivo: {self.nom_archivo}, Tipo: {self.get_tipo_display()}, URL del Archivo: {self.archivo_url}, Acciones: {', '.join([str(accion.idAccion) for accion in self.acciones.all()])}"
+#     def __str__(self):
+#         return f"Prueba: {self.idPruebas}, Nombre de Archivo: {self.nom_archivo}, Tipo: {self.get_tipo_display()}, URL del Archivo: {self.archivo_url}, Acciones: {', '.join([str(accion.idAccion) for accion in self.acciones.all()])}"
 
 
 
-class usuarioL(models.Model):
-    user = models.OneToOneField(User, related_name="usuarioL", on_delete=models.CASCADE)
+# class usuarioL(models.Model):
+#     user = models.OneToOneField(User, related_name="usuarioL", on_delete=models.CASCADE)
 
-    def __str__(self):
-        return  " {nombre}".format(nombre = self.user)
+#     def __str__(self):
+#         return  " {nombre}".format(nombre = self.user)
     
 # class usuarioA(models.Model):
 #     user = models.ForeignKey(usuarioL, on_delete=models.CASCADE)
@@ -169,56 +168,34 @@ class usuarioL(models.Model):
 #         return "{user}, {area}".format(user = self.user, area = self.Area)
 
 
-class Usuario(models.Model):
+class UsuarioP(models.Model):
     types_ORS = [
-        ("1", "AGUASCALIENTES"),
-        ("2", "BAJA CALIFORNIA"),
-        ("3", "BAJA CALIFORNIA SUR"),
-        ("4", "CAMPECHE"),
-        ("5", "COAHUILA"),
-        ("6", "COLIMA"),
-        ("7", "CHIAPAS"),
-        ("8", "CHIHUAHUA"),
-        ("9", "CDMX"),
-        ("10", "DURANGO"),
-        ("11", "GUANAJUATO"),
-        ("12", "GUERRERO"),
-        ("13", "HIDALGO"),
-        ("14", "JALISCO"),
-        ("15", "EDOMEX"),
-        ("16", "MICHOACÁN"),
-        ("17", "MORELOS"),
-        ("18", "NAYARIT"),
-        ("19", "NUEVO LEÓN"),
-        ("20", "OAXACA"),
-        ("21", "PUEBLA"),
-        ("22", "QUERÉTARO"),
-        ("23", "QUINTANA ROO"),
-        ("24", "SAN LUIS POTOSÍ"),
-        ("25", "SINALOA"),
-        ("26", "SONORA"),
-        ("27", "TABASCO"),
-        ("28", "TAMAULIPAS"),
-        ("29", "TLAXCALA"),
-        ("30", "VERACRUZ"),
-        ("31", "YUCATÁN"),
-        ("32", "ZACATECAS"),
+        ("1", "OR AGS"), ("2", "OR BC"), ("3", "OR BCS"), ("4", "OR CAMP"), ("5", "OR COAH"),
+        ("6", "OR COL"), ("7", "OR CHIS"), ("8", "OR CHIH"), ("9", "OR CDMX"), ("10", "OR DGO"),
+        ("11", "OR GTO"), ("12", "OR GRO"), ("13", "OR HGO"), ("14", "OR JAL"), ("15", "OR EDOMEX"),
+        ("16", "OR MICH"), ("17", "OR MOR"), ("18", "OR NAY"), ("19", "OR NL"), ("20", "OR OAX"),
+        ("21", "OR PUE"), ("22", "OR QRO"), ("23", "OR QROO"), ("24", "OR SLP"), ("25", "OR SIN"),
+        ("26", "OR SON"), ("27", "OR TAB"), ("28", "OR TAMPS"), ("29", "OR TLX"), ("30", "OR VER"),
+        ("31", "OR YUC"), ("32", "OR ZAC"), ("33", "DGTIC"), ("34", "DGCM"), ("35", "DGRAM"), ("36", "DG"), ("37", "SCJ"), ("38", "DGA"), ("39", "DGECCC"), ("40", "DGCOR"),
     ]
+
+
     types_user = [
         ("1" , "Administrador"),
         ("2", "Editor"),
     ]
     idUser = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, related_name="usuarioP", on_delete=models.CASCADE, default=1)
     nickname = models.CharField(max_length = 20)
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=200)
-    password = models.CharField(max_length=250)
-    estado = models.CharField(max_length=2, choices=types_ORS, default="9")
+    # password = models.CharField(max_length=250)
+    OR = models.CharField(max_length=2, choices=types_ORS, default="9")
     tipo = models.CharField(max_length=1, choices=types_user, default="3")
-
+    
     def save(self, *args, **kwargs):
-        self.password = make_password(self.password)
-        super(Usuario, self).save(*args, **kwargs)
+        # self.password = make_password(self.password)
+        super(UsuarioP, self).save(*args, **kwargs)
 
     def __str__(self):
-        return  " {id}, {nickname}, {state}, {type}".format(id = self.idUser, nickname = self.nickname, state = self.estado, type = self.tipo)
+        return  " {id}, {nickname}, {state}, {type}".format(id = self.idUser, nickname = self.nickname, state = self.OR, type = self.tipo)

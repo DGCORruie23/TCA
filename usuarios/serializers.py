@@ -1,11 +1,11 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from usuarios.models import Usuario
+from usuarios.models import UsuarioP
 
 class UserGetSerializer(ModelSerializer):
 	class Meta:
-		model = Usuario
+		model = UsuarioP
 		fields = [
 			'nickname',
 			'password',
@@ -13,7 +13,7 @@ class UserGetSerializer(ModelSerializer):
 		
 class UserGetSerializerC(ModelSerializer):
 	class Meta:
-		model = Usuario
+		model = UsuarioP
 		fields = [
 			'nickname',
 			'nombre',

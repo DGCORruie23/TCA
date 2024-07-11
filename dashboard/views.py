@@ -2,17 +2,17 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth.models import User
-from usuarios.models import usuarioL
-from usuarios.models import Usuario
-from usuarios.models import Registro, Acciones, Pruebas
+# from usuarios.models import usuarioL
+from usuarios.models import UsuarioP
+from usuarios.models import Registro, Acciones
 from datetime import datetime
-from .forms import RegistroConAccionesYPruebasForm, AccionForm, PruebaForm
+from .forms import RegistroConAccionesYPruebasForm, AccionForm
 from django.forms import inlineformset_factory
 
 
 
 # Create your views here.
-@login_required
+
 # def dashboard(request):
 
 #     if request.method == 'GET':
@@ -32,15 +32,21 @@ from django.forms import inlineformset_factory
 #                 }
 #         return render(request, "dashboard/dashboard.html")
     
-
+@login_required
 def dashboard(request):
     if request.method == 'GET':
 
-        registros = Registro.objects.all().order_by('fecha_termino')
-
+        
+        userDataI = UsuarioP.objects.filter(user__username=request.user)
         registrosConFechas = []
         dif = []
+        print(userDataI[0].tipo)
+        if userDataI[0].tipo == "1":
+            registros = Registro.objects.all().order_by('fecha_termino')
+        else:
+            registros = Registro.objects.all().order_by('fecha_termino').filter(area=userDataI[0].OR)
 
+        
         for registro in registros:
             fecha_inicio = registro.fecha_inicio.strftime('%d-%m-%Y')
             fecha_termino = registro.fecha_termino.strftime('%d-%m-%Y')
@@ -56,11 +62,14 @@ def dashboard(request):
         registrosConFechas = zip(registrosConFechas, dif)
         
 
-        pruebas = Pruebas.objects.all()
+        # pruebas = Pruebas.objects.all()
+
+        
         
         context = {
             'registrosConFechas': registrosConFechas,
-            'pruebas': pruebas,
+            # 'pruebas': pruebas,
+            'dataU':userDataI,
         }
 
         return render(request, "dashboard/dashboard.html", context)
@@ -83,23 +92,21 @@ def crear_registro(request):
         if registro_form.is_valid():
             registro = registro_form.save()
 
-            areas1 = registro_form.cleaned_data['accion1_area1']
             areas2 = registro_form.cleaned_data['accion1_area2']
 
             accion = Acciones.objects.create(
                 descripcion=request.POST['accion1_descripcion']
             )
-            accion.area1.set(areas1)
             accion.area2.set(areas2)
             accion.save()
             registro.accionR.add(accion)
 
-            prueba = Pruebas.objects.create(
-                nom_archivo=request.POST['prueba1_nom_archivo'],
-                tipo=request.POST['prueba1_tipo'],
-                archivo_url=request.POST['prueba1_archivo_url']
-            )
-            prueba.acciones.add(accion)
+            # prueba = Pruebas.objects.create(
+            #     nom_archivo=request.POST['prueba1_nom_archivo'],
+            #     tipo=request.POST['prueba1_tipo'],
+            #     archivo_url=request.POST['prueba1_archivo_url']
+            # )
+            # prueba.acciones.add(accion)
 
             return redirect('dashboard')
     else:

@@ -8,7 +8,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from datetime import *
 
 from .serializers import UserGetSerializer, UserGetSerializerC
-from .models import Usuario
+from .models import UsuarioP
 
 
 from datetime import *
@@ -32,9 +32,9 @@ def login_user(request):
 
             print(f" nickname: {usuario_info}, pass: {pass_info}")
 
-            if(Usuario.objects.filter(nickname = usuario_info).exists()):
+            if(UsuarioP.objects.filter(nickname = usuario_info).exists()):
 
-                datos_usuario = Usuario.objects.get(nickname = usuario_info)
+                datos_usuario = UsuarioP.objects.get(nickname = usuario_info)
 
                 if(check_password(pass_info, datos_usuario.password)):
                     nuevo_serializer = {'nickname': datos_usuario.nickname,

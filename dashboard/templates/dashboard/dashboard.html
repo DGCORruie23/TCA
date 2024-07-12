@@ -234,17 +234,9 @@
 {% endblock styles %}
 
 {% block content %}
-<!-- <section class="grow bg-gray-50 dark:bg-gray-900"> -->
-
 {% if user.is_authenticated %}
 <h1 style="text-align: end; padding-right: 10px">Logeado como : {{ dataU.0.nombre }}</h1>
 <input type="hidden" id="logged-in-user" value="{{ user.id }}">
-
-
-
-
-
-
 
 <br><br><br>
 {% if dataU.0.tipo == "1" %}
@@ -254,17 +246,7 @@
         type="submit">Agregar Registro</a>
 </div>
 {% endif %}
-<div class="bdtable bg-inm-marron-100  ">
-
-    <!-- <div id="popup" class="overlay">
-                <div id="popupBody">
-                    <a href="" id="cerrar">&times;</a>
-                    <div class="popupContent">
-                        <p>holaaa</p>
-                    </div>
-                </div>
-            </div> -->
-
+<div class="bdtable bg-inm-marron-100">
 
     <table id="myTable">
         <tr class="header">
@@ -273,138 +255,95 @@
             <th class="text-center">Fecha Término</th>
             <th class="text-center">Rubro</th>
             <th class="text-center">Descripción</th>
-            <th class="text-center">Área</th>
+            <th class="text-center">Áreas Responsables</th>
             <th class="text-center">Estatus</th>
             <th class="text-center">Acciones</th>
         </tr>
 
-        {% for registro, diferencia in registrosConFechas %}
-
+        {% for data in registrosConFechas %}
         <tr>
-            <td>{{ registro.0.claveAcuerdo }}</td>
-            <td>{{ registro.0.fecha_inicio|date:"d-m-Y" }}</td>
-            <td>{{ registro.0.fecha_termino|date:"d-m-Y" }}</td>
+            <td>{{ data.registro.claveAcuerdo }}</td>
+            <td>{{ data.fecha_inicio }}</td>
+            <td>{{ data.fecha_termino }}</td>
             <td>
-                {% for rubro in registro.0.rubro.all %}
+                {% for rubro in data.registro.rubro.all %}
                 {{ rubro.tipo }}{% if not forloop.last %}, {% endif %}
                 {% endfor %}
             </td>
-            <!-- <td>
-                        {% for accion in registro.0.accionR.all %}
-                        {{ accion.descripcion }}
-                        <div class="text-right">
-                            <a href="#popup" class=" text-inm-rojo-200 hover:text-inm-marron-200 font-bold ml-2">Ver más</a></div> 
-                        </div>
-                        
-                        {% endfor %}
-                    </td> -->
             <td>
-                {% for accion in registro.0.accionR.all %}
-                {{ accion.descripcion }}
-                <div class="text-right">
-                    <a href="#popup{{ accion.idAccion }}{{ pruebas.idPruebas }}"
-                        class="text-inm-rojo-200 hover:text-inm-marron-200 font-bold ml-2">Ver más</a>
-                </div>
-
-                <div id="popup{{ accion.idAccion }}{{ pruebas.idPruebas }}" class="overlay">
-                    <div id="popupBody" class="popupBody">
-                        <a href="#" id="cerrar" class="cerrar">&times;</a>
-                        <div class="popupContent">
-                            <h2 class="popupTitle verde">Detalles del Registro</h2>
-                            <!-- <div class="popupSection">
-                                <h3 class="marron">Área 1:</h3>
-                                <ul>
-                                    {% for area1 in accion.area1.all %}
-                                    <li>{{ area1.nickname }}</li>
-                                    {% endfor %}
-                                </ul>
-                            </div> -->
-                            <div class="popupSection">
-                                <h3 class="marron">Área 2:</h3>
-                                <ul>
-                                    {% for area2 in accion.area2.all %}
-                                    <li>{{ area2.nickname }}</li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                            <div class="popupSection" style="text-align: justify;">
-                                <h3 class="marron">Descripción:</h3>
-                                <p style="text-align: justify;">{{ accion.descripcion }}</p>
-                            </div>
-                            <!-- <div class="popupSection">
-                                <h3 class="marron">Imágenes de Prueba:</h3>
-                                {% for prueba in accion.accionP.all %}
-                                {% if prueba.tipo == 1 %}
-                                <div class="respI">
-                                    <img class="responsive-image" src="{{ prueba.archivo_url }}" alt="Imagen de prueba">
+                {% for accion in data.registro.accionR.all %}
+                    {{ accion.descripcion }}
+                    <div class="text-right">
+                        <a href="#popup{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
+                            class="text-inm-rojo-200 hover:text-inm-marron-200 font-bold ml-2">Ver más</a>
+                    </div>
+                    
+                    <div id="popup{{ forloop.parentloop.counter }}_{{ forloop.counter }}" class="overlay">
+                        <div id="popupBody" class="popupBody">
+                            <a href="#" id="cerrar" class="cerrar">&times;</a>
+                            <div class="popupContent">
+                                <h2 class="popupTitle verde">Detalles del Registro</h2>
+                                <div class="popupSection">
+                                    <h3 class="marron">OR:</h3>
+                                    <ul>
+                                        <li>{{ data.areas_str }}</li>
+                                    </ul>
                                 </div>
-                                {% else %}
-                                <div class="respI">
-                                    <img class="responsive-image" src="{% static 'imgs/' %}{{ prueba.archivo_url }}"
-                                        alt="Imagen de prueba">
+                                <div class="popupSection">
+                                    <h3 class="marron">Áreas Responsables:</h3>
+                                    <ul>
+                                        {% for area2 in accion.area2.all %}
+                                            <li>{{ area2.nickname }}</li>
+                                        {% endfor %}
+                                    </ul>
                                 </div>
-                                {% endif %}
-                                {% endfor %}
-                            </div> -->
+                                <div class="popupSection" style="text-align: justify;">
+                                    <h3 class="marron">Descripción:</h3>
+                                    <p style="text-align: justify;">{{ accion.descripcion }}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-
                 {% endfor %}
             </td>
+                    
             <td>
-                <!-- {% for area in registro.0.area.all %}
-                        {{ area.nickname }}{% if not forloop.last %}, {% endif %}
-                        {% endfor %} -->
-                {% for accion in registro.0.accionR.all %}
+                {% for accion in data.registro.accionR.all %}
                 {% for area2 in accion.area2.all %}
                 - {{ area2.nickname }}
                 {% endfor %}
                 {% endfor %}
             </td>
             <td>
-                {% if registro.0.estado == '1' %}
-                {% if diferencia >= -5 %}
+                {% if data.registro.estado == '1' %}
+                {% if data.diferencia >= -5 %}
                 <div class="text-center py-2" style="background-color: #C30E2E; color: white; border-radius: 5px;">
-                    <span>{{ registro.0.get_estado_display }}</span>
+                    <span>{{ data.registro.get_estado_display }}</span>
                 </div>
-                {% elif diferencia >= -15 %}
+                {% elif data.diferencia >= -15 %}
                 <div class="text-center py-2" style="background-color: #FFFF00; color: #000000; border-radius: 5px;">
-                    <span>{{ registro.0.get_estado_display }}</span>
+                    <span>{{ data.registro.get_estado_display }}</span>
                 </div>
-
                 {% else %}
                 <div class="text-center py-2" style="background-color: #BC955C; color: white; border-radius: 5px;">
-                    <span>{{ registro.0.get_estado_display }}</span>
+                    <span>{{ data.registro.get_estado_display }}</span>
                 </div>
                 {% endif %}
                 {% else %}
                 <div class="text-center py-2" style="background-color: green; color: white; border-radius: 5px;">
-                    <span>{{ registro.0.get_estado_display }}</span>
+                    <span>{{ data.registro.get_estado_display }}</span>
                 </div>
                 {% endif %}
             </td>
             <td>
-                <!-- Botón de editar -->
-                <!-- <a href="{% url 'editar_registro' registro.0.idRegistro %}" class="basis-1/8 py-3 px-6 mx-1 bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white ">Editar</a> -->
-                <a href="{% url 'detalles' registro.0.idRegistro %}"
+                <a href="{% url 'detalles' data.registro.idRegistro %}"
                     class="basis-1/8 py-3 px-6 mx-1 bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white ">Detalles</a>
             </td>
-
         </tr>
         {% endfor %}
     </table>
-
-
-
-
 </div>
 <br><br><br>
 
-
 {% endif %}
-
-
-
 {% endblock content %}

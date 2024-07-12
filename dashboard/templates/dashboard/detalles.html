@@ -278,7 +278,7 @@ html {
 {% block content %}
 
         {% if user.is_authenticated %}
-            <h1 style="text-align: end; padding-right: 10px">Logged in as : {{ user.username }}</h1>
+        <h1 style="text-align: end; padding-right: 10px">Logeado como : {{ dataU.0.nombre }}</h1>
             <input type="hidden" id="logged-in-user" value="{{ user.id }}">
         {% endif %}
 

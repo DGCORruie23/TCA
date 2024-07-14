@@ -230,15 +230,24 @@
         color: #C30E2E;
         transition: color 0.3s ease;
     }
+
+    .username {
+        text-align: center;
+        padding-right: 10px;
+        color: #235B4E;
+        font-weight: bold;
+        font-size: 30px;
+        margin-bottom: 10px;
+    }
 </style>
 {% endblock styles %}
 
 {% block content %}
 {% if user.is_authenticated %}
-<h1 style="text-align: end; padding-right: 10px">Logeado como : {{ dataU.0.nombre }}</h1>
+<br>
+<p class="username">Usted está logueado como: {{ dataU.0.nombre }}</p>
 <input type="hidden" id="logged-in-user" value="{{ user.id }}">
 
-<br><br><br>
 {% if dataU.0.tipo == "1" %}
 <div style="margin: 0 auto; margin-bottom: 1%;">
     <a href="{% url 'crear_registro' %}"

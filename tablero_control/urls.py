@@ -21,7 +21,10 @@ from . import views
 from django.urls import path, include
 from usuarios.views import index
 import dashboard.views as vDash
-
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('usuarios/', include('usuarios.urls')),
@@ -33,3 +36,5 @@ urlpatterns = [
     path('crear_registro/', vDash.crear_registro ,name="crear_registro" ),
     path('detalles/<int:registro_id>/', vDash.detalles , name='detalles'),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

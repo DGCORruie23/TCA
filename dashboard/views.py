@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from usuarios.models import UsuarioP
 from usuarios.models import Registro, Acciones
 from datetime import datetime
-from .forms import RegistroConAccionesYPruebasForm, AccionForm
+from .forms import RegistroConAccionesYPruebasForm, AccionForm, MensajeForm
 from django.forms import inlineformset_factory
 
 
@@ -87,13 +87,33 @@ def crear_registro(request):
 
 
 
-def detalles(request,registro_id):
+@login_required
+def detalles(request, registro_id):
+    registro = Registro.objects.get(pk=registro_id)
+    mensajes = registro.mensajes.all().order_by('fecha_envio')
+    userDataI = UsuarioP.objects.filter(user__username=request.user)
 
-    if request.method == 'GET':
-        userDataI = UsuarioP.objects.filter(user__username=request.user)
-       
-        context = {
+    # Añadir la propiedad archivo_nombre a cada mensaje
+    for mensaje in mensajes:
+        if mensaje.archivo:
+            mensaje.archivo_nombre = mensaje.archivo.name.split('/')[-1]
 
-            'dataU': userDataI,
-        }
-    return render(request,'dashboard/detalles.html', context)
+    if request.method == 'POST':
+        mensaje_form = MensajeForm(request.POST, request.FILES)
+        if mensaje_form.is_valid():
+            nuevo_mensaje = mensaje_form.save(commit=False)
+            nuevo_mensaje.registro = registro
+            nuevo_mensaje.usuario = request.user
+            nuevo_mensaje.save()
+            return redirect('detalles', registro_id=registro_id)
+    else:
+        mensaje_form = MensajeForm()
+
+    context = {
+        'registro': registro,
+        'mensajes': mensajes,
+        'mensaje_form': mensaje_form,
+        'dataU': userDataI,
+    }
+
+    return render(request, 'dashboard/detalles.html', context)

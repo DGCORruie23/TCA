@@ -12,9 +12,17 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Archivos estáticos
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+# Archivos de medios
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -24,7 +32,7 @@ SECRET_KEY = 'django-insecure-)t!cpic2ec%*0__ao4j5@ykor_65s%0dzu*vavdf@s*b9p9i99
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 ALLOWED_HOSTS = ['ruie.dgcor.com', 'www.ruie.dgcor.com', "192.168.8.2","192.168.8.15", "localhost", "172.22.13.148","127.0.0.1","192.168.42.123"]
 
 LOGIN_REDIRECT_URL = '/dashboard/'

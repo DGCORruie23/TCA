@@ -79,3 +79,14 @@ class UsuarioP(models.Model):
 
     def __str__(self):
         return  " {id}, {nickname}, {state}, {type}".format(id = self.idUser, nickname = self.nickname, state = self.OR, type = self.tipo)
+    
+
+class Mensaje(models.Model):
+    registro = models.ForeignKey(Registro, on_delete=models.CASCADE, related_name='mensajes')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    texto = models.TextField()
+    archivo = models.FileField(upload_to='mensajes/', blank=True, null=True)
+    fecha_envio = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.usuario.username} - {self.fecha_envio} - {self.registro} - {self.texto} - {self.archivo}"

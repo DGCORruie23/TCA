@@ -5,8 +5,84 @@
 {% block title %}Editar Registro{% endblock title %}
 
 {% block styles %}
-<style>
-    .container {
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #F2DEDB;
+            color: #000000;
+        }
+
+        .form-container {
+            background-color: #235B4E;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 50px auto;
+        }
+
+        .form-title {
+            color: #DDC9A3;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #DDC9A3;
+            font-weight: bold;
+            
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #DDC9A3;
+            border-radius: 15px;
+            font-size: 16px;
+            color: #000000;
+            background-color: #FFFFFF;
+        }
+
+        .form-button {
+            color: #ffffff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .form-button:hover {
+            background-color: #691C32;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        .container {
         width: 50%;
         margin: 50px auto;
         padding: 20px;
@@ -99,74 +175,61 @@
         color: black;
     }
 
-
     </style>
 {% endblock styles %}
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/i18n/jquery-ui-i18n.min.js"></script>
 
 {% block content %}
-    <!-- <div class="container" style="width: 50%; max-width: 600px;">
-        <h1>Editar Registro</h1>
+{% if user.is_authenticated %}
+    <div class="form-container">
+        <h2 class="form-title">Editar Registro</h2>
         <form method="post">
             {% csrf_token %}
-
-            {{ registro_form.as_p }}
-
-            <button class="py-3 px-6 mx-1 bg-inm-marron-200 hover:bg-inm-marron-100 rounded-xl text-white" type="submit">Guardar Cambios</button>
-        </form>
-    </div> -->
-
-    <div class="container" style="width: 50%; max-width: 600px;">
-        <h1>Editar Registro</h1>
-        <form method="post"> 
-            {% csrf_token %}
-                <input type="hidden" name="idRegistro" value="{{ registro.idRegistro }}" class="elegant-input" id="idRegistro">
-
-                <label for="fname" class="elegant-input-label">Fecha Inicio:</label><br>
-                <input type="text" name="idfecha_inicio" value="{{ registro.id_fecha_inicio }}" class="elegant-input" id="id_fecha_inicio">
-
-                <label for="fname" class="elegant-input-label">Fecha Término:</label><br>
-                <input type="text" name="idfecha_termino" value="{{ registro.id_fecha_termino }}" class="elegant-input" id="id_fecha_termino">
-            <button class="py-3 px-6 mx-1 bg-inm-marron-200 hover:bg-inm-marron-100 rounded-xl text-white" type="submit">Guardar Cambios</button>
+            <div class="form-group">
+                {{ registro_form.as_p }}
+            </div>
+            <div class="form-group">
+                {{ accion_form.as_p }}
+            </div>
+            <button type="submit" class="form-button bg-inm-rojo-200">Guardar Cambios</button>
         </form>
     </div>
+{% endif %}
 
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $("#id_fecha_inicio").datepicker({
-                dateFormat: 'dd/mm/yy',
-                dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-                firstDay: 1,
-                prevText: 'Anterior',
-                nextText: 'Siguiente',
-                currentText: 'Hoy',
-                closeText: 'Cerrar',
-                showButtonPanel: false,
-                buttonText: 'Seleccionar fecha',
-                showAnim: 'slideDown',
-                showOtherMonths: true, 
-                selectOtherMonths: true 
-            });
-    
-            $("#id_fecha_termino").datepicker({
-                dateFormat: 'dd/mm/yy', 
-                dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-                prevText: 'Anterior',
-                nextText: 'Siguiente',
-                currentText: 'Hoy',
-                closeText: 'Cerrar',
-                showButtonPanel: false,
-                buttonText: 'Seleccionar fecha',
-                showAnim: 'slideDown',
-                showOtherMonths: true,
-                selectOtherMonths: true
-            });
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#id_fecha_inicio").datepicker({
+            dateFormat: 'dd/mm/yy',
+            dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            firstDay: 1,
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            currentText: 'Hoy',
+            closeText: 'Cerrar',
+            showButtonPanel: false,
+            buttonText: 'Seleccionar fecha',
+            showAnim: 'slideDown',
+            showOtherMonths: true, 
+            selectOtherMonths: true 
         });
-    </script>
+
+        $("#id_fecha_termino").datepicker({
+            dateFormat: 'dd/mm/yy', 
+            dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            currentText: 'Hoy',
+            closeText: 'Cerrar',
+            showButtonPanel: false,
+            buttonText: 'Seleccionar fecha',
+            showAnim: 'slideDown',
+            showOtherMonths: true,
+            selectOtherMonths: true
+        });
+    });
+</script>
 {% endblock content %}

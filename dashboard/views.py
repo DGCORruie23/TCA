@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from usuarios.models import UsuarioP
 from usuarios.models import Registro, Acciones
 from datetime import datetime
-from .forms import RegistroConAccionesYPruebasForm, AccionForm, MensajeForm
+from .forms import RegistroConAccionesYPruebasForm, AccionForm, MensajeForm, AccionesForm, RegistroConAccionesFORM
 from django.forms import inlineformset_factory
 
 
@@ -117,3 +117,42 @@ def detalles(request, registro_id):
     }
 
     return render(request, 'dashboard/detalles.html', context)
+
+
+@login_required
+def editar_registro(request, id):
+    registro = get_object_or_404(Registro, idRegistro=id)
+    accion = registro.accionR.first()
+
+    if request.method == 'POST':
+        registro_form = RegistroConAccionesFORM(request.POST, instance=registro)
+        accion_form = AccionesForm(request.POST, instance=accion)
+        
+        if registro_form.is_valid() and accion_form.is_valid():
+            registro = registro_form.save()
+            accion = accion_form.save(commit=False)
+            accion.save()
+            registro.accionR.set([accion])
+            registro.save()
+
+            return redirect('dashboard')
+    else:
+        registro_form = RegistroConAccionesFORM(instance=registro)
+        accion_form = AccionesForm(instance=accion)
+
+    return render(request, 'dashboard/editar_registro.html', {
+        'registro_form': registro_form,
+        'accion_form': accion_form,
+    })
+
+@login_required
+def eliminar_registro(request, idRegistro):
+    registro = get_object_or_404(Registro, idRegistro=idRegistro)
+    accion = registro.accionR.first()
+
+    if request.method == 'POST':
+        registro.delete()
+        accion.delete()
+        return redirect('dashboard')
+
+    return render(request, 'dashboard/eliminar_registro.html', {'registro': registro})

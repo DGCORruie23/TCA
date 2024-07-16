@@ -20,7 +20,7 @@
     }
 
     tr:nth-child(even) {
-        background-color: #e1e1e1
+        background-color: #e1e1e1;
     }
 
     td:nth-child(4) {
@@ -37,7 +37,6 @@
         box-shadow: 0px 1px;
         margin-left: 100px;
         margin-right: 100px;
-
     }
 
     .punto {
@@ -100,9 +99,6 @@
         transition: all 5s ease-in-out;
     }
 
-
-
-
     #cerrar {
         position: absolute;
         top: 20px;
@@ -114,16 +110,12 @@
         transition: all 100ms;
     }
 
-
-
     tr.header {
         background-color: #235B4E;
         color: white;
     }
 
-
     .responsive-image {
-
         max-width: 100%;
         height: 300px;
         display: block;
@@ -135,32 +127,6 @@
         height: 300px;
         display: block;
         margin: 0 auto;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        transition: none;
-        /* Eliminar transición */
     }
 
     .popupBody {
@@ -184,9 +150,8 @@
         font-size: 24px;
         font-weight: bold;
         margin-bottom: 15px;
-        color: #DDC9A3;
+        color: #10312B;
         text-align: center;
-        text-justify: auto;
     }
 
     .popupSection {
@@ -201,7 +166,6 @@
         text-transform: uppercase;
         border-bottom: 2px solid #691C32;
         padding-bottom: 5px;
-
     }
 
     .respI {
@@ -214,7 +178,6 @@
         border-radius: 5px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         max-height: 300px;
-        /* Ajustar el tamaño de la imagen */
     }
 
     .cerrar {
@@ -238,6 +201,112 @@
         font-weight: bold;
         font-size: 30px;
         margin-bottom: 10px;
+    }
+
+    .flex {
+        display: flex;
+    }
+
+    .flex-col {
+        flex-direction: column;
+    }
+
+    .items-center {
+        align-items: center;
+    }
+
+    .justify-center {
+        justify-content: center;
+    }
+
+    .space-y-2>*+* {
+        margin-top: 0.5rem;
+    }
+
+    .w-full {
+        width: 100%;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .h-full {
+        height: 100%;
+    }
+
+    .flex-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .flex-container>div {
+        margin: 10px;
+        text-align: center;
+        line-height: 20px;
+        font-size: 15px;
+        height: 100%;
+    }
+
+
+    td {
+        text-align: justify;
+        vertical-align: middle;
+    }
+
+        .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+        background-color: white;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 60%;
+        max-width: 600px;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-content p {
+        margin-bottom: 15px;
+    }
+
+    .modal-content button {
+        display: block;
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: #C30E2E;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .modal-content button:hover {
+        background-color: #a90b28;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
     }
 </style>
 {% endblock styles %}
@@ -266,7 +335,10 @@
             <th class="text-center">Descripción</th>
             <th class="text-center">Áreas Responsables</th>
             <th class="text-center">Estatus</th>
+            <th class="text-center">Mensajes</th>
+            {% if dataU.0.tipo == "1" %}
             <th class="text-center">Acciones</th>
+            {% endif %}
         </tr>
 
         {% for data in registrosConFechas %}
@@ -281,41 +353,41 @@
             </td>
             <td>
                 {% for accion in data.registro.accionR.all %}
-                    {{ accion.descripcion }}
-                    <div class="text-right">
-                        <a href="#popup{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
-                            class="text-inm-rojo-200 hover:text-inm-marron-200 font-bold ml-2">Ver más</a>
-                    </div>
-                    
-                    <div id="popup{{ forloop.parentloop.counter }}_{{ forloop.counter }}" class="overlay">
-                        <div id="popupBody" class="popupBody">
-                            <a href="#" id="cerrar" class="cerrar">&times;</a>
-                            <div class="popupContent">
-                                <h2 class="popupTitle verde">Detalles del Registro</h2>
-                                <div class="popupSection">
-                                    <h3 class="marron">OR:</h3>
-                                    <ul>
-                                        <li>{{ data.areas_str }}</li>
-                                    </ul>
-                                </div>
-                                <div class="popupSection">
-                                    <h3 class="marron">Áreas Responsables:</h3>
-                                    <ul>
-                                        {% for area2 in accion.area2.all %}
-                                            <li>{{ area2.nickname }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                                <div class="popupSection" style="text-align: justify;">
-                                    <h3 class="marron">Descripción:</h3>
-                                    <p style="text-align: justify;">{{ accion.descripcion }}</p>
-                                </div>
+                {{ accion.descripcion }}
+                <div class="text-right">
+                    <a href="#popup{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
+                        class="text-inm-rojo-200 hover:text-inm-marron-200 font-bold ml-2">Ver más</a>
+                </div>
+
+                <div id="popup{{ forloop.parentloop.counter }}_{{ forloop.counter }}" class="overlay">
+                    <div id="popupBody" class="popupBody">
+                        <a href="#" id="cerrar" class="cerrar">&times;</a>
+                        <div class="popupContent">
+                            <h2 class="popupTitle verde">Detalles del Registro</h2>
+                            <div class="popupSection">
+                                <h3 class="marron">OR:</h3>
+                                <ul>
+                                    <li>{{ data.areas_str }}</li>
+                                </ul>
+                            </div>
+                            <div class="popupSection">
+                                <h3 class="marron">Áreas Responsables:</h3>
+                                <ul>
+                                    {% for area2 in accion.area2.all %}
+                                    <li>{{ area2.nickname }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="popupSection" style="text-align: justify;">
+                                <h3 class="marron">Descripción:</h3>
+                                <p style="text-align: justify;">{{ accion.descripcion }}</p>
                             </div>
                         </div>
                     </div>
+                </div>
                 {% endfor %}
             </td>
-                    
+
             <td>
                 {% for accion in data.registro.accionR.all %}
                 {% for area2 in accion.area2.all %}
@@ -345,9 +417,41 @@
                 {% endif %}
             </td>
             <td>
-                <a href="{% url 'detalles' data.registro.idRegistro %}"
-                    class="basis-1/8 py-3 px-6 mx-1 bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white ">Detalles</a>
+                <a href="{% url 'detalles' data.registro.idRegistro %}" style="background-color: #6F7271;"
+                    class="basis-1/8 py-3 px-6 mx-1  hover:bg-inm-rojo-300 rounded-xl text-white ">Detalles</a>
             </td>
+            {% if dataU.0.tipo == "1" %}
+            <td class="text-center">
+                <a href="{% url 'editar_registro' data.registro.idRegistro %}"
+                    class="py-3 px-6 bg-inm-verde-200 hover:bg-inm-verde-300 rounded-xl text-white text-center ">Editar</a>
+                <br><br>
+                <div id="confirmDeleteModal{{ forloop.counter }}" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <p>¿Está seguro que desea eliminar este registro?</p>
+                        <form id="eliminarForm{{ forloop.counter }}" method="post"
+                            action="{% url 'eliminar_registro' data.registro.idRegistro %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                class="py-3 px-4 bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+
+                <button onclick="document.getElementById('confirmDeleteModal{{ forloop.counter }}').style.display='block'"
+                    class="py-3 px-4 bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white">Eliminar</button>
+                <script>
+
+                    var closeButtons = document.getElementsByClassName("close");
+                    for (var i = 0; i < closeButtons.length; i++) {
+                        closeButtons[i].onclick = function () {
+                            var modal = this.parentElement.parentElement;
+                            modal.style.display = "none";
+                        }
+                    }
+                </script>
+            </td>
+            {% endif %}
         </tr>
         {% endfor %}
     </table>

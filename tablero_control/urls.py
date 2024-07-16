@@ -35,6 +35,12 @@ urlpatterns = [
     path('dashboard/', vDash.dashboard ,name="dashboard" ),
     path('crear_registro/', vDash.crear_registro ,name="crear_registro" ),
     path('detalles/<int:registro_id>/', vDash.detalles , name='detalles'),
+
+    path('editar_registro/<int:id>/', vDash.editar_registro, name='editar_registro'),
+
+    path('eliminar/<int:idRegistro>/', vDash.eliminar_registro, name='eliminar_registro'),
 ]
+
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

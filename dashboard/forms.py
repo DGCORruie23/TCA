@@ -28,14 +28,6 @@ class RegistroConAccionesFORM(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['area'].queryset = Area.objects.filter(idArea__lte=32) 
 
-class AccionForm(forms.ModelForm):
-    class Meta:
-        model = Acciones
-        fields = ['area2', 'descripcion']
-        labels = {
-            'area2': 'Áreas Responsables',
-        }
-
 class AccionesForm(forms.ModelForm):
     class Meta:
         model = Acciones
@@ -43,7 +35,7 @@ class AccionesForm(forms.ModelForm):
         labels = {
             'area2': 'Áreas Responsables',
         }
-        
+
 class MensajeForm(forms.ModelForm):
     class Meta:
         model = Mensaje

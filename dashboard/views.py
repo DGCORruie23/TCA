@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from usuarios.models import UsuarioP
 from usuarios.models import Registro, Acciones
 from datetime import datetime
-from .forms import RegistroConAccionesYPruebasForm, AccionForm, MensajeForm, AccionesForm, RegistroConAccionesFORM
+from .forms import RegistroConAccionesYPruebasForm, MensajeForm, AccionesForm, RegistroConAccionesFORM
 from django.forms import inlineformset_factory
 
 from datetime import date
@@ -26,9 +26,14 @@ def dashboard(request):
             ).order_by('fecha_termino')
 
             registros = registros_area | registros_acciones_area2
-            registros = registros.distinct()
+            registros = registros.distinct().order_by('fecha_termino')
 
-        for registro in registros:
+        registros_en_proceso = registros.filter(estado="1")
+        registros_atendidos = registros.filter(estado="2")
+
+        registros_ordenados = list(registros_en_proceso) + list(registros_atendidos)
+
+        for registro in registros_ordenados:
             fecha_inicio = registro.fecha_inicio.strftime('%d-%m-%Y')
             fecha_termino = registro.fecha_termino.strftime('%d-%m-%Y')
             fecha_inicio_dt = datetime.strptime(fecha_inicio, '%d-%m-%Y')
@@ -53,7 +58,6 @@ def dashboard(request):
         }
 
         return render(request, "dashboard/dashboard.html", context)
-
 
 def crear_registro(request):
     if request.method == 'POST':
@@ -135,7 +139,7 @@ def editar_registro(request, id):
             registro.accionR.set([accion])
             
             registro.save()
-
+            print("Registro guardado", registro, accion)
             return redirect('dashboard')
     else:
         registro_form = RegistroConAccionesFORM(instance=registro)

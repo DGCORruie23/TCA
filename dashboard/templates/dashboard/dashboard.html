@@ -308,6 +308,20 @@
         text-decoration: none;
         cursor: pointer;
     }
+
+
+
+    .search-container {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .search-container input {
+        width: 30%;
+        padding: 10px;
+        font-size: 16px;
+    }
 </style>
 {% endblock styles %}
 
@@ -324,6 +338,14 @@
         type="submit">Agregar Registro</a>
 </div>
 {% endif %}
+
+<!-- Buscador -->
+<div class="search-container">
+    <input type="text" id="searchStatus" placeholder="Buscar por Estatus" onkeyup="filterTable()">
+    <input type="text" id="searchClave" placeholder="Buscar por Clave de Acuerdo" onkeyup="filterTable()">
+    <input type="text" id="searchArea" placeholder="Buscar por Áreas Responsables" onkeyup="filterTable()">
+</div>
+
 <div class="bdtable bg-inm-marron-100">
 
     <table id="myTable">
@@ -460,3 +482,33 @@
 
 {% endif %}
 {% endblock content %}
+
+<script>
+    function filterTable() {
+        var statusInput = document.getElementById('searchStatus').value.toUpperCase();
+        var claveInput = document.getElementById('searchClave').value.toUpperCase();
+        var areaInput = document.getElementById('searchArea').value.toUpperCase();
+        var table = document.getElementById('myTable');
+        var tr = table.getElementsByTagName('tr');
+
+        for (var i = 1; i < tr.length; i++) {
+            var tdStatus = tr[i].getElementsByTagName('td')[6];
+            var tdClave = tr[i].getElementsByTagName('td')[0];
+            var tdArea = tr[i].getElementsByTagName('td')[5];
+            
+            if (tdStatus && tdClave && tdArea) {
+                var statusValue = tdStatus.textContent || tdStatus.innerText;
+                var claveValue = tdClave.textContent || tdClave.innerText;
+                var areaValue = tdArea.textContent || tdArea.innerText;
+                
+                if (statusValue.toUpperCase().indexOf(statusInput) > -1 && 
+                    claveValue.toUpperCase().indexOf(claveInput) > -1 && 
+                    areaValue.toUpperCase().indexOf(areaInput) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>

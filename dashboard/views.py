@@ -9,7 +9,7 @@ from datetime import datetime
 from .forms import RegistroConAccionesYPruebasForm, AccionForm, MensajeForm, AccionesForm, RegistroConAccionesFORM
 from django.forms import inlineformset_factory
 
-
+from datetime import date
 @login_required
 def dashboard(request):
     if request.method == 'GET':
@@ -93,7 +93,6 @@ def detalles(request, registro_id):
     mensajes = registro.mensajes.all().order_by('fecha_envio')
     userDataI = UsuarioP.objects.filter(user__username=request.user)
 
-    # Añadir la propiedad archivo_nombre a cada mensaje
     for mensaje in mensajes:
         if mensaje.archivo:
             mensaje.archivo_nombre = mensaje.archivo.name.split('/')[-1]
@@ -123,16 +122,18 @@ def detalles(request, registro_id):
 def editar_registro(request, id):
     registro = get_object_or_404(Registro, idRegistro=id)
     accion = registro.accionR.first()
-
+    
     if request.method == 'POST':
         registro_form = RegistroConAccionesFORM(request.POST, instance=registro)
         accion_form = AccionesForm(request.POST, instance=accion)
         
         if registro_form.is_valid() and accion_form.is_valid():
+            registro.fecha_finalizacion = "1970-01-01"
             registro = registro_form.save()
             accion = accion_form.save(commit=False)
             accion.save()
             registro.accionR.set([accion])
+            
             registro.save()
 
             return redirect('dashboard')

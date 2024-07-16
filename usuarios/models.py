@@ -1,11 +1,12 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User 
-
+from datetime import date
 
 class Area(models.Model):
     idArea = models.AutoField(primary_key=True)
     nickname = models.CharField(max_length=150)
+    name = models.CharField(max_length=300, default="Nombre de Area")
 
     def __str__(self):
         return f"{self.idArea},{self.nickname},"
@@ -33,9 +34,10 @@ class Registro(models.Model):
     rubro = models.ManyToManyField(Rubro, related_name='registroR')
     area = models.ManyToManyField(Area, related_name='registroA')
     estado = models.CharField(max_length=1, choices=types_estado, default="1")
+    fecha_finalizacion = models.DateField(default="1970-01-01")
 
     def __str__(self):
-        return f"Registro: {self.idRegistro}, Clave de Acuerdo: {self.claveAcuerdo}, Fecha de inicio: {self.fecha_inicio}, Fecha de término: {self.fecha_termino}, Rubro: {', '.join([rubro.tipo for rubro in self.rubro.all()])}, Áreas: {', '.join([area.nickname for area in self.area.all()])}, Estado: {self.get_estado_display()}"
+        return f"Registro: {self.idRegistro}, Clave de Acuerdo: {self.claveAcuerdo}, Fecha de inicio: {self.fecha_inicio}, Fecha de término: {self.fecha_termino}, Rubro: {', '.join([rubro.tipo for rubro in self.rubro.all()])}, OR: {', '.join([area.nickname for area in self.area.all()])}, Estatus: {self.get_estado_display()}"
 
 
 class Acciones(models.Model):
@@ -56,7 +58,7 @@ class UsuarioP(models.Model):
         ("16", "OR MICH"), ("17", "OR MOR"), ("18", "OR NAY"), ("19", "OR NL"), ("20", "OR OAX"),
         ("21", "OR PUE"), ("22", "OR QRO"), ("23", "OR QROO"), ("24", "OR SLP"), ("25", "OR SIN"),
         ("26", "OR SON"), ("27", "OR TAB"), ("28", "OR TAMPS"), ("29", "OR TLX"), ("30", "OR VER"),
-        ("31", "OR YUC"), ("32", "OR ZAC"), ("33", "DGTIC"), ("34", "DGCM"), ("35", "DGRAM"), ("36", "DG"), ("37", "SCJ"), ("38", "DGA"), ("39", "DGECCC"), ("40", "DGCOR"),
+        ("31", "OR YUC"), ("32", "OR ZAC"), ("33", "OC"), ("34", "OSCJ"), ("35", "CECC"), ("36", "DCS"), ("37", "DGA"), ("38", "DGCOR"), ("39", "DGCVM"), ("40", "DGPVM"),("41", "DGRAM"),("42", "DGTIC"),
     ]
 
 

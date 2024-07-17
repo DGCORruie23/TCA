@@ -254,7 +254,7 @@
         vertical-align: middle;
     }
 
-        .modal {
+    .modal {
         display: none;
         position: fixed;
         z-index: 1000;
@@ -325,8 +325,9 @@
         display: flex;
         justify-content: space-between;
         margin-bottom: 20px;
-        max-width: 100%;
-        overflow: auto;
+        margin-left: 15%;
+        max-width: 70%;
+        /*overflow: auto;*/
     }
 </style>
 {% endblock styles %}
@@ -396,14 +397,14 @@
                             <div class="popupSection">
                                 <h3 class="marron">OR:</h3>
                                 <ul>
-                                    <li>{{ data.areas_str }}</li>
+                                    <li>{{ data.areas_name }}</li>
                                 </ul>
                             </div>
                             <div class="popupSection">
                                 <h3 class="marron">Áreas Responsables:</h3>
                                 <ul>
                                     {% for area2 in accion.area2.all %}
-                                    <li>{{ area2.nickname }}</li>
+                                    <li>{{ area2.name }}</li>
                                     {% endfor %}
                                 </ul>
                             </div>
@@ -426,7 +427,7 @@
             </td>
             <td>
                 {% if data.registro.estado == '1' %}
-                {% if data.diferencia >= -5 %}
+                {% if data.diferencia >= -7 %}
                 <div class="text-center py-2" style="background-color: #C30E2E; color: white; border-radius: 5px;">
                     <span>{{ data.registro.get_estado_display }}</span>
                 </div>
@@ -442,12 +443,16 @@
                 {% else %}
                 <div class="text-center py-2" style="background-color: green; color: white; border-radius: 5px;">
                     <span>{{ data.registro.get_estado_display }}</span>
+                    {% if data.registro.estado == '2' %}
+                    <p>el {{ data.registro.fecha_finalizacion }}</p>
+                    {% endif %}
                 </div>
                 {% endif %}
             </td>
             <td>
                 <a href="{% url 'detalles' data.registro.idRegistro %}" style="background-color: #6F7271;"
                     class="basis-1/8 py-3 px-6 mx-1  hover:bg-inm-rojo-300 rounded-xl text-white ">Detalles</a>
+
             </td>
             {% if dataU.0.tipo == "1" %}
             <td class="text-center">

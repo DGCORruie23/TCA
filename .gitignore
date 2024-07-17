@@ -2,3 +2,4 @@ entorno
 *.pyc
 db.sqlite3
 migrations
+media/mensajes/

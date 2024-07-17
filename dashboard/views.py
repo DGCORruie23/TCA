@@ -39,9 +39,11 @@ def dashboard(request):
             fecha_inicio_dt = datetime.strptime(fecha_inicio, '%d-%m-%Y')
             fecha_termino_dt = datetime.strptime(fecha_termino, '%d-%m-%Y')
             diferencia = datetime.now() - fecha_termino_dt
-
+            fecha_finalizacion = registro.fecha_finalizacion
+            #print(fecha_finalizacion)
             areas = registro.area.all()
             areas_str = ', '.join(area.nickname for area in areas)
+            areas_name = ', '.join(area.name for area in areas)
             dias = diferencia.days
 
             registrosConFechas.append({
@@ -50,6 +52,8 @@ def dashboard(request):
                 'fecha_termino': fecha_termino,
                 'diferencia': dias,
                 'areas_str': areas_str,
+                'areas_name': areas_name,
+                'fecha_finalizacion': fecha_finalizacion
             })
 
         context = {
@@ -132,14 +136,18 @@ def editar_registro(request, id):
         accion_form = AccionesForm(request.POST, instance=accion)
         
         if registro_form.is_valid() and accion_form.is_valid():
-            registro.fecha_finalizacion = "1970-01-01"
+            if registro.estado == 1:
+                registro.fecha_finalizacion = "1970-01-01"
+            else:
+                registro.fecha_finalizacion = datetime.now().strftime("%Y-%m-%d")
+            
             registro = registro_form.save()
-            accion = accion_form.save(commit=False)
+            accion = accion_form.save()
             accion.save()
             registro.accionR.set([accion])
             
             registro.save()
-            print("Registro guardado", registro, accion)
+
             return redirect('dashboard')
     else:
         registro_form = RegistroConAccionesFORM(instance=registro)

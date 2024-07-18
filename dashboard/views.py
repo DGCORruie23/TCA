@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 # from usuarios.models import usuarioL
 from usuarios.models import UsuarioP
-from usuarios.models import Registro, Acciones
-from datetime import datetime
+from usuarios.models import Registro, Acciones, Notificacion
+from datetime import datetime, timedelta, timezone
 from .forms import RegistroConAccionesYPruebasForm, MensajeForm, AccionesForm, RegistroConAccionesFORM
 from django.forms import inlineformset_factory
 
@@ -15,7 +15,6 @@ def dashboard(request):
     if request.method == 'GET':
         userDataI = UsuarioP.objects.filter(user__username=request.user)
         registrosConFechas = []
-        dif = []
 
         if userDataI[0].tipo == "1":
             registros = Registro.objects.all().order_by('fecha_termino')
@@ -40,7 +39,6 @@ def dashboard(request):
             fecha_termino_dt = datetime.strptime(fecha_termino, '%d-%m-%Y')
             diferencia = datetime.now() - fecha_termino_dt
             fecha_finalizacion = registro.fecha_finalizacion
-            #print(fecha_finalizacion)
             areas = registro.area.all()
             areas_str = ', '.join(area.nickname for area in areas)
             areas_name = ', '.join(area.name for area in areas)
@@ -56,12 +54,30 @@ def dashboard(request):
                 'fecha_finalizacion': fecha_finalizacion
             })
 
+        now = datetime.now()
+        nuevos_registros = registros.filter(fecha_creacion__gte=now - timedelta(days=7))
+
+
+        for registro in nuevos_registros:
+            Notificacion.objects.get_or_create(user=request.user, registro=registro)
+
+        notificaciones = Notificacion.objects.filter(user=request.user, leido=False)
+
         context = {
             'registrosConFechas': registrosConFechas,
             'dataU': userDataI,
+            'notificaciones': notificaciones,
         }
 
         return render(request, "dashboard/dashboard.html", context)
+
+@login_required
+def marcar_notificacion_leida(request, notificacion_id):
+    notificacion = get_object_or_404(Notificacion, id=notificacion_id, user=request.user)
+    notificacion.leido = True
+    notificacion.fecha_leido = datetime.now()
+    notificacion.save()
+    return redirect('dashboard')
 
 def crear_registro(request):
     if request.method == 'POST':

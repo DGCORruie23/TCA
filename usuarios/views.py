@@ -77,3 +77,7 @@ def login_user(request):
                                          'tipo': ''}
             serializer_datos = UserGetSerializerC(nuevo_serializer)
             return JsonResponse(serializer_datos.data, status = 200)
+
+
+def pagina404(request, exception):
+    return render(request, 'base/error404.html')

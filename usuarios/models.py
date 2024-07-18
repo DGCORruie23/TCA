@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User 
 from datetime import date
+from datetime import datetime
 
 class Area(models.Model):
     idArea = models.AutoField(primary_key=True)
@@ -21,7 +22,6 @@ class Rubro(models.Model):
 
 
 class Registro(models.Model):
-
     types_estado = [
         ("1", "En proceso"),
         ("2", "Atendido"),
@@ -35,11 +35,20 @@ class Registro(models.Model):
     area = models.ManyToManyField(Area, related_name='registroA')
     estado = models.CharField(max_length=1, choices=types_estado, default="1")
     fecha_finalizacion = models.DateField(default="1970-01-01")
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Registro: {self.idRegistro}, Clave de Acuerdo: {self.claveAcuerdo}, Fecha de inicio: {self.fecha_inicio}, Fecha de término: {self.fecha_termino}, Rubro: {', '.join([rubro.tipo for rubro in self.rubro.all()])}, OR: {', '.join([area.nickname for area in self.area.all()])}, Estatus: {self.get_estado_display()}"
 
+class Notificacion(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    registro = models.ForeignKey(Registro, on_delete=models.CASCADE)
+    leido = models.BooleanField(default=False)
+    fecha_leido = models.DateTimeField(null=True, blank=True)
 
+    def __str__(self):
+        return f"Notificación para {self.user.username} sobre {self.registro.claveAcuerdo}"
+    
 class Acciones(models.Model):
     idAccion = models.AutoField(primary_key=True)
     idRegistro = models.ManyToManyField(Registro, related_name='accionR')

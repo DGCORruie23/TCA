@@ -329,6 +329,29 @@
         max-width: 70%;
         /*overflow: auto;*/
     }
+
+    .notification-bell {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.bell-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.notification-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
 </style>
 {% endblock styles %}
 
@@ -338,14 +361,31 @@
 <p class="username">Usted está logueado como: {{ dataU.0.nombre }}</p>
 <input type="hidden" id="logged-in-user" value="{{ user.id }}">
 
+
+{% if notificaciones %}
+<div class="notification-container">
+    <h4 class="notification-header">Nuevas Notificaciones</h4>
+    <ul class="notification-list">
+        {% for notificacion in notificaciones %}
+        <li class="notification-item">
+            <span>Nuevo acuerdo creado: <strong>{{ notificacion.registro.claveAcuerdo }}</strong></span>
+            <a href="{% url 'marcar_notificacion_leida' notificacion.id %}" class="notification-link">Marcar como leído</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
 {% if dataU.0.tipo == "1" %}
 <div style="margin: 0 auto; margin-bottom: 1%;">
     <a href="{% url 'crear_registro' %}"
         class="basis-1/8 py-3 px-6 mx-1 bg-inm-verde-100 hover:bg-inm-verde-200 rounded-xl text-white "
         type="submit">Agregar Registro</a>
 </div>
-
 {% endif %}
+
+
+
 
 <div class="search-container">
     <input type="text" id="searchStatus" placeholder="Buscar por Estatus" onkeyup="filterTable()">

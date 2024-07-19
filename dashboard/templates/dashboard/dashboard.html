@@ -333,7 +333,7 @@
 
 
 
-.notification-bell {
+    .notification-bell {
         position: relative;
         display: inline-block;
         cursor: pointer;
@@ -433,11 +433,11 @@
         from {
             opacity: 0;
         }
+
         to {
             opacity: 1;
         }
     }
-
 </style>
 {% endblock styles %}
 
@@ -447,14 +447,15 @@
 <p class="username">Usted está logueado como: {{ dataU.0.nombre }}</p>
 <input type="hidden" id="logged-in-user" value="{{ user.id }}">
 
-<div class="notification-bell" onclick="toggleModal()">
-    <img src="{% static 'bell.jpg' %}" alt="Bell Icon" class="bell-icon">
+<div id="notification-bell" class="notification-bell" onclick="toggleModal()">
+    <img src="{% static bell.jpg %}" alt="">
     {% if notificaciones %}
     <span class="notification-count">{{ notificaciones|length }}</span>
     {% endif %}
 </div>
 
 <div id="notificationModal" class="modal">
+
     <div class="modal-content">
         <span class="close" onclick="toggleModal()">&times;</span>
         <h4>Nuevas Notificaciones</h4>
@@ -463,7 +464,8 @@
             <li>
                 Nuevo acuerdo creado: <strong>{{ notificacion.registro.claveAcuerdo }}</strong>
                 <br>
-                <a href="{% url 'marcar_notificacion_leida' notificacion.id %}" class="notification-link">Marcar como leído</a>
+                <a href="{% url 'marcar_notificacion_leida' notificacion.id %}" class="notification-link">Marcar como
+                    leído</a>
             </li>
             {% endfor %}
         </ul>
@@ -483,7 +485,9 @@
 
 {% if dataU.0.tipo == "1" %}
 <div style="margin: 0 auto; margin-bottom: 1%;">
-    <a href="{% url 'crear_registro' %}" class="basis-1/8 py-3 px-6 mx-1 bg-inm-verde-100 hover:bg-inm-verde-200 rounded-xl text-white" type="submit">Agregar Registro</a>
+    <a href="{% url 'crear_registro' %}"
+        class="basis-1/8 py-3 px-6 mx-1 bg-inm-verde-100 hover:bg-inm-verde-200 rounded-xl text-white"
+        type="submit">Agregar Registro</a>
 </div>
 {% endif %}
 
@@ -615,7 +619,8 @@
                     </div>
                 </div>
 
-                <button onclick="document.getElementById('confirmDeleteModal{{ forloop.counter }}').style.display='block'"
+                <button
+                    onclick="document.getElementById('confirmDeleteModal{{ forloop.counter }}').style.display='block'"
                     class="py-3 px-4 bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white">Eliminar</button>
                 <script>
 
@@ -707,12 +712,11 @@
     }
 
 
-  
-    $(document).ready(function() {
-      var refreshId =  setInterval( function(){
-    $('#feedback-bg-info').load('index.php');
-   }, 1000 );
-});
+    setTimeout(() => {
+  location.reload();
+}, 10000);
+
+
 </script>
 {% endif %}
 

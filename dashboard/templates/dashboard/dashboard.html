@@ -330,27 +330,113 @@
         /*overflow: auto;*/
     }
 
-    .notification-bell {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-}
 
-.bell-icon {
-    width: 24px;
-    height: 24px;
-}
 
-.notification-count {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    padding: 5px 10px;
-    font-size: 12px;
-}
+
+.notification-bell {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .bell-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .notification-count {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: white;
+        padding: 20px;
+        border: 1px solid #888;
+        border-radius: 10px;
+        max-width: 500px;
+        width: 80%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content h4 {
+        margin-top: 0;
+    }
+
+    .modal-content ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .modal-content li {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .modal-content li:last-child {
+        border-bottom: none;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+    }
+
+    .notification-link {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 8px 16px;
+        background-color: #235B4E;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+    }
+
+    .notification-link:hover {
+        background-color: #1a4331;
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
 
 </style>
 {% endblock styles %}
@@ -361,26 +447,43 @@
 <p class="username">Usted está logueado como: {{ dataU.0.nombre }}</p>
 <input type="hidden" id="logged-in-user" value="{{ user.id }}">
 
-
-{% if notificaciones %}
-<div class="notification-container">
-    <h4 class="notification-header">Nuevas Notificaciones</h4>
-    <ul class="notification-list">
-        {% for notificacion in notificaciones %}
-        <li class="notification-item">
-            <span>Nuevo acuerdo creado: <strong>{{ notificacion.registro.claveAcuerdo }}</strong></span>
-            <a href="{% url 'marcar_notificacion_leida' notificacion.id %}" class="notification-link">Marcar como leído</a>
-        </li>
-        {% endfor %}
-    </ul>
+<div class="notification-bell" onclick="toggleModal()">
+    <img src="{% static 'bell.jpg' %}" alt="Bell Icon" class="bell-icon">
+    {% if notificaciones %}
+    <span class="notification-count">{{ notificaciones|length }}</span>
+    {% endif %}
 </div>
-{% endif %}
+
+<div id="notificationModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="toggleModal()">&times;</span>
+        <h4>Nuevas Notificaciones</h4>
+        <ul>
+            {% for notificacion in notificaciones %}
+            <li>
+                Nuevo acuerdo creado: <strong>{{ notificacion.registro.claveAcuerdo }}</strong>
+                <br>
+                <a href="{% url 'marcar_notificacion_leida' notificacion.id %}" class="notification-link">Marcar como leído</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script>
+    function toggleModal() {
+        var modal = document.getElementById("notificationModal");
+        if (modal.style.display === "none" || modal.style.display === "") {
+            modal.style.display = "flex";
+        } else {
+            modal.style.display = "none";
+        }
+    }
+</script>
 
 {% if dataU.0.tipo == "1" %}
 <div style="margin: 0 auto; margin-bottom: 1%;">
-    <a href="{% url 'crear_registro' %}"
-        class="basis-1/8 py-3 px-6 mx-1 bg-inm-verde-100 hover:bg-inm-verde-200 rounded-xl text-white "
-        type="submit">Agregar Registro</a>
+    <a href="{% url 'crear_registro' %}" class="basis-1/8 py-3 px-6 mx-1 bg-inm-verde-100 hover:bg-inm-verde-200 rounded-xl text-white" type="submit">Agregar Registro</a>
 </div>
 {% endif %}
 
@@ -531,6 +634,7 @@
     </table>
 </div>
 <br><br><br>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
 <script>
     function filterTable() {
         var statusInput = document.getElementById("searchStatus").value.toUpperCase();
@@ -561,6 +665,54 @@
             }
         }
     }
+
+
+    function openNotificationModal() {
+        document.getElementById('notificationModal').style.display = 'block';
+    }
+
+    function closeNotificationModal() {
+        document.getElementById('notificationModal').style.display = 'none';
+    }
+
+
+    function filterTable() {
+        var statusInput = document.getElementById("searchStatus").value.toUpperCase();
+        var claveInput = document.getElementById("searchClave").value.toUpperCase();
+        var areaInput = document.getElementById("searchArea").value.toUpperCase();
+        var table = document.getElementById("myTable");
+        var tr = table.getElementsByTagName("tr");
+
+        for (var i = 1; i < tr.length; i++) {
+            var tdStatus = tr[i].getElementsByTagName("td")[6];
+            var tdClave = tr[i].getElementsByTagName("td")[0];
+            var tdArea = tr[i].getElementsByTagName("td")[5];
+
+            if (tdStatus && tdClave && tdArea) {
+                var statusValue = tdStatus.textContent || tdStatus.innerText;
+                var claveValue = tdClave.textContent || tdClave.innerText;
+                var areaValue = tdArea.textContent || tdArea.innerText;
+
+                if (
+                    statusValue.toUpperCase().indexOf(statusInput) > -1 &&
+                    claveValue.toUpperCase().indexOf(claveInput) > -1 &&
+                    areaValue.toUpperCase().indexOf(areaInput) > -1
+                ) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+
+  
+    $(document).ready(function() {
+      var refreshId =  setInterval( function(){
+    $('#feedback-bg-info').load('index.php');
+   }, 1000 );
+});
 </script>
 {% endif %}
 

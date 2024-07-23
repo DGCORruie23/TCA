@@ -43,3 +43,7 @@ class MensajeForm(forms.ModelForm):
         widgets = {
             'texto': forms.Textarea(attrs={'placeholder': 'Escribe tu mensaje aquí...'}),
         }
+
+
+class CargarArchivoForm(forms.Form):
+    archivo = forms.FileField()

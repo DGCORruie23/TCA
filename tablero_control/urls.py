@@ -38,6 +38,7 @@ urlpatterns = [
     
     path('crear_registro/', vDash.crear_registro ,name="crear_registro" ),
     path('detalles/<int:registro_id>/', vDash.detalles , name='detalles'),
+    path('carga_masiva/', vDash.cargaMasiva , name='carga_masiva'),
 
     path('editar_registro/<int:id>/', vDash.editar_registro, name='editar_registro'),
 

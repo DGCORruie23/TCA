@@ -4,19 +4,23 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 # from usuarios.models import usuarioL
 from usuarios.models import UsuarioP
-from usuarios.models import Registro, Acciones, Notificacion
+from usuarios.models import Registro, Acciones, Notificacion,Area, Rubro
 from datetime import datetime, timedelta, timezone
 from .forms import RegistroConAccionesYPruebasForm, MensajeForm, AccionesForm, RegistroConAccionesFORM, CargarArchivoForm
 from django.forms import inlineformset_factory
 import openpyxl as opxl
 
 from datetime import date
+from datetime import datetime
+import re
+
+from dateutil.parser import parse
 @login_required
 def dashboard(request):
     if request.method == 'GET':
         userDataI = UsuarioP.objects.filter(user__username=request.user)
         registrosConFechas = []
-
+        formCargar1 = CargarArchivoForm()
         if userDataI[0].tipo == "1":
             registros = Registro.objects.all().order_by('fecha_termino')
         else:
@@ -68,6 +72,7 @@ def dashboard(request):
             'registrosConFechas': registrosConFechas,
             'dataU': userDataI,
             'notificaciones': notificaciones,
+            'formCargar1': formCargar1,
         }
 
         return render(request, "dashboard/dashboard.html", context)
@@ -188,67 +193,99 @@ def eliminar_registro(request, idRegistro):
     return render(request, 'dashboard/eliminar_registro.html', {'registro': registro})
 
 
+
+
+
+
+
+MONTHS = {
+    'enero': '01', 'febrero': '02', 'marzo': '03', 'abril': '04',
+    'mayo': '05', 'junio': '06', 'julio': '07', 'agosto': '08',
+    'septiembre': '09', 'octubre': '10', 'noviembre': '11', 'diciembre': '12'
+}
+
+def convert_spanish_date(date_str):
+    if isinstance(date_str, str):
+        match = re.match(r'(\d{1,2}) de (\w+) de (\d{4})', date_str)
+        if match:
+            day, month, year = match.groups()
+            month_number = {
+                'enero': 1, 'febrero': 2, 'marzo': 3, 'abril': 4, 'mayo': 5, 'junio': 6,
+                'julio': 7, 'agosto': 8, 'septiembre': 9, 'octubre': 10, 'noviembre': 11, 'diciembre': 12
+            }.get(month.lower())
+            if month_number:
+                return datetime(int(year), month_number, int(day)).date()
+    return None
+
+from datetime import datetime
+
 @login_required
 @csrf_exempt
-def cargaMasivaUser(request):
-    if(request.method == "POST"):
+def cargaMasiva(request):
+    if request.method == "POST":
         form = CargarArchivoForm(request.POST, request.FILES)
-        if(form.is_valid()):
-            # Nota: "archivo" este campo se llama como se llama en el form  
+        if form.is_valid():
             excel_file = request.FILES["archivo"]
             nombreA = str(excel_file.name)
             extensionA = (nombreA.split(".")[-1]).lower()
-            # print((nombreA.split(".")[-1]).lower())
-            if( extensionA == "xlsx" 
-               or extensionA == ".xlsm" 
-               or extensionA == ".xlsb" 
-               or extensionA == ".xltx" 
-               or extensionA == ".xltm" 
-               or extensionA == ".xls"):
-                dataWB = opxl.load_workbook(excel_file, data_only=True)
 
+            if extensionA in ["xlsx", "xlsm", "xlsb", "xltx", "xltm", "xls"]:
+                dataWB = opxl.load_workbook(excel_file, data_only=True)
                 data = dataWB.worksheets[0]
 
-                # print(data.cell(4,2).value)
-
-                # Se leen los datos del excel
-                municipio = []
-                auxL = []
-            
                 i = 1
-                while not(i == 0):
+                while True:
+                    if data.cell(i + 4, 4).value is None:
+                        break
 
-                    auxL.clear()
+                    clave_acuerdo = data.cell(i + 4, 1).value
+                    rubro = data.cell(i + 4, 2).value
+                    descripcion = data.cell(i + 4, 3).value  # Este campo no se usa en Registro
+                    areas_responsables = data.cell(i + 4, 4).value
+                    fecha_termino = data.cell(i + 4, 5).value
+                    fecha_inicio = data.cell(i + 4, 6).value
+                    or_field = data.cell(i + 4, 7).value
+                    estado = data.cell(i + 4, 8).value
+                    fecha_finalizacion = data.cell(i + 4, 9).value
 
-                    if(data.cell( i+4, 4).value == None):
-                        i = 0
-                        # print(edoFuerza)
+                    # Convertir fechas
+                    fecha_inicio = convert_spanish_date(fecha_inicio) if isinstance(fecha_inicio, str) else fecha_inicio
+                    if fecha_termino == "De manera inmediata":
+                        fecha_termino = fecha_inicio
                     else:
-                        nickname = data.cell(i + 4, 2).value
-                        password = data.cell(i + 4, 3).value
-                        nombres = data.cell(i + 4, 4).value
-                        apellidos = data.cell(i + 4, 5).value
-                        estado = data.cell(i + 4, 6).value
-                        tipo = data.cell(i + 4, 7).value
+                        fecha_termino = convert_spanish_date(fecha_termino) if isinstance(fecha_termino, str) else fecha_termino
 
-                        passUpdate = password                        
+                    fecha_finalizacion = convert_spanish_date(fecha_finalizacion) if isinstance(fecha_finalizacion, str) else fecha_finalizacion
+                    if fecha_finalizacion is None:
+                        fecha_finalizacion = datetime(1970, 1, 1).date()
 
-                        # if (Usuario.objects.filter(nickname = nickname).exists()):
-                        #     passUpdate = make_password(password)
-                        #     Usuario.objects.filter(nickname = nickname).update(nombre=nombres, apellido=apellidos, password=passUpdate, estado=estado)
-                        # else:
-                        #     Usuario.objects.create(
-                        #         nickname=nickname, 
-                        #         nombre=nombres, 
-                        #         apellido=apellidos, 
-                        #         password=passUpdate,
-                        #         estado=estado,
-                        #         tipo=tipo,
-                        #     )
-                        # i = i + 1
+                    if clave_acuerdo and clave_acuerdo.count('/') == 2:
+                        partes = clave_acuerdo.split('/')
+                        clave_acuerdo = f"{partes[1]}/{partes[0]}/{partes[2]}"
 
-                #-----------------------------------
-            return redirect("pagina_pruebas_usuarios")
+                    rubro_obj, created = Rubro.objects.get_or_create(tipo=rubro)
+                    areas_responsables_list = areas_responsables.split(',')
+                    areas_objs = []
+                    for area in areas_responsables_list:
+                        area_obj, created = Area.objects.get_or_create(nickname=area.strip())
+                        areas_objs.append(area_obj)
+
+                    # Actualizar solo los campos válidos
+                    registro, created = Registro.objects.update_or_create(
+                        claveAcuerdo=clave_acuerdo,
+                        defaults={
+                            "fecha_inicio": fecha_inicio,
+                            "fecha_termino": fecha_termino,
+                            "estado": estado,
+                            "fecha_finalizacion": fecha_finalizacion,
+                        }
+                    )
+                    registro.rubro.set([rubro_obj])
+                    registro.area.set(areas_objs)
+
+                    i += 1
+
+            return redirect("dashboard")
     else:
         form = CargarArchivoForm()
-    return render(request, "cargarExcel/cargarUsuarios.html", {"form" : form})
+    return render(request, "dashboard/dashboard.html", {"form": form})

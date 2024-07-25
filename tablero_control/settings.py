@@ -127,12 +127,12 @@ USE_TZ = True
 BASE_DIR_ROOT = os.environ.get('BASE_DIR_ROOT', default=BASE_DIR)
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR_ROOT / "static"
+STATIC_ROOT = os.path.join(BASE_DIR_ROOT, "static")
 # STATICFILES_DIRS = [os.path.join(BASE_DIR_ROOT, 'static')]
 
 # Archivos de medios
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR_ROOT / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR_ROOT,'media')
 
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 

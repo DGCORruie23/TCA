@@ -19,6 +19,26 @@
         text-align: center;
     }
 
+    .colorRectangulo {
+        border-radius: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border: 5px solid #f2eddf;
+        background-color: #235B4E;
+        opacity: 0.90;
+        color: rgb(0, 0, 0);
+    }
+
+    .colorH1 {
+        font-size: 26px;
+        margin-bottom: 20px;
+        color: #DDC9A3;
+    }
+
+    .colorH2 {
+        font-size: 18px;
+        color: rgb(255, 255, 255);
+    }
+
     .container h1 {
         font-size: 24px;
         margin-bottom: 20px;
@@ -109,7 +129,7 @@
     {% block content %}
 
     
-    <div class="container" style="width: 50%; max-width: 600px;">
+    {% comment %} <div class="container" style="width: 50%; max-width: 600px;">
         <h1>Crear Nuevo Registro</h1>
         <form method="post">
             {% csrf_token %}
@@ -117,6 +137,256 @@
             {{ registro_form.as_p }}
 
             <button class="py-3 px-6 mx-1 bg-inm-marron-200 hover:bg-inm-marron-100 rounded-xl text-white" type="submit">Guardar Acuerdo</button>
+        </form>
+    </div> {% endcomment %}
+
+    <div class="p-5 flex items-center justify-center">
+        <form class="w-full" method="post">
+            {% csrf_token %}
+            <div class="colorRectangulo rounded-xl border-3 p-6 w-full">
+                <div class="text-center mb-4">
+                    <h1 class="colorH1">Crear Nuevo Registro</h1>
+                </div>
+                <div class="text-center mb-4">
+                    <div class="p-4 rounded-lg flex justify-between">
+                        <div class="flex-1 text-center">
+        
+                            <div class="px-2 flex flex-col space-y-2">
+                                <label for="id_claveAcuerdo">Clave de Acuerdo:</label>
+                                <input name="claveAcuerdo" id="id_claveAcuerdo" type="text" class="text-center border border-gray-300 rounded-full p-2 text-12pt" placeholder="00/AREA/MES/Año">
+                                <!-- <textarea name="claveAcuerdo" cols="40" rows="10" required id="id_claveAcuerdo">Clave de Acuerdo</textarea> -->
+                            </div>
+                            
+                            <div class="py-4 rounded-lg border-3 p-2 w-full">
+                                <h1 class="colorH2">Fechas:</h1>
+                                <div class="p-2 rounded-lg flex justify-between">
+        
+                                    <div class="px-2 flex-1 text-center">
+                                        <div class="flex flex-col space-y-2">
+                                            <label for="id_fecha_inicio">Inicio:</label>
+                                            <input class="text-center" type="text" name="fecha_inicio" required id="id_fecha_inicio">
+                                        </div>
+                                    </div>
+        
+                                    <div class="px-2 flex-1 text-center">
+                                        <div class="flex flex-col space-y-2">
+                                            <label for="id_fecha_termino">Termino:</label>
+                                            <input class="text-center" type="text" name="fecha_termino" required id="id_fecha_termino">
+                                        </div>
+                                    </div>
+        
+                                </div>
+                            </div>
+        
+                            <div class="px-2 flex-1 text-center">
+                                <div class="flex flex-col space-y-2">
+                                    <label for="id_rubro">Rubro:</label>
+                                
+                                        <select name="rubro" size="7" required id="id_rubro" multiple>
+                                            <option value="1">1, Otros Asuntos Administrativos y Mantenimientos</option>
+                                            
+                                            <option value="2">2, Otros</option>
+                                            
+                                            <option value="3">3, Acciones de Control y Verificación Migratoria</option>
+                                            
+                                            <option value="4">4, Simplificación de Tramites y Abatimiento de Rezago</option>
+                                            
+                                            <option value="5">5, Recursos Humanos y Capacitación</option>
+                                            
+                                            <option value="6">6, Bienes Muebles, Parque Vehicular e Inventarios</option>
+                                            
+                                            <option value="7">7, Archivo Migratorio</option>
+                                            
+                                            <option value="8">8, Sistemas Informaticos y Equipo</option>
+                                            
+                                            <option value="9">9, Estaciones Migratorias y Estancias Provisionales</option>
+                                            
+                                            <option value="10">10, Asuntos Jurídicos</option>
+                                        
+                                        </select>
+                                </div>
+                            </div>
+        
+                        </div>
+                        <div class="flex-1 text-center">
+                            <div class="flex-1 text-center">
+        
+                                <div class="px-2 flex flex-col space-y-2">
+                                    <label for="id_area">OR:</label>
+                                    <select name="area" size="7" required id="id_area" multiple>
+                                        <option value="1">1,OR AGS,</option>
+        
+                                        <option value="2">2,OR BC,</option>
+        
+                                        <option value="3">3,OR BCS,</option>
+        
+                                        <option value="4">4,OR CAMP,</option>
+        
+                                        <option value="5">5,OR COAH,</option>
+        
+                                        <option value="6">6,OR COL,</option>
+        
+                                        <option value="7">7,OR CHIS,</option>
+        
+                                        <option value="8">8,OR CHIH,</option>
+        
+                                        <option value="9">9,OR CDMX,</option>
+        
+                                        <option value="10">10,OR DGO,</option>
+        
+                                        <option value="11">11,OR GTO,</option>
+        
+                                        <option value="12">12,OR GRO,</option>
+        
+                                        <option value="13">13,OR HGO,</option>
+        
+                                        <option value="14">14,OR JAL,</option>
+        
+                                        <option value="15">15,OR EDOMEX,</option>
+        
+                                        <option value="16">16,OR MICH,</option>
+        
+                                        <option value="17">17,OR MOR,</option>
+        
+                                        <option value="18">18,OR NAY,</option>
+        
+                                        <option value="19">19,OR NL,</option>
+        
+                                        <option value="20">20,OR OAX,</option>
+        
+                                        <option value="21">21,OR PUE,</option>
+        
+                                        <option value="22">22,OR QRO,</option>
+        
+                                        <option value="23">23,OR QROO,</option>
+        
+                                        <option value="24">24,OR SLP,</option>
+        
+                                        <option value="25">25,OR SIN,</option>
+        
+                                        <option value="26">26,OR SON,</option>
+        
+                                        <option value="27">27,OR TAB,</option>
+        
+                                        <option value="28">28,OR TAMPS,</option>
+        
+                                        <option value="29">29,OR TLX,</option>
+        
+                                        <option value="30">30,OR VER,</option>
+        
+                                        <option value="31">31,OR YUC,</option>
+        
+                                        <option value="32">32,OR ZAC,</option>
+                                    </select>
+                                </div>
+        
+                                <div class="px-2 py-10 flex flex-col space-y-2">
+                                    <label for="id_accion1_area2">Áreas Responsables:</label>
+                                    <select name="accion1_area2" size="7" required id="id_accion1_area2" multiple>
+                                        <option value="1">1,OR AGS,</option>
+                                        
+                                        <option value="2">2,OR BC,</option>
+                                        
+                                        <option value="3">3,OR BCS,</option>
+                                        
+                                        <option value="4">4,OR CAMP,</option>
+                                        
+                                        <option value="5">5,OR COAH,</option>
+                                        
+                                        <option value="6">6,OR COL,</option>
+                                        
+                                        <option value="7">7,OR CHIS,</option>
+                                        
+                                        <option value="8">8,OR CHIH,</option>
+                                        
+                                        <option value="9">9,OR CDMX,</option>
+                                        
+                                        <option value="10">10,OR DGO,</option>
+                                        
+                                        <option value="11">11,OR GTO,</option>
+                                        
+                                        <option value="12">12,OR GRO,</option>
+                                        
+                                        <option value="13">13,OR HGO,</option>
+                                        
+                                        <option value="14">14,OR JAL,</option>
+                                        
+                                        <option value="15">15,OR EDOMEX,</option>
+                                        
+                                        <option value="16">16,OR MICH,</option>
+                                        
+                                        <option value="17">17,OR MOR,</option>
+                                        
+                                        <option value="18">18,OR NAY,</option>
+                                        
+                                        <option value="19">19,OR NL,</option>
+                                        
+                                        <option value="20">20,OR OAX,</option>
+                                        
+                                        <option value="21">21,OR PUE,</option>
+                                        
+                                        <option value="22">22,OR QRO,</option>
+                                        
+                                        <option value="23">23,OR QROO,</option>
+                                        
+                                        <option value="24">24,OR SLP,</option>
+                                        
+                                        <option value="25">25,OR SIN,</option>
+                                        
+                                        <option value="26">26,OR SON,</option>
+                                        
+                                        <option value="27">27,OR TAB,</option>
+                                        
+                                        <option value="28">28,OR TAMPS,</option>
+                                        
+                                        <option value="29">29,OR TLX,</option>
+                                        
+                                        <option value="30">30,OR VER,</option>
+                                        
+                                        <option value="31">31,OR YUC,</option>
+                                        
+                                        <option value="32">32,OR ZAC,</option>
+                                        
+                                        <option value="33">33,OC,</option>
+                                        
+                                        <option value="34">34,OSCJ,</option>
+                                        
+                                        <option value="35">35,CECC,</option>
+                                        
+                                        <option value="36">36,DCS,</option>
+                                        
+                                        <option value="37">37,DGA,</option>
+                                        
+                                        <option value="38">38,DGCOR,</option>
+                                        
+                                        <option value="39">39,DGCVM,</option>
+                                        
+                                        <option value="40">40,DGPVM,</option>
+                                        
+                                        <option value="41">41,DGRAM,</option>
+                                        
+                                        <option value="42">42,DGTIC,</option>
+                                    </select>
+                                </div>
+        
+        
+                            </div>
+                        </div>
+                        <div class="flex-1 text-center">
+        
+                            <div class="px-2 py-10 flex flex-col space-y-2">
+                                <label for="id_accion1_descripcion">Descripción:</label>
+                                <textarea name="accion1_descripcion" cols="40" rows="15" required id="id_accion1_descripcion"></textarea>
+        
+                            </div>
+        
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button class="py-3 px-6 mx-1 bg-inm-marron-200 hover:bg-inm-marron-100 rounded-xl text-white" type="submit">Guardar Acuerdo</button>
+                </div>
+            </div>
         </form>
     </div>
 

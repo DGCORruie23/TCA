@@ -10,6 +10,7 @@ from .forms import RegistroConAccionesYPruebasForm, MensajeForm, AccionesForm, R
 from django.forms import inlineformset_factory
 import openpyxl as opxl
 
+import locale
 from datetime import date
 from datetime import datetime
 import re
@@ -195,29 +196,16 @@ def eliminar_registro(request, idRegistro):
 
 
 
-
-
-
-MONTHS = {
-    'enero': '01', 'febrero': '02', 'marzo': '03', 'abril': '04',
-    'mayo': '05', 'junio': '06', 'julio': '07', 'agosto': '08',
-    'septiembre': '09', 'octubre': '10', 'noviembre': '11', 'diciembre': '12'
-}
+locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 
 def convert_spanish_date(date_str):
-    if isinstance(date_str, str):
-        match = re.match(r'(\d{1,2}) de (\w+) de (\d{4})', date_str)
-        if match:
-            day, month, year = match.groups()
-            month_number = {
-                'enero': 1, 'febrero': 2, 'marzo': 3, 'abril': 4, 'mayo': 5, 'junio': 6,
-                'julio': 7, 'agosto': 8, 'septiembre': 9, 'octubre': 10, 'noviembre': 11, 'diciembre': 12
-            }.get(month.lower())
-            if month_number:
-                return datetime(int(year), month_number, int(day)).date()
-    return None
+    try:
+        date_str = date_str.lower()
+        return datetime.strptime(date_str, '%d de %B de %Y').date()
+    except ValueError:
+        print(f"Error al convertir fecha: {date_str}")
+        return None
 
-from datetime import datetime
 
 @login_required
 @csrf_exempt
@@ -229,27 +217,41 @@ def cargaMasiva(request):
             nombreA = str(excel_file.name)
             extensionA = (nombreA.split(".")[-1]).lower()
 
+            print(f"Archivo recibido: {nombreA}")
+
             if extensionA in ["xlsx", "xlsm", "xlsb", "xltx", "xltm", "xls"]:
                 dataWB = opxl.load_workbook(excel_file, data_only=True)
                 data = dataWB.worksheets[0]
+
+                area_celda = data['H3'].value
+                fecha_inicio = data['B3'].value
+                fecha_inicio = convert_spanish_date(fecha_inicio) if isinstance(fecha_inicio, str) else fecha_inicio
+
+                if fecha_inicio is None:
+                    print("Fecha de inicio no válida")
+                    return render(request, "dashboard/dashboard.html", {"form": form, "error": "Fecha de inicio no válida"})
 
                 i = 1
                 while True:
                     if data.cell(i + 4, 4).value is None:
                         break
 
-                    clave_acuerdo = data.cell(i + 4, 1).value
-                    rubro = data.cell(i + 4, 2).value
-                    descripcion = data.cell(i + 4, 3).value  # Este campo no se usa en Registro
-                    areas_responsables = data.cell(i + 4, 4).value
-                    fecha_termino = data.cell(i + 4, 5).value
-                    fecha_inicio = data.cell(i + 4, 6).value
-                    or_field = data.cell(i + 4, 7).value
-                    estado = data.cell(i + 4, 8).value
-                    fecha_finalizacion = data.cell(i + 4, 9).value
+                    clave_acuerdo = data.cell(i + 4, 2).value
+                    print("claveAcuerdo: ", clave_acuerdo)
+                    rubro = data.cell(i + 4, 3).value
+                    print("rubro: ", rubro)
+                    descripcion = data.cell(i + 4, 4).value
+                    print("descripcion: ", descripcion)
+                    areas_responsables = data.cell(i + 4, 5).value
+                    print("areas_responsables: ", areas_responsables)
+                    fecha_termino = data.cell(i + 4, 6).value
+                    print("fecha_termino: ", fecha_termino)
+                    estado = data.cell(i + 4, 7).value
+                    print("estado: ", estado)
+                    fecha_finalizacion = data.cell(i + 4, 8).value
+                    print("fecha_finalizacion: ", fecha_finalizacion)
 
                     # Convertir fechas
-                    fecha_inicio = convert_spanish_date(fecha_inicio) if isinstance(fecha_inicio, str) else fecha_inicio
                     if fecha_termino == "De manera inmediata":
                         fecha_termino = fecha_inicio
                     else:
@@ -264,13 +266,14 @@ def cargaMasiva(request):
                         clave_acuerdo = f"{partes[1]}/{partes[0]}/{partes[2]}"
 
                     rubro_obj, created = Rubro.objects.get_or_create(tipo=rubro)
+                    area_obj, created = Area.objects.get_or_create(nickname=area_celda)
+
                     areas_responsables_list = areas_responsables.split(',')
                     areas_objs = []
                     for area in areas_responsables_list:
-                        area_obj, created = Area.objects.get_or_create(nickname=area.strip())
-                        areas_objs.append(area_obj)
+                        area_responsable_obj, created = Area.objects.get_or_create(nickname=area.strip())
+                        areas_objs.append(area_responsable_obj)
 
-                    # Actualizar solo los campos válidos
                     registro, created = Registro.objects.update_or_create(
                         claveAcuerdo=clave_acuerdo,
                         defaults={
@@ -281,11 +284,21 @@ def cargaMasiva(request):
                         }
                     )
                     registro.rubro.set([rubro_obj])
-                    registro.area.set(areas_objs)
+                    registro.area.set([area_obj])
+
+                    accion, created = Acciones.objects.update_or_create(
+                        descripcion=descripcion,
+                    )
+                    accion.idRegistro.add(registro)
+                    accion.area2.set(areas_objs)
+
+                    print(f"Registro {i}: {clave_acuerdo} procesado correctamente")
 
                     i += 1
 
             return redirect("dashboard")
+        else:
+            print("Formulario no válido")
     else:
         form = CargarArchivoForm()
     return render(request, "dashboard/dashboard.html", {"form": form})

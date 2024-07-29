@@ -130,7 +130,7 @@
 
     
     {% comment %} <div class="container" style="width: 50%; max-width: 600px;">
-        <h1>Crear Nuevo Registro</h1>
+        <h1>Crear Nuevo Acuerdo</h1>
         <form method="post">
             {% csrf_token %}
 
@@ -145,7 +145,7 @@
             {% csrf_token %}
             <div class="colorRectangulo rounded-xl border-3 p-6 w-full">
                 <div class="text-center mb-4">
-                    <h1 class="colorH1">Crear Nuevo Registro</h1>
+                    <h1 class="colorH1">Crear Nuevo Acuerdo</h1>
                 </div>
                 <div class="text-center mb-4">
                     <div class="p-4 rounded-lg flex justify-between">
@@ -164,14 +164,14 @@
                                     <div class="px-2 flex-1 text-center">
                                         <div class="flex flex-col space-y-2">
                                             <label for="id_fecha_inicio">Inicio:</label>
-                                            <input class="text-center" type="text" name="fecha_inicio" required id="id_fecha_inicio">
+                                            <input class="text-center" type="datetime" name="fecha_inicio" required id="id_fecha_inicio">
                                         </div>
                                     </div>
         
                                     <div class="px-2 flex-1 text-center">
                                         <div class="flex flex-col space-y-2">
                                             <label for="id_fecha_termino">Termino:</label>
-                                            <input class="text-center" type="text" name="fecha_termino" required id="id_fecha_termino">
+                                            <input class="text-center" type="datetime" name="fecha_termino" required id="id_fecha_termino">
                                         </div>
                                     </div>
         

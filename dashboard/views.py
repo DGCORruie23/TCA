@@ -223,56 +223,84 @@ def cargaMasiva(request):
                 dataWB = opxl.load_workbook(excel_file, data_only=True)
                 data = dataWB.worksheets[0]
 
-                area_celda = data['H3'].value
-                fecha_inicio = data['B3'].value
-                fecha_inicio = convert_spanish_date(fecha_inicio) if isinstance(fecha_inicio, str) else fecha_inicio
-
-                if fecha_inicio is None:
-                    print("Fecha de inicio no válida")
-                    return render(request, "dashboard/dashboard.html", {"form": form, "error": "Fecha de inicio no válida"})
-
+            
                 i = 1
                 while True:
-                    if data.cell(i + 4, 4).value is None:
+                    if data.cell(i + 1, 3).value is None:
                         break
+                    fecha_inicio = data.cell(i + 1, 1).value
+                    fecha_inicio = convert_spanish_date(fecha_inicio) if isinstance(fecha_inicio, str) else fecha_inicio 
 
-                    clave_acuerdo = data.cell(i + 4, 2).value
+                    area_celda = data.cell(i + 1, 2).value
+
+                    clave_acuerdo = data.cell(i + 1, 3).value
                     print("claveAcuerdo: ", clave_acuerdo)
-                    rubro = data.cell(i + 4, 3).value
+                    rubro = data.cell(i + 1, 4).value
                     print("rubro: ", rubro)
-                    descripcion = data.cell(i + 4, 4).value
+                    descripcion = data.cell(i + 1, 5).value
                     print("descripcion: ", descripcion)
-                    areas_responsables = data.cell(i + 4, 5).value
+                    areas_responsables = data.cell(i + 1, 6).value
                     print("areas_responsables: ", areas_responsables)
-                    fecha_termino = data.cell(i + 4, 6).value
+                    fecha_termino = data.cell(i + 1, 7).value
                     print("fecha_termino: ", fecha_termino)
-                    estado = data.cell(i + 4, 7).value
+                    estado = data.cell(i + 1, 8).value
                     print("estado: ", estado)
-                    fecha_finalizacion = data.cell(i + 4, 8).value
+                    if estado == "Atendido":  
+                        estado = 2
+                    elif estado == "atendido":
+                        estado = 2
+                    elif estado == "ATENDIDO":
+                        estado = 2
+                    elif estado == "Cumplido":
+                        estado = 2
+                    elif estado == "CUMPLIDO":
+                        estado = 2
+                    elif estado == "cumplido":
+                        estado = 2
+                    else:
+                        estado = 1
+                    print("STATUSSSSSS: ", estado)
+                    fecha_finalizacion = data.cell(i + 1, 9).value
+                    if fecha_finalizacion is None:
+                        fecha_finalizacion = datetime(1970, 1, 1).date()
+                    
                     print("fecha_finalizacion: ", fecha_finalizacion)
 
                     # Convertir fechas
-                    if fecha_termino == "De manera inmediata":
-                        fecha_termino = fecha_inicio
+                    if isinstance(fecha_termino, date):
+                        fecha_termino = fecha_termino
                     else:
-                        fecha_termino = convert_spanish_date(fecha_termino) if isinstance(fecha_termino, str) else fecha_termino
-
-                    fecha_finalizacion = convert_spanish_date(fecha_finalizacion) if isinstance(fecha_finalizacion, str) else fecha_finalizacion
-                    if fecha_finalizacion is None:
-                        fecha_finalizacion = datetime(1970, 1, 1).date()
+                        fecha_termino = fecha_inicio
 
                     if clave_acuerdo and clave_acuerdo.count('/') == 2:
                         partes = clave_acuerdo.split('/')
-                        clave_acuerdo = f"{partes[1]}/{partes[0]}/{partes[2]}"
+                        # clave_acuerdo = f"{partes[1]}/{partes[0]}/{partes[2]}"
+                        # fecha_inicio
+                        clave_acuerdo = f"{i:02}/{partes[0]}/{datetime.strftime(fecha_inicio, '%m/%Y')}"
+                    try:
+                        rubro_obj = Rubro.objects.get(tipo=rubro)
+                        print(rubro_obj)
+                    except Rubro.DoesNotExist:
+                        print("Rubro '{rubro}' no encontrado")
 
-                    rubro_obj, created = Rubro.objects.get_or_create(tipo=rubro)
-                    area_obj, created = Area.objects.get_or_create(nickname=area_celda)
+                    try:
+                        area_obj = Area.objects.get(nickname=area_celda)
+                        print(area_obj)
+                    except Area.DoesNotExist:
+                        print("Área '{area_celda}' no encontrada")
 
-                    areas_responsables_list = areas_responsables.split(',')
+                    areas_responsables_list = areas_responsables.split('-')
+                    print('areas responsables',areas_responsables_list)
                     areas_objs = []
                     for area in areas_responsables_list:
-                        area_responsable_obj, created = Area.objects.get_or_create(nickname=area.strip())
+                        try:
+                            if area == "OR":
+                                area_responsable_obj =  Area.objects.get(nickname=area_celda)
+                            area_responsable_obj = Area.objects.get(nickname=area.strip())
+                        except Area.DoesNotExist:
+                            print("Área responsable '{area.strip()}' no encontrada")
                         areas_objs.append(area_responsable_obj)
+                        print("areas_objs",areas_objs)
 
                     registro, created = Registro.objects.update_or_create(
                         claveAcuerdo=clave_acuerdo,
@@ -296,7 +324,7 @@ def cargaMasiva(request):
 
                     i += 1
 
-            return redirect("dashboard")
+            return redirect('dashboard')
         else:
             print("Formulario no válido")
     else:

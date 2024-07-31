@@ -67,7 +67,7 @@ class UsuarioP(models.Model):
         ("16", "OR MICH"), ("17", "OR MOR"), ("18", "OR NAY"), ("19", "OR NL"), ("20", "OR OAX"),
         ("21", "OR PUE"), ("22", "OR QRO"), ("23", "OR QROO"), ("24", "OR SLP"), ("25", "OR SIN"),
         ("26", "OR SON"), ("27", "OR TAB"), ("28", "OR TAMPS"), ("29", "OR TLX"), ("30", "OR VER"),
-        ("31", "OR YUC"), ("32", "OR ZAC"), ("33", "OC"), ("34", "OSCJ"), ("35", "CECC"), ("36", "DCS"), ("37", "DGA"), ("38", "DGCOR"), ("39", "DGCVM"), ("40", "DGPVM"),("41", "DGRAM"),("42", "DGTIC"),
+        ("31", "OR YUC"), ("32", "OR ZAC"), ("33", "OC"), ("34", "OSCJ"), ("35", "CECC"), ("36", "DCS"), ("37", "DGA"), ("38", "DGCOR"), ("39", "DGCVM"), ("40", "DGPMV"),("41", "DGRAM"),("42", "DGTIC"),
     ]
 
 

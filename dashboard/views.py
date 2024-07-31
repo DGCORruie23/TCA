@@ -22,6 +22,11 @@ def dashboard(request):
     if request.method == 'GET':
         userDataI = UsuarioP.objects.filter(user__username=request.user)
         registrosConFechas = []
+        nombres_areas = [area.nickname for area in Area.objects.all()]
+        areas_n = nombres_areas if len(nombres_areas) > 1 else None
+    
+
+        print(areas_n)
         formCargar1 = CargarArchivoForm()
         if userDataI[0].tipo == "1":
             registros = Registro.objects.all().order_by('fecha_termino')
@@ -58,7 +63,7 @@ def dashboard(request):
                 'diferencia': dias,
                 'areas_str': areas_str,
                 'areas_name': areas_name,
-                'fecha_finalizacion': fecha_finalizacion
+                'fecha_finalizacion': fecha_finalizacion,
             })
 
         now = datetime.now()
@@ -75,6 +80,7 @@ def dashboard(request):
             'dataU': userDataI,
             'notificaciones': notificaciones,
             'formCargar1': formCargar1,
+            'areas_n': areas_n
         }
 
         return render(request, "dashboard/dashboard.html", context)

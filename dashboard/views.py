@@ -306,6 +306,7 @@ def cargaMasiva(request):
                             # print(f"Área responsable '{area.strip()}' no encontrada")
                             pass
                         areas_objs.append(area_responsable_obj)
+                    
                         # print("areas_objs", areas_objs)
 
                     # Obtener el último índice para el área específica

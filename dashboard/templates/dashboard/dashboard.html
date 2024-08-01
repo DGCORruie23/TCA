@@ -678,7 +678,14 @@
                 <div class="text-center py-2" style="background-color: green; color: white; border-radius: 5px;">
                     <span>{{ data.registro.get_estado_display }}</span>
                     {% if data.registro.estado == '2' %}
-                    <p>el {{ data.registro.fecha_finalizacion }}</p>
+                    
+                          {% if data.registro.fecha_finalizacion|date:"Y-m-d" != "1970-01-01" %}
+
+                        <p> 
+                            el {{ data.registro.fecha_finalizacion }}
+                        </p>
+                        {% endif %}
+                   
                     {% endif %}
                 </div>
                 {% endif %}
@@ -738,7 +745,7 @@
         for (var i = 1; i < tr.length; i++) {
             var tdStatus = tr[i].getElementsByTagName("td")[6];
             var tdClave = tr[i].getElementsByTagName("td")[0];
-            var tdArea = tr[i].getElementsByTagName("td")[5]; // Ajusta el índice del td según tu tabla
+            var tdArea = tr[i].getElementsByTagName("td")[5];
 
             if (tdStatus && tdClave && tdArea) {
                 var txtValueStatus = tdStatus.textContent || tdStatus.innerText;

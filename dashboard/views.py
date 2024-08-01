@@ -303,7 +303,7 @@ def cargaMasiva(request):
                             area_responsable_obj = Area.objects.get(nickname=area.strip())
                         except Area.DoesNotExist:
                             errArea = errArea+1
-                            print(f"Área responsable '{area.strip()}' no encontrada")
+                            # print(f"Área responsable '{area.strip()}' no encontrada")
                             pass
                         areas_objs.append(area_responsable_obj)
                         # print("areas_objs", areas_objs)
@@ -336,8 +336,8 @@ def cargaMasiva(request):
                     accion.area2.set(areas_objs)
 
                     # print(f"Registro {i}: {clave_acuerdo} procesado correctamente")
-                    print('Errores de rubro' , errores)
-                    print('Errores de area', errArea)
+                    # print('Errores de rubro' , errores)
+                    # print('Errores de area', errArea)
                     i += 1
 
             return redirect('dashboard')

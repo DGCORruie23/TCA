@@ -575,9 +575,18 @@
     <input type="text" id="searchStatus1" placeholder="Buscar por Estatus" onkeyup="filterTable()">
     <input type="text" id="searchClave1" placeholder="Buscar por Clave de Acuerdo" onkeyup="filterTable()">
     <select id="searchArea" multiple onchange="filterTable()">
-        {% for area in areas_n %}
-        <option value="{{ area }}">{{ area }}</option>
-        {% endfor %}
+        <option value="show_all">Mostrar todos</option>
+        {% if dataU.0.tipo == "1" %}
+            {% for area in areas_n %}
+                <option value="{{ area }}">{{ area }}</option>
+            {% endfor %}
+        {% elif dataU.0.tipo == "2" %}
+            {% for area in areas_n %}
+                {% if forloop.counter > 31 %}
+                    <option value="{{ area }}">{{ area }}</option>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
     </select>
 </div>
 
@@ -792,7 +801,25 @@
         closeAreaModal();
     }
 
+    document.getElementById('searchArea').addEventListener('change', function() {
+        var select = this;
+        var options = select.options;
+        var selected = [];
 
+        for (var i = 0; i < options.length; i++) {
+            if (options[i].selected) {
+                selected.push(options[i].value);
+            }
+        }
+
+        if (selected.includes('show_all')) {
+            for (var i = 0; i < options.length; i++) {
+                options[i].selected = true;
+            }
+        }
+
+        filterTable();
+    });
 
 </script>
 {% endif %}

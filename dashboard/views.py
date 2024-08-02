@@ -26,7 +26,7 @@ def dashboard(request):
         areas_n = nombres_areas if len(nombres_areas) > 1 else None
     
 
-        print(areas_n)
+        # print(areas_n)
         formCargar1 = CargarArchivoForm()
         if userDataI[0].tipo == "1":
             registros = Registro.objects.all().order_by('fecha_termino')
@@ -261,6 +261,14 @@ def cargaMasiva(request):
                         estado = 2
                     elif estado == "ATENDIDO":
                         estado = 2
+                    elif estado == "Completado":
+                        estado = 2   
+                    elif estado == "COMPLETADO":
+                        estado = 2
+                    elif estado == "Terminado":
+                        estado = 2
+                    elif estado == "TERMINADO":
+                        estado = 2                                                                                           
                     elif estado == "Cumplido":
                         estado = 2
                     elif estado == "CUMPLIDO":
@@ -291,7 +299,7 @@ def cargaMasiva(request):
                         # print(area_obj)
                     except Area.DoesNotExist:
                         pass
-                        # print(f"Área '{area_celda}' no encontrada")
+                        print(f"Área '{area_celda}' no encontrada")
 
                     areas_responsables_list = areas_responsables.split('-')
                     # print('areas responsables', areas_responsables_list)
@@ -301,9 +309,10 @@ def cargaMasiva(request):
                             if area == "OR":
                                 area_responsable_obj =  Area.objects.get(nickname=area_celda)
                             area_responsable_obj = Area.objects.get(nickname=area.strip())
+                            print(f"Área responsable seteada '{area_responsable_obj}'")
                         except Area.DoesNotExist:
                             errArea = errArea+1
-                            # print(f"Área responsable '{area.strip()}' no encontrada")
+                            print(f"Área responsable '{area_responsable_obj}' no encontrada")
                             pass
                         areas_objs.append(area_responsable_obj)
                     
@@ -336,9 +345,9 @@ def cargaMasiva(request):
                     accion.idRegistro.add(registro)
                     accion.area2.set(areas_objs)
 
-                    # print(f"Registro {i}: {clave_acuerdo} procesado correctamente")
+                    print(f"Registro {i}: {clave_acuerdo} procesado correctamente")
                     # print('Errores de rubro' , errores)
-                    # print('Errores de area', errArea)
+                    print('Errores de area', errArea)
                     i += 1
 
             return redirect('dashboard')

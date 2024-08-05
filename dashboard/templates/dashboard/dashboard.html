@@ -325,8 +325,8 @@
         display: flex;
         justify-content: space-between;
         margin-bottom: 20px;
-        margin-left: 15%;
-        max-width: 70%;
+        margin-left: 10%;
+        max-width: 80%;
         /*overflow: auto;*/
     }
 
@@ -480,6 +480,32 @@
     .descripcion {
         width: 40%;
     }
+
+    input::placeholder {
+    color: #999;
+}
+
+input[type="text"] {
+    padding: 5px;
+    margin: 5px;
+    width: 250px;
+    box-sizing: border-box;
+}
+
+
+input::placeholder {
+    color: #999;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-container select {
+    height: auto;
+    min-width: 200px; /* Ajusta el tamaño mínimo para select */
+}
+
+
 </style>
 {% endblock styles %}
 
@@ -573,7 +599,10 @@
 
 <div class="search-container">
     <input type="text" id="searchStatus1" placeholder="Buscar por Estatus" onkeyup="filterTable()">
-    <input type="text" id="searchClave1" placeholder="Buscar por Clave de Acuerdo" onkeyup="filterTable()">
+    <input type="text" id="searchClave1" placeholder="Buscar por Clave de Acuerdo/OR" onkeyup="filterTable()">
+    <input type="text" id="searchFechaInicio" placeholder="Buscar por Fecha de Inicio (dd-mm-yyyy)" onkeyup="filterTable()">
+    <input type="text" id="searchFechaTermino" placeholder="Buscar por Fecha de Término (dd-mm-yyyy)" onkeyup="filterTable()">
+    <input type="text" id="searchDescripcion" placeholder="Buscar por Descripción" onkeyup="filterTable()">
     <select id="searchArea" multiple onchange="filterTable()">
         <option value="show_all">Mostrar todos</option>
         {% if dataU.0.tipo == "1" %}
@@ -589,6 +618,9 @@
         {% endif %}
     </select>
 </div>
+
+
+
 
 <!-- <div class="search-container">
     <input type="text" id="searchStatus" placeholder="Buscar por Estatus" onkeyup="filterTable()">
@@ -744,35 +776,52 @@
 <br><br><br>
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 <script>
-    function filterTable() {
-        var inputStatus = document.getElementById("searchStatus1").value.toUpperCase();
-        var inputClave = document.getElementById("searchClave1").value.toUpperCase();
-        var selectedAreas = Array.from(document.getElementById("searchArea").selectedOptions).map(option => option.value.toUpperCase());
-        var table = document.getElementById("myTable");
-        var tr = table.getElementsByTagName("tr");
+function filterTable() {
+    var inputStatus = document.getElementById("searchStatus1").value.toUpperCase();
+    var inputClave = document.getElementById("searchClave1").value.toUpperCase();
+    var selectedAreas = Array.from(document.getElementById("searchArea").selectedOptions).map(option => option.value.toUpperCase());
+    var inputFechaInicio = document.getElementById("searchFechaInicio").value;
+    var inputFechaTermino = document.getElementById("searchFechaTermino").value;
+    var inputDescripcion = document.getElementById("searchDescripcion").value.toUpperCase();
+    var table = document.getElementById("myTable");
+    var tr = table.getElementsByTagName("tr");
 
-        for (var i = 1; i < tr.length; i++) {
-            var tdStatus = tr[i].getElementsByTagName("td")[6];
-            var tdClave = tr[i].getElementsByTagName("td")[0];
-            var tdArea = tr[i].getElementsByTagName("td")[5];
+    for (var i = 1; i < tr.length; i++) {
+        var tdStatus = tr[i].getElementsByTagName("td")[6];
+        var tdClave = tr[i].getElementsByTagName("td")[0];
+        var tdArea = tr[i].getElementsByTagName("td")[5];
+        var tdFechaInicio = tr[i].getElementsByTagName("td")[1];
+        var tdFechaTermino = tr[i].getElementsByTagName("td")[2];
+        var tdDescripcion = tr[i].getElementsByTagName("td")[4];
 
-            if (tdStatus && tdClave && tdArea) {
-                var txtValueStatus = tdStatus.textContent || tdStatus.innerText;
-                var txtValueClave = tdClave.textContent || tdClave.innerText;
-                var txtValueArea = tdArea.textContent || tdArea.innerText;
+        if (tdStatus && tdClave && tdArea && tdFechaInicio && tdFechaTermino && tdDescripcion) {
+            var txtValueStatus = tdStatus.textContent || tdStatus.innerText;
+            var txtValueClave = tdClave.textContent || tdClave.innerText;
+            var txtValueArea = tdArea.textContent || tdArea.innerText;
+            var txtValueFechaInicio = tdFechaInicio.textContent || tdFechaInicio.innerText;
+            var txtValueFechaTermino = tdFechaTermino.textContent || tdFechaTermino.innerText;
+            var txtValueDescripcion = tdDescripcion.textContent || tdDescripcion.innerText;
 
-                var matchesStatus = txtValueStatus.toUpperCase().indexOf(inputStatus) > -1;
-                var matchesClave = txtValueClave.toUpperCase().indexOf(inputClave) > -1;
-                var matchesArea = selectedAreas.length === 0 || selectedAreas.some(area => txtValueArea.toUpperCase().indexOf(area) > -1);
+            var matchesStatus = txtValueStatus.toUpperCase().indexOf(inputStatus) > -1;
+            var matchesClave = txtValueClave.toUpperCase().indexOf(inputClave) > -1;
+            var matchesArea = selectedAreas.length === 0 || selectedAreas.some(area => txtValueArea.toUpperCase().indexOf(area) > -1);
 
-                if (matchesStatus && matchesClave && matchesArea) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
+            var matchesFechaInicio = !inputFechaInicio || (inputFechaInicio === txtValueFechaInicio);
+            var matchesFechaTermino = !inputFechaTermino || (inputFechaTermino === txtValueFechaTermino);
+            var matchesDescripcion = txtValueDescripcion.toUpperCase().indexOf(inputDescripcion) > -1;
+
+            if (matchesStatus && matchesClave && matchesArea && matchesFechaInicio && matchesFechaTermino && matchesDescripcion) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
             }
         }
     }
+}
+
+
+
+
 
 
     function openAreaModal() {

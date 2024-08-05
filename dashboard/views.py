@@ -16,6 +16,7 @@ from datetime import date
 from datetime import datetime
 import re
 
+from django.db import transaction
 from dateutil.parser import parse
 @login_required
 def dashboard(request):
@@ -214,6 +215,7 @@ def convert_spanish_date(date_str):
         return None
 
 
+
 @login_required
 @csrf_exempt
 def cargaMasiva(request):
@@ -231,124 +233,90 @@ def cargaMasiva(request):
                 dataWB = opxl.load_workbook(excel_file, data_only=True)
                 data = dataWB.worksheets[0]
 
-                i = 1
-                while True:
-                    if data.cell(i + 1, 3).value is None:
-                        break
-                    fecha_inicio = data.cell(i + 1, 1).value
-                    fecha_inicio = convert_spanish_date(fecha_inicio) if isinstance(fecha_inicio, str) else fecha_inicio
+                total_rows = data.max_row - 1
+                chunk_size = 20
 
-                    area_celda = data.cell(i + 1, 2).value
-
-                    clave_acuerdo = data.cell(i + 1, 3).value
-                    # print("claveAcuerdo: ", clave_acuerdo)
-                    rubro = data.cell(i + 1, 4).value
-                    # print("rubro: ", rubro)
-                    descripcion = data.cell(i + 1, 5).value
-                    # print("descripcion: ", descripcion)
-                    areas_responsables = data.cell(i + 1, 6).value
-                    # print("areas_responsables: ", areas_responsables)
-                    fecha_termino = data.cell(i + 1, 7).value
-                    # print("fecha_termino: ", fecha_termino)
-
-
-
-                    estado = data.cell(i + 1, 8).value
-                    # print("estado: ", estado)
-                    if estado == "Atendido":  
-                        estado = 2
-                    elif estado == "atendido":
-                        estado = 2
-                    elif estado == "ATENDIDO":
-                        estado = 2
-                    elif estado == "Completado":
-                        estado = 2   
-                    elif estado == "COMPLETADO":
-                        estado = 2
-                    elif estado == "Terminado":
-                        estado = 2
-                    elif estado == "TERMINADO":
-                        estado = 2                                                                                           
-                    elif estado == "Cumplido":
-                        estado = 2
-                    elif estado == "CUMPLIDO":
-                        estado = 2
-                    elif estado == "cumplido":
-                        estado = 2
-                    else:
-                        estado = 1
-                    # print("STATUSSSSSS: ", estado)
-                    fecha_finalizacion = data.cell(i + 1, 9).value
-                    if fecha_finalizacion is None:
-                        fecha_finalizacion = datetime(1970, 1, 1).date()
-                    # print("fecha_finalizacion: ", fecha_finalizacion)
-
-                    # Convertir fechas
-                    if not isinstance(fecha_termino, date):
-                        fecha_termino = fecha_inicio
-
-                    try:
-                        rubro_obj = Rubro.objects.get(tipo=rubro)
-                        # print(rubro_obj)
-                    except Rubro.DoesNotExist:
-                        errores = errores+1
-                        # print(f"Rubro '{rubro}' no encontrado")
-
-                    try:
-                        area_obj = Area.objects.get(nickname=area_celda)
-                        # print(area_obj)
-                    except Area.DoesNotExist:
-                        pass
-                        print(f"Área '{area_celda}' no encontrada")
-
-                    areas_responsables_list = areas_responsables.split('-')
-                    # print('areas responsables', areas_responsables_list)
-                    areas_objs = []
-                    for area in areas_responsables_list:
-                        try:
-                            if area == "OR":
-                                area_responsable_obj =  Area.objects.get(nickname=area_celda)
-                            area_responsable_obj = Area.objects.get(nickname=area.strip())
-                            print(f"Área responsable seteada '{area_responsable_obj}'")
-                        except Area.DoesNotExist:
-                            errArea = errArea+1
-                            print(f"Área responsable '{area_responsable_obj}' no encontrada")
-                            pass
-                        areas_objs.append(area_responsable_obj)
+                for start_row in range(1, total_rows + 1, chunk_size):
+                    end_row = min(start_row + chunk_size, total_rows + 1)
                     
-                        # print("areas_objs", areas_objs)
+                    with transaction.atomic():
+                        for i in range(start_row, end_row):
+                            if data.cell(i + 1, 3).value is None:
+                                break
+                            fecha_inicio = data.cell(i + 1, 1).value
+                            fecha_inicio = convert_spanish_date(fecha_inicio) if isinstance(fecha_inicio, str) else fecha_inicio
 
-                    # Obtener el último índice para el área específica
-                    ultimo_clave_acuerdo = Registro.objects.filter(area=area_obj).aggregate(Max('claveAcuerdo'))['claveAcuerdo__max']
-                    if ultimo_clave_acuerdo:
-                        ultimo_indice = int(ultimo_clave_acuerdo.split('/')[0])
-                    else:
-                        ultimo_indice = 0
-                    nuevo_indice = ultimo_indice + 1
-                    clave_acuerdo = f"{nuevo_indice:02}/{area_celda.split(' ')[1]}/{fecha_inicio.strftime('%m/%Y')}"
+                            area_celda = data.cell(i + 1, 2).value
+                            clave_acuerdo = data.cell(i + 1, 3).value
+                            rubro = data.cell(i + 1, 4).value
+                            descripcion = data.cell(i + 1, 5).value
+                            areas_responsables = data.cell(i + 1, 6).value
+                            fecha_termino = data.cell(i + 1, 7).value
+                            estado = data.cell(i + 1, 8).value
+                            if estado in ["Atendido", "atendido", "ATENDIDO", "Completado", "COMPLETADO", "Terminado", "TERMINADO", "Cumplido", "CUMPLIDO", "cumplido"]:
+                                estado = 2
+                            else:
+                                estado = 1
+                            fecha_finalizacion = data.cell(i + 1, 9).value
+                            if fecha_finalizacion is None:
+                                fecha_finalizacion = datetime(1970, 1, 1).date()
+                            if not isinstance(fecha_termino, date):
+                                fecha_termino = fecha_inicio
 
-                    registro, created = Registro.objects.update_or_create(
-                        claveAcuerdo=clave_acuerdo,
-                        defaults={
-                            "fecha_inicio": fecha_inicio,
-                            "fecha_termino": fecha_termino,
-                            "estado": estado,
-                            "fecha_finalizacion": fecha_finalizacion,
-                        }
-                    )
-                    registro.rubro.set([rubro_obj])
-                    registro.area.set([area_obj])
+                            try:
+                                rubro_obj = Rubro.objects.get(tipo=rubro)
+                            except Rubro.DoesNotExist:
+                                errores += 1
 
-                    accion, created = Acciones.objects.update_or_create(
-                        descripcion=descripcion,
-                    )
-                    accion.idRegistro.add(registro)
-                    accion.area2.set(areas_objs)
+                            try:
+                                area_obj = Area.objects.get(nickname=area_celda)
+                            except Area.DoesNotExist:
+                                pass
+                                print(f"Área '{area_celda}' no encontrada")
 
-                    print(f"Registro {i}: {clave_acuerdo} procesado correctamente")
-                    # print('Errores de rubro' , errores)
-                    print('Errores de area', errArea)
-                    i += 1
+                            areas_responsables_list = areas_responsables.split('-')
+                            areas_objs = []
+                            for area in areas_responsables_list:
+                                try:
+                                    if area == "OR":
+                                        area_responsable_obj = Area.objects.get(nickname=area_celda)
+                                    else:
+                                        area_responsable_obj = Area.objects.get(nickname=area.strip())
+                                    print(f"Área responsable seteada '{area_responsable_obj}'")
+                                except Area.DoesNotExist:
+                                    errArea += 1
+                                    print(f"Área responsable '{area_responsable_obj}' no encontrada")
+                                    pass
+                                areas_objs.append(area_responsable_obj)
+
+                            ultimo_clave_acuerdo = Registro.objects.filter(area=area_obj).aggregate(Max('claveAcuerdo'))['claveAcuerdo__max']
+                            if ultimo_clave_acuerdo:
+                                ultimo_indice = int(ultimo_clave_acuerdo.split('/')[0])
+                            else:
+                                ultimo_indice = 0
+                            nuevo_indice = ultimo_indice + 1
+                            clave_acuerdo = f"{nuevo_indice:02}/{area_celda.split(' ')[1]}/{fecha_inicio.strftime('%m/%Y')}"
+
+                            registro, created = Registro.objects.update_or_create(
+                                claveAcuerdo=clave_acuerdo,
+                                defaults={
+                                    "fecha_inicio": fecha_inicio,
+                                    "fecha_termino": fecha_termino,
+                                    "estado": estado,
+                                    "fecha_finalizacion": fecha_finalizacion,
+                                }
+                            )
+                            registro.rubro.set([rubro_obj])
+                            registro.area.set([area_obj])
+
+                            accion, created = Acciones.objects.update_or_create(
+                                descripcion=descripcion,
+                            )
+                            accion.idRegistro.add(registro)
+                            accion.area2.set(areas_objs)
+
+                            print(f"Registro {i}: {clave_acuerdo} procesado correctamente")
+                            print('Errores de area', errArea)
 
             return redirect('dashboard')
         else:

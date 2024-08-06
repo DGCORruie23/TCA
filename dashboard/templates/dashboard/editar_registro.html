@@ -31,7 +31,6 @@
 
         .form-group {
             margin-bottom: 20px;
-            
         }
 
         .form-group label {
@@ -39,7 +38,6 @@
             margin-bottom: 8px;
             color: #DDC9A3;
             font-weight: bold;
-            
         }
 
         .form-input {
@@ -70,114 +68,102 @@
             background-color: #691C32;
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
         .container {
-        width: 50%;
-        margin: 50px auto;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border: 2px solid #f2eddf;
-        background-color: #235B4E;
-        opacity: 0.90;
-        color: rgb(0, 0, 0);
-        text-align: center;
-    }
+            width: 50%;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid #f2eddf;
+            background-color: #235B4E;
+            opacity: 0.90;
+            color: rgb(0, 0, 0);
+            text-align: center;
+        }
 
-    .container h1 {
-        font-size: 24px;
-        margin-bottom: 20px;
-        color: rgb(255, 255, 255);
-    }
+        .container h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: rgb(255, 255, 255);
+        }
 
-    label {
-        color: white;
-    }
+        label {
+            color: white;
+        }
 
-    input[type="text"], input[type="date"], select, textarea {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-sizing: border-box;
-        color: rgb(0, 0, 0);
-        background-color: white;
-    }
+        input[type="text"], input[type="date"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            color: rgb(0, 0, 0);
+            background-color: white;
+        }
 
+        .ui-datepicker {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-    .ui-datepicker {
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-        background-color: white; /* Cambiar el fondo a blanco */
-        border: 1px solid #ccc; /* Agregar un borde */
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Agregar sombra */
-    }
+        .ui-datepicker-header {
+            background-color: #235B4E;
+            border: none;
+            color: white;
+        }
 
-    .ui-datepicker-header {
-        background-color: #235B4E;
-        border: none;
-        color: white;
-    }
+        .ui-datepicker-title {
+            color: white;
+        }
 
-    .ui-datepicker-title {
-        color: white;
-    }
+        .ui-datepicker-calendar td {
+            padding: 5px;
+        }
 
-    .ui-datepicker-calendar td {
-        padding: 5px;
-    }
+        .ui-datepicker-calendar td a {
+            color: black;
+            text-decoration: none;
+        }
 
-    .ui-datepicker-calendar td a {
-        color: black;
-        text-decoration: none;
-    }
+        .ui-datepicker-calendar td a:hover {
+            background-color: #d2e8d4;
+        }
 
-    .ui-datepicker-calendar td a:hover {
-        background-color: #d2e8d4;
-    }
+        .ui-datepicker-close {
+            background-color: #235B4E;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            margin-top: 5px;
+            cursor: pointer;
+        }
 
-    .ui-datepicker-close {
-        background-color: #235B4E;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        margin-top: 5px;
-        cursor: pointer;
-    }
+        .ui-datepicker-close:hover {
+            background-color: #1a4331;
+        }
 
-    .ui-datepicker-close:hover {
-        background-color: #1a4331;
-    }
+        .ui-datepicker-prev {
+            cursor: pointer;
+            margin-right: 40%;
+        }
 
-    .ui-datepicker-prev {
-        cursor: pointer;
-        margin-right: 40%;
-    }
+        .ui-datepicker-next {
+            cursor: pointer;
+        }
 
-    .ui-datepicker-next {
-        cursor: pointer;
-    }
+        input[type="date"]::-webkit-datetime-edit {
+            color: black;
+        }
 
-
-    input[type="date"]::-webkit-datetime-edit {
-        color: black;
-    }
-
+        .errorlist {
+            color: white;
+        }
     </style>
 {% endblock styles %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/i18n/jquery-ui-i18n.min.js"></script>
 
 {% block content %}
 {% if user.is_authenticated %}
@@ -191,8 +177,6 @@
             <div class="form-group">
                 {{ accion_form.as_p }}
             </div>
-
-            
             <button type="submit" class="form-button bg-inm-rojo-200">Guardar Cambios</button>
         </form>
     </div>
@@ -214,12 +198,12 @@
             showButtonPanel: false,
             buttonText: 'Seleccionar fecha',
             showAnim: 'slideDown',
-            showOtherMonths: true, 
-            selectOtherMonths: true 
+            showOtherMonths: true,
+            selectOtherMonths: true
         });
 
         $("#id_fecha_termino").datepicker({
-            dateFormat: 'dd/mm/yy', 
+            dateFormat: 'dd/mm/yy',
             dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
             monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
             prevText: 'Anterior',

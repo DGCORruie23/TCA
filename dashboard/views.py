@@ -56,6 +56,7 @@ def dashboard(request):
             areas_str = ', '.join(area.nickname for area in areas)
             areas_name = ', '.join(area.name for area in areas)
             dias = diferencia.days
+            porcentaje = registro.porcentaje_avance
 
             registrosConFechas.append({
                 'registro': registro,
@@ -65,6 +66,7 @@ def dashboard(request):
                 'areas_str': areas_str,
                 'areas_name': areas_name,
                 'fecha_finalizacion': fecha_finalizacion,
+                'porcentaje': porcentaje
             })
 
         now = datetime.now()

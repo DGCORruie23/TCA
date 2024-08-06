@@ -1,6 +1,6 @@
 from django import forms
 from usuarios.models import Registro, Acciones,  Area, Mensaje
-
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 class RegistroConAccionesYPruebasForm(forms.ModelForm):
     class Meta:
@@ -19,14 +19,18 @@ class RegistroConAccionesYPruebasForm(forms.ModelForm):
 class RegistroConAccionesFORM(forms.ModelForm):
     class Meta:
         model = Registro
-        fields = ['claveAcuerdo','fecha_inicio', 'fecha_termino', 'rubro', 'area', 'estado']
+        fields = ['claveAcuerdo','fecha_inicio', 'fecha_termino', 'rubro', 'area', 'estado', 'porcentaje_avance']
         labels = {
+            'claveAcuerdo': 'Clave de Acuerdo',
             'area': 'OR',
             'estado': 'Estatus',
+            'porcentaje_avance': 'Porcentaje de Avance'
         }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['area'].queryset = Area.objects.filter(idArea__lte=32) 
+        self.fields['porcentaje_avance'].validators.extend([MaxValueValidator(99), MinValueValidator(0)])
+
 
 class AccionesForm(forms.ModelForm):
     class Meta:

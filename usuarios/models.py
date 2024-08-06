@@ -36,6 +36,7 @@ class Registro(models.Model):
     estado = models.CharField(max_length=1, choices=types_estado, default="1")
     fecha_finalizacion = models.DateField(default="1970-01-01")
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+    porcentaje_avance = models.IntegerField(default=0)
 
     def __str__(self):
         return f"Registro: {self.idRegistro}, Clave de Acuerdo: {self.claveAcuerdo}, Fecha de inicio: {self.fecha_inicio}, Fecha de término: {self.fecha_termino}, Rubro: {', '.join([rubro.tipo for rubro in self.rubro.all()])}, OR: {', '.join([area.nickname for area in self.area.all()])}, Estatus: {self.get_estado_display()}"

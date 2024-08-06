@@ -431,7 +431,6 @@
         background-color: #1a4331;
     }
 
-    /* Animation */
     @keyframes fadeIn {
         from {
             opacity: 0;
@@ -463,7 +462,7 @@
 
     th.descripcion,
     td.descripcion {
-        width: 30%;
+        width: 60%;
     }
 
     th.areas-responsables,
@@ -482,30 +481,125 @@
     }
 
     input::placeholder {
-    color: #999;
-}
-
-input[type="text"] {
-    padding: 5px;
-    margin: 5px;
-    width: 250px;
-    box-sizing: border-box;
-}
+        color: #999;
+    }
 
 
-input::placeholder {
-    color: #999;
-    white-space: normal;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.search-container select {
-    height: auto;
-    min-width: 200px; /* Ajusta el tamaño mínimo para select */
-}
+    input[type="text"] {
+        padding: 5px;
+        margin: 5px;
+        width: 250px;
+        box-sizing: border-box;
+    }
 
 
+    input::placeholder {
+        color: #999;
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .search-container select {
+        height: auto;
+        min-width: 200px;
+    }
+
+
+    td.actions-column {
+        white-space: nowrap;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    td.actions-column form {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    td.actions-column {
+        white-space: nowrap;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    td.actions-column form {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .action-link {
+        display: inline-block;
+        width: 100px;
+        text-align: center;
+        margin-bottom: 10px;
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .action-link+.action-link {
+        margin-left: 10px;
+    }
+
+    .action-link,
+    .other-button-class {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+
+    .action-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+    }
+
+    .action-link,
+    .action-button {
+        display: inline-block;
+        width: 100px;
+        text-align: center;
+        margin-bottom: 10px;
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .action-link+.action-link,
+    .action-link+.action-button {
+        margin-left: 0;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 </style>
 {% endblock styles %}
 
@@ -530,8 +624,7 @@ input::placeholder {
             <li>
                 Nuevo acuerdo creado: <strong>{{ notificacion.registro.claveAcuerdo }}</strong>
                 <br>
-                <a href="{% url 'marcar_notificacion_leida' notificacion.id %}" class="notification-link">Marcar como
-                    leído</a>
+                <a href="{% url 'marcar_notificacion_leida' notificacion.id %}" class="notification-link">Ir al acuerdo</a>
             </li>
             {% endfor %}
         </ul>
@@ -600,21 +693,23 @@ input::placeholder {
 <div class="search-container">
     <input type="text" id="searchStatus1" placeholder="Buscar por Estatus" onkeyup="filterTable()">
     <input type="text" id="searchClave1" placeholder="Buscar por Clave de Acuerdo/OR" onkeyup="filterTable()">
-    <input type="text" id="searchFechaInicio" placeholder="Buscar por Fecha de Inicio (dd-mm-yyyy)" onkeyup="filterTable()">
-    <input type="text" id="searchFechaTermino" placeholder="Buscar por Fecha de Término (dd-mm-yyyy)" onkeyup="filterTable()">
+    <input type="text" id="searchFechaInicio" placeholder="Buscar por Fecha de Inicio (dd-mm-yyyy)"
+        onkeyup="filterTable()">
+    <input type="text" id="searchFechaTermino" placeholder="Buscar por Fecha de Término (dd-mm-yyyy)"
+        onkeyup="filterTable()">
     <input type="text" id="searchDescripcion" placeholder="Buscar por Descripción" onkeyup="filterTable()">
     <select id="searchArea" multiple onchange="filterTable()">
         <option value="show_all">Mostrar todos</option>
         {% if dataU.0.tipo == "1" %}
-            {% for area in areas_n %}
-                <option value="{{ area }}">{{ area }}</option>
-            {% endfor %}
+        {% for area in areas_n %}
+        <option value="{{ area }}">{{ area }}</option>
+        {% endfor %}
         {% elif dataU.0.tipo == "2" %}
-            {% for area in areas_n %}
-                {% if forloop.counter > 31 %}
-                    <option value="{{ area }}">{{ area }}</option>
-                {% endif %}
-            {% endfor %}
+        {% for area in areas_n %}
+        {% if forloop.counter > 31 %}
+        <option value="{{ area }}">{{ area }}</option>
+        {% endif %}
+        {% endfor %}
         {% endif %}
     </select>
 </div>
@@ -640,10 +735,7 @@ input::placeholder {
             <th class="text-center descripcion">Descripción</th>
             <th class="text-center">Áreas Responsables</th>
             <th class="text-center">Estatus</th>
-            <th class="text-center">Mensajes</th>
-            {% if dataU.0.tipo == "1" %}
             <th class="text-center">Acciones</th>
-            {% endif %}
         </tr>
 
         {% for data in registrosConFechas %}
@@ -719,56 +811,58 @@ input::placeholder {
                 <div class="text-center py-2" style="background-color: green; color: white; border-radius: 5px;">
                     <span>{{ data.registro.get_estado_display }}</span>
                     {% if data.registro.estado == '2' %}
-                    
-                          {% if data.registro.fecha_finalizacion|date:"Y-m-d" != "1970-01-01" %}
 
-                        <p> 
-                            el {{ data.registro.fecha_finalizacion }}
-                        </p>
-                        {% endif %}
-                   
+                    {% if data.registro.fecha_finalizacion|date:"Y-m-d" != "1970-01-01" %}
+
+                    <p>
+                        el {{ data.registro.fecha_finalizacion }}
+                    </p>
+                    {% endif %}
+
                     {% endif %}
                 </div>
                 {% endif %}
             </td>
-            <td>
-                <a href="{% url 'detalles' data.registro.idRegistro %}" style="background-color: #6F7271;"
-                    class="basis-1/8 py-3 px-6 mx-1  hover:bg-inm-rojo-300 rounded-xl text-white ">Detalles</a>
 
-            </td>
-            {% if dataU.0.tipo == "1" %}
-            <td class="text-center">
-                <a href="{% url 'editar_registro' data.registro.idRegistro %}"
-                    class="py-3 px-6 bg-inm-verde-200 hover:bg-inm-verde-300 rounded-xl text-white text-center ">Editar</a>
-                <br><br>
-                <div id="confirmDeleteModal{{ forloop.counter }}" class="modal">
-                    <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <p>¿Está seguro que desea eliminar este registro?</p>
-                        <form id="eliminarForm{{ forloop.counter }}" method="post"
-                            action="{% url 'eliminar_registro' data.registro.idRegistro %}">
-                            {% csrf_token %}
-                            <button type="submit"
-                                class="py-3 px-4 bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white">Eliminar</button>
-                        </form>
+
+            <td class="actions-column text-center">
+                <div class="action-container">
+                    <a href="{% url 'detalles' data.registro.idRegistro %}" style="background-color: #6F7271;"
+                        class="action-link  hover:bg-inm-rojo-300 rounded-xl text-white ">Detalles</a>
+                    {% if dataU.0.tipo == "1" %}
+                    <a href="{% url 'editar_registro' data.registro.idRegistro %}"
+                        class="action-link bg-inm-verde-200 hover:bg-inm-verde-300 rounded-xl text-white text-center ">Editar</a>
+                    <br><br>
+                    <div id="confirmDeleteModal{{ forloop.counter }}" class="modal">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <p>¿Está seguro que desea eliminar este acuerdo?</p>
+                            <form id="eliminarForm{{ forloop.counter }}" method="post"
+                                action="{% url 'eliminar_registro' data.registro.idRegistro %}">
+                                {% csrf_token %}
+                                <button type="submit"
+                                    class="action-button bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white">Eliminar</button>
+                            </form>
+                        </div>
                     </div>
-                </div>
 
-                <button
-                    onclick="document.getElementById('confirmDeleteModal{{ forloop.counter }}').style.display='block'"
-                    class="py-3 px-4 bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white">Eliminar</button>
-                <script>
+                    <button
+                        onclick="document.getElementById('confirmDeleteModal{{ forloop.counter }}').style.display='block'"
+                        class="py-3 px-4 bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white">Eliminar</button>
+                    <script>
 
-                    var closeButtons = document.getElementsByClassName("close");
-                    for (var i = 0; i < closeButtons.length; i++) {
-                        closeButtons[i].onclick = function () {
-                            var modal = this.parentElement.parentElement;
-                            modal.style.display = "none";
+                        var closeButtons = document.getElementsByClassName("close");
+                        for (var i = 0; i < closeButtons.length; i++) {
+                            closeButtons[i].onclick = function () {
+                                var modal = this.parentElement.parentElement;
+                                modal.style.display = "none";
+                            }
                         }
-                    }
-                </script>
+                    </script>
+                    {% endif %}
+                </div>
             </td>
-            {% endif %}
+
         </tr>
         {% endfor %}
     </table>
@@ -776,48 +870,48 @@ input::placeholder {
 <br><br><br>
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 <script>
-function filterTable() {
-    var inputStatus = document.getElementById("searchStatus1").value.toUpperCase();
-    var inputClave = document.getElementById("searchClave1").value.toUpperCase();
-    var selectedAreas = Array.from(document.getElementById("searchArea").selectedOptions).map(option => option.value.toUpperCase());
-    var inputFechaInicio = document.getElementById("searchFechaInicio").value;
-    var inputFechaTermino = document.getElementById("searchFechaTermino").value;
-    var inputDescripcion = document.getElementById("searchDescripcion").value.toUpperCase();
-    var table = document.getElementById("myTable");
-    var tr = table.getElementsByTagName("tr");
+    function filterTable() {
+        var inputStatus = document.getElementById("searchStatus1").value.toUpperCase();
+        var inputClave = document.getElementById("searchClave1").value.toUpperCase();
+        var selectedAreas = Array.from(document.getElementById("searchArea").selectedOptions).map(option => option.value.toUpperCase());
+        var inputFechaInicio = document.getElementById("searchFechaInicio").value;
+        var inputFechaTermino = document.getElementById("searchFechaTermino").value;
+        var inputDescripcion = document.getElementById("searchDescripcion").value.toUpperCase();
+        var table = document.getElementById("myTable");
+        var tr = table.getElementsByTagName("tr");
 
-    for (var i = 1; i < tr.length; i++) {
-        var tdStatus = tr[i].getElementsByTagName("td")[6];
-        var tdClave = tr[i].getElementsByTagName("td")[0];
-        var tdArea = tr[i].getElementsByTagName("td")[5];
-        var tdFechaInicio = tr[i].getElementsByTagName("td")[1];
-        var tdFechaTermino = tr[i].getElementsByTagName("td")[2];
-        var tdDescripcion = tr[i].getElementsByTagName("td")[4];
+        for (var i = 1; i < tr.length; i++) {
+            var tdStatus = tr[i].getElementsByTagName("td")[6];
+            var tdClave = tr[i].getElementsByTagName("td")[0];
+            var tdArea = tr[i].getElementsByTagName("td")[5];
+            var tdFechaInicio = tr[i].getElementsByTagName("td")[1];
+            var tdFechaTermino = tr[i].getElementsByTagName("td")[2];
+            var tdDescripcion = tr[i].getElementsByTagName("td")[4];
 
-        if (tdStatus && tdClave && tdArea && tdFechaInicio && tdFechaTermino && tdDescripcion) {
-            var txtValueStatus = tdStatus.textContent || tdStatus.innerText;
-            var txtValueClave = tdClave.textContent || tdClave.innerText;
-            var txtValueArea = tdArea.textContent || tdArea.innerText;
-            var txtValueFechaInicio = tdFechaInicio.textContent || tdFechaInicio.innerText;
-            var txtValueFechaTermino = tdFechaTermino.textContent || tdFechaTermino.innerText;
-            var txtValueDescripcion = tdDescripcion.textContent || tdDescripcion.innerText;
+            if (tdStatus && tdClave && tdArea && tdFechaInicio && tdFechaTermino && tdDescripcion) {
+                var txtValueStatus = tdStatus.textContent || tdStatus.innerText;
+                var txtValueClave = tdClave.textContent || tdClave.innerText;
+                var txtValueArea = tdArea.textContent || tdArea.innerText;
+                var txtValueFechaInicio = tdFechaInicio.textContent || tdFechaInicio.innerText;
+                var txtValueFechaTermino = tdFechaTermino.textContent || tdFechaTermino.innerText;
+                var txtValueDescripcion = tdDescripcion.textContent || tdDescripcion.innerText;
 
-            var matchesStatus = txtValueStatus.toUpperCase().indexOf(inputStatus) > -1;
-            var matchesClave = txtValueClave.toUpperCase().indexOf(inputClave) > -1;
-            var matchesArea = selectedAreas.length === 0 || selectedAreas.some(area => txtValueArea.toUpperCase().indexOf(area) > -1);
+                var matchesStatus = txtValueStatus.toUpperCase().indexOf(inputStatus) > -1;
+                var matchesClave = txtValueClave.toUpperCase().indexOf(inputClave) > -1;
+                var matchesArea = selectedAreas.length === 0 || selectedAreas.some(area => txtValueArea.toUpperCase().indexOf(area) > -1);
 
-            var matchesFechaInicio = !inputFechaInicio || (inputFechaInicio === txtValueFechaInicio);
-            var matchesFechaTermino = !inputFechaTermino || (inputFechaTermino === txtValueFechaTermino);
-            var matchesDescripcion = txtValueDescripcion.toUpperCase().indexOf(inputDescripcion) > -1;
+                var matchesFechaInicio = !inputFechaInicio || (inputFechaInicio === txtValueFechaInicio);
+                var matchesFechaTermino = !inputFechaTermino || (inputFechaTermino === txtValueFechaTermino);
+                var matchesDescripcion = txtValueDescripcion.toUpperCase().indexOf(inputDescripcion) > -1;
 
-            if (matchesStatus && matchesClave && matchesArea && matchesFechaInicio && matchesFechaTermino && matchesDescripcion) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
+                if (matchesStatus && matchesClave && matchesArea && matchesFechaInicio && matchesFechaTermino && matchesDescripcion) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
             }
         }
     }
-}
 
 
 
@@ -850,7 +944,7 @@ function filterTable() {
         closeAreaModal();
     }
 
-    document.getElementById('searchArea').addEventListener('change', function() {
+    document.getElementById('searchArea').addEventListener('change', function () {
         var select = this;
         var options = select.options;
         var selected = [];

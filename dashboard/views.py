@@ -92,7 +92,9 @@ def marcar_notificacion_leida(request, notificacion_id):
     notificacion.leido = True
     notificacion.fecha_leido = datetime.now()
     notificacion.save()
-    return redirect('dashboard')
+
+    registro_id = notificacion.registro.idRegistro
+    return redirect('detalles', registro_id=registro_id)
 
 def crear_registro(request):
     if request.method == 'POST':

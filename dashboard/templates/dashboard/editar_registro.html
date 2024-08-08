@@ -2,220 +2,271 @@
 
 {% load static %}
 
-{% block title %}Editar Registro{% endblock title %}
+{% block title %}Editar Acuerdo{% endblock title %}
 
 {% block styles %}
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #F2DEDB;
-            color: #000000;
-        }
+    .container {
+        width: 50%;
+        margin: 50px auto;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border: 2px solid #f2eddf;
+        background-color: #235B4E;
+        opacity: 0.90;
+        color: rgb(0, 0, 0);
+        text-align: center;
+    }
 
-        .form-container {
-            background-color: #235B4E;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: 50px auto;
-        }
+    .colorRectangulo {
+        border-radius: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border: 5px solid #f2eddf;
+        background-color: #235B4E;
+        opacity: 0.90;
+        color: rgb(0, 0, 0);
+    }
 
-        .form-title {
-            color: #DDC9A3;
-            font-size: 28px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    .colorH1 {
+        font-size: 26px;
+        margin-bottom: 20px;
+        color: #DDC9A3;
+    }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+    .colorH2 {
+        font-size: 18px;
+        color: rgb(255, 255, 255);
+    }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #DDC9A3;
-            font-weight: bold;
-        }
+    .container h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: rgb(255, 255, 255);
+    }
 
-        .form-input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #DDC9A3;
-            border-radius: 15px;
-            font-size: 16px;
-            color: #000000;
-            background-color: #FFFFFF;
-        }
+    label {
+        color: white;
+    }
 
-        .form-button {
-            color: #ffffff;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-            display: block;
-            width: 100%;
-            text-align: center;
-        }
+    input[type="text"], input[type="date"], select, textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        color: rgb(0, 0, 0);
+        background-color: white;
+    }
 
-        .form-button:hover {
-            background-color: #691C32;
-        }
 
-        .container {
-            width: 50%;
-            margin: 50px auto;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border: 2px solid #f2eddf;
-            background-color: #235B4E;
-            opacity: 0.90;
-            color: rgb(0, 0, 0);
-            text-align: center;
-        }
+    .ui-datepicker {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        background-color: white;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-        .container h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: rgb(255, 255, 255);
-        }
+    .ui-datepicker-header {
+        background-color: #235B4E;
+        border: none;
+        color: white;
+    }
 
-        label {
-            color: white;
-        }
+    .ui-datepicker-title {
+        color: white;
+    }
 
-        input[type="text"], input[type="date"], select, textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            color: rgb(0, 0, 0);
-            background-color: white;
-        }
+    .ui-datepicker-calendar td {
+        padding: 5px;
+    }
 
-        .ui-datepicker {
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            background-color: white;
-            border: 1px solid #ccc;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+    .ui-datepicker-calendar td a {
+        color: black;
+        text-decoration: none;
+    }
 
-        .ui-datepicker-header {
-            background-color: #235B4E;
-            border: none;
-            color: white;
-        }
+    .ui-datepicker-calendar td a:hover {
+        background-color: #d2e8d4;
+    }
 
-        .ui-datepicker-title {
-            color: white;
-        }
+    .ui-datepicker-close {
+        background-color: #235B4E;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        margin-top: 5px;
+        cursor: pointer;
+    }
 
-        .ui-datepicker-calendar td {
-            padding: 5px;
-        }
+    .ui-datepicker-close:hover {
+        background-color: #1a4331;
+    }
 
-        .ui-datepicker-calendar td a {
-            color: black;
-            text-decoration: none;
-        }
+    .ui-datepicker-prev {
+        cursor: pointer;
+        margin-right: 40%;
+    }
 
-        .ui-datepicker-calendar td a:hover {
-            background-color: #d2e8d4;
-        }
+    .ui-datepicker-next {
+        cursor: pointer;
+    }
 
-        .ui-datepicker-close {
-            background-color: #235B4E;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            margin-top: 5px;
-            cursor: pointer;
-        }
 
-        .ui-datepicker-close:hover {
-            background-color: #1a4331;
-        }
+    input[type="date"]::-webkit-datetime-edit {
+        color: black;
+    }
+    input[type="text"].text-12pt {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
 
-        .ui-datepicker-prev {
-            cursor: pointer;
-            margin-right: 40%;
-        }
 
-        .ui-datepicker-next {
-            cursor: pointer;
-        }
 
-        input[type="date"]::-webkit-datetime-edit {
-            color: black;
-        }
 
-        .errorlist {
-            color: white;
-        }
     </style>
 {% endblock styles %}
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/i18n/jquery-ui-i18n.min.js"></script>
+
 {% block content %}
-{% if user.is_authenticated %}
-    <div class="form-container">
-        <h2 class="form-title">Editar Registro</h2>
-        <form method="post">
+    <div class="p-5 flex items-center justify-center">
+        <form class="w-full" method="post">
             {% csrf_token %}
-            <div class="form-group">
-                {{ registro_form.as_p }}
+            <div class="colorRectangulo rounded-xl border-3 p-6 w-full">
+                <div class="text-center mb-4">
+                    <h1 class="colorH1">Editar Acuerdo</h1>
+                </div>
+                <div class="text-center mb-4">
+                    <div class="p-4 rounded-lg flex justify-between">
+                        <div class="flex-1 text-center">
+
+
+                            <div class="px-2 flex-1 text-center">
+                                <div class="flex flex-col space-y-2">
+                                    <label for="{{ registro_form.claveAcuerdo.id_for_label }}">Clave del Acuerdo:</label>
+                                    {{ registro_form.claveAcuerdo }}
+                                </div>
+                            </div>
+                                                                          
+                            
+                            <div class="py-4 rounded-lg border-3 p-2 w-full">
+                                <h1 class="colorH2">Fechas:</h1>
+                                <div class="p-2 rounded-lg flex justify-between">
+        
+                                    <div class="px-2 flex-1 text-center">
+                                        <div class="flex flex-col space-y-2">
+                                            <label for="{{ registro_form.fecha_inicio.id_for_label }}">Inicio:</label>
+                                            {{ registro_form.fecha_inicio }}
+                                        </div>
+                                    </div>
+        
+                                    <div class="px-2 flex-1 text-center">
+                                        <div class="flex flex-col space-y-2">
+                                            <label for="{{ registro_form.fecha_termino.id_for_label }}">Termino:</label>
+                                            {{ registro_form.fecha_termino }}
+                                        </div>
+                                    </div>
+        
+                                </div>
+                            </div>
+        
+                            <div class="px-2 flex-1 text-center">
+                                <div class="flex flex-col space-y-2">
+                                    <label for="{{ registro_form.rubro.id_for_label }}">Rubro:</label>
+                                    {{ registro_form.rubro }}
+                                </div>
+                            </div>
+        
+                        </div>
+                        
+                        <div class="flex-1 text-center">
+                            <div class="flex-1 text-center">
+        
+                                <div class="px-2 flex flex-col space-y-2">
+                                    <label for="{{ registro_form.area.id_for_label }}">OR:</label>
+                                    {{ registro_form.area }}
+                                </div>
+        
+                                <div class="px-2 py-10 flex flex-col space-y-2">
+                                    <label for="{{ accion_form.area2.id_for_label }}">Áreas Responsables:</label>
+                                    {{ accion_form.area2 }}
+                                </div>
+        
+        
+                            </div>
+                            <div class="px-2 flex flex-col space-y-2">
+                                <label for="{{ registro_form.porcentaje_avance.id_for_label }}">Porcentaje de Avance:</label>
+                                {{ registro_form.porcentaje_avance }}
+                            </div>
+                            
+                            
+                            <div class="px-2 flex flex-col space-y-2">
+                                <label for="{{ registro_form.estado.id_for_label }}">Estatus:</label>
+                                {{ registro_form.estado }}
+                            </div>
+                        </div>
+                        <div class="flex-1 text-center">
+        
+                            <div class="px-2 py-10 flex flex-col space-y-2">
+                                <label for="{{ accion_form.descripcion.id_for_label }}">Descripción:</label>
+                                {{ accion_form.descripcion }}
+                            </div>
+        
+                        </div>
+
+                        
+                        
+                    </div>
+                    
+                </div>
+                <div class="text-center">
+                    <button class="py-3 px-6 mx-1 bg-inm-marron-200 hover:bg-inm-marron-100 rounded-xl text-white" type="submit">Guardar Cambios</button>
+                </div>
             </div>
-            <div class="form-group">
-                {{ accion_form.as_p }}
-            </div>
-            <button type="submit" class="form-button bg-inm-rojo-200">Guardar Cambios</button>
         </form>
     </div>
-{% endif %}
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $("#id_fecha_inicio").datepicker({
-            dateFormat: 'dd/mm/yy',
-            dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-            firstDay: 1,
-            prevText: 'Anterior',
-            nextText: 'Siguiente',
-            currentText: 'Hoy',
-            closeText: 'Cerrar',
-            showButtonPanel: false,
-            buttonText: 'Seleccionar fecha',
-            showAnim: 'slideDown',
-            showOtherMonths: true,
-            selectOtherMonths: true
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#id_fecha_inicio").datepicker({
+                dateFormat: 'dd/mm/yy',
+                dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                firstDay: 1,
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                currentText: 'Hoy',
+                closeText: 'Cerrar',
+                showButtonPanel: false,
+                buttonText: 'Seleccionar fecha',
+                showAnim: 'slideDown',
+                showOtherMonths: true, 
+                selectOtherMonths: true 
+            });
+    
+            $("#id_fecha_termino").datepicker({
+                dateFormat: 'dd/mm/yy',
+                dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                firstDay: 1,
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                currentText: 'Hoy',
+                closeText: 'Cerrar',
+                showButtonPanel: false,
+                buttonText: 'Seleccionar fecha',
+                showAnim: 'slideDown',
+                showOtherMonths: true, 
+                selectOtherMonths: true 
+            });
         });
-
-        $("#id_fecha_termino").datepicker({
-            dateFormat: 'dd/mm/yy',
-            dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-            prevText: 'Anterior',
-            nextText: 'Siguiente',
-            currentText: 'Hoy',
-            closeText: 'Cerrar',
-            showButtonPanel: false,
-            buttonText: 'Seleccionar fecha',
-            showAnim: 'slideDown',
-            showOtherMonths: true,
-            selectOtherMonths: true
-        });
-    });
-</script>
+    </script>
 {% endblock content %}

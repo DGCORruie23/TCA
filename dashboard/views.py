@@ -15,6 +15,7 @@ import locale
 from datetime import date
 from datetime import datetime
 import re
+from django.contrib import messages
 
 from django.db import transaction
 from dateutil.parser import parse
@@ -164,11 +165,32 @@ def detalles(request, registro_id):
 @login_required
 def editar_registro(request, id):
     registro = get_object_or_404(Registro, idRegistro=id)
-    accion = registro.accionR.first() 
-    
+    accion = registro.accionR.first()
+
     if request.method == 'POST':
         registro_form = RegistroConAccionesFORM(request.POST, instance=registro)
         accion_form = AccionesForm(request.POST, instance=accion)
+
+        if registro_form.is_valid() and accion_form.is_valid():
+            registro = registro_form.save()
+            accion = accion_form.save(commit=False)
+            accion.registro = registro
+            accion.save()
+
+            messages.success(request, "Guardado correctamente.")
+            return render(request, 'dashboard/editar_registro.html', {
+                'registro_form': registro_form,
+                'accion_form': accion_form,
+            })
+
+        else:
+            # Collect all field errors and display them in messages
+            for field, errors in registro_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error en {field}: {error}")
+            for field, errors in accion_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error en {field}: {error}")
     else:
         registro_form = RegistroConAccionesFORM(instance=registro)
         accion_form = AccionesForm(instance=accion)
@@ -177,7 +199,6 @@ def editar_registro(request, id):
         'registro_form': registro_form,
         'accion_form': accion_form,
     })
-
 
 
 @login_required

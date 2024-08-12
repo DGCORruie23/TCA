@@ -152,6 +152,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/i18n/jquery-ui-i18n.min.js"></script>
 
 {% block content %}
+{% if dataU.0.tipo == "1" %}
     <div class="p-5 flex items-center justify-center">
 
 
@@ -309,4 +310,5 @@
 
 
     </script>
+{% endif %}
 {% endblock content %}

@@ -47,41 +47,40 @@ class RegistroConAccionesFORM(forms.ModelForm):
 
         return claveAcuerdo
 
+
+
     def clean_fecha_inicio(self):
         fecha_inicio = self.cleaned_data.get('fecha_inicio')
         if not fecha_inicio:
             raise ValidationError("La fecha de inicio es obligatoria.")
-        try:
-            datetime.strptime(fecha_inicio.strftime('%d/%m/%Y'), '%d/%m/%Y')
-        except ValueError:
+        
+        fecha_inicio_str = fecha_inicio.strftime('%d/%m/%Y')
+
+        if not re.match(r'^\d{2}/\d{2}/\d{4}$', fecha_inicio_str):
             raise ValidationError("La fecha debe tener el formato dd/mm/yyyy.")
+
+        year = int(fecha_inicio_str.split('/')[-1])
+        if year < 1000 or year > 9999:
+            raise ValidationError("El año debe tener 4 dígitos.")
+        
         return fecha_inicio
 
     def clean_fecha_termino(self):
         fecha_termino = self.cleaned_data.get('fecha_termino')
         if not fecha_termino:
             raise ValidationError("La fecha de término es obligatoria.")
-        try:
-            datetime.strptime(fecha_termino.strftime('%d/%m/%Y'), '%d/%m/%Y')
-        except ValueError:
+        
+        fecha_termino_str = fecha_termino.strftime('%d/%m/%Y')
+        
+        if not re.match(r'^\d{2}/\d{2}/\d{4}$', fecha_termino_str):
             raise ValidationError("La fecha debe tener el formato dd/mm/yyyy.")
+
+        year = int(fecha_termino_str.split('/')[-1])
+        if year < 1000 or year > 9999:
+            raise ValidationError("El año debe tener 4 dígitos.")
+        
         return fecha_termino
-    
-    def clean(self):
-        cleaned_data = super().clean()
-        porcentaje_avance = cleaned_data.get('porcentaje_avance')
 
-        if porcentaje_avance == 100:
-            cleaned_data['estado'] = 2
-        else:
-            cleaned_data['estado'] = 1
-        estado = cleaned_data.get('estado')
-        print(estado)
-        print(porcentaje_avance)
-        if estado == 1 and porcentaje_avance != 100:
-            raise forms.ValidationError('El estado está en "Atendido", pero el porcentaje de avance no es 100.')
-
-        return cleaned_data
 
     
 class AccionesForm(forms.ModelForm):

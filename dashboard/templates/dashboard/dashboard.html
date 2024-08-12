@@ -5,580 +5,7 @@
 {% block title %}Dashboard{% endblock title %}
 
 {% block styles %}
-<style>
-    table {
-        border-collapse: collapse;
-        width: 100%;
-    }
-
-    th,
-    td {
-        text-align: left;
-        padding: 8px;
-        max-width: 400px;
-        word-wrap: break-word;
-    }
-
-    tr:nth-child(even) {
-        background-color: #e1e1e1;
-    }
-
-    td:nth-child(4) {
-        text-align: justify;
-    }
-
-    th {
-        color: rgb(255, 255, 255);
-    }
-
-    .bdtable {
-        border: 2px solid #b4b4b4;
-        border-radius: 15px;
-        box-shadow: 0px 1px;
-        margin-left: 100px;
-        margin-right: 100px;
-    }
-
-    .punto {
-        margin-right: 100px;
-    }
-
-    #myInput {
-        background-position: 10px 10px;
-        background-repeat: no-repeat;
-        width: 45%;
-        font-size: 16px;
-        padding: 12px 10px 12px 40px;
-        border: 1px solid #ddd;
-        margin-left: 12%;
-        border-radius: 10px;
-        margin-bottom: 20px;
-    }
-
-    .flex-container {
-        display: flex;
-        align-items: stretch;
-    }
-
-    .flex-container>div {
-        margin: 10px;
-        text-align: center;
-        line-height: 20px;
-        font-size: 15px;
-    }
-
-    .overlay {
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(0, 0, 0, 0.7);
-        transition: opacity 500ms;
-        visibility: hidden;
-        opacity: 0;
-    }
-
-    .overlay:target {
-        visibility: visible;
-        opacity: 1;
-    }
-
-    #popupBody {
-        width: 60%;
-        max-height: 80vh;
-        overflow-y: auto;
-        padding: 2%;
-        border-radius: 15px;
-        box-shadow: 0 0 5px #CCC;
-        background: #FFF;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        transition: all 5s ease-in-out;
-    }
-
-    #cerrar {
-        position: absolute;
-        top: 20px;
-        right: 30px;
-        font-size: 30px;
-        font-weight: bold;
-        text-decoration: none;
-        color: #F00;
-        transition: all 100ms;
-    }
-
-    tr.header {
-        background-color: #235B4E;
-        color: white;
-    }
-
-    .responsive-image {
-        max-width: 100%;
-        height: 300px;
-        display: block;
-        margin: 0 auto;
-    }
-
-    .respI {
-        width: auto;
-        height: 300px;
-        display: block;
-        margin: 0 auto;
-    }
-
-    .popupBody {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        max-width: 80%;
-        max-height: 80%;
-        overflow-y: auto;
-        border: 2px solid #235B4E;
-    }
-
-    .popupContent {
-        font-size: 16px;
-        line-height: 1.6;
-        color: #10312B;
-    }
-
-    .popupTitle {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 15px;
-        color: #10312B;
-        text-align: center;
-    }
-
-    .popupSection {
-        margin-bottom: 20px;
-        text-align: justify;
-    }
-
-    .popupSection h3 {
-        font-size: 18px;
-        margin-bottom: 10px;
-        color: #235B4E;
-        text-transform: uppercase;
-        border-bottom: 2px solid #691C32;
-        padding-bottom: 5px;
-    }
-
-    .respI {
-        margin-bottom: 15px;
-    }
-
-    .responsive-image {
-        max-width: 100%;
-        height: auto;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        max-height: 300px;
-    }
-
-    .cerrar {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 24px;
-        color: #9F2241;
-        text-decoration: none;
-    }
-
-    .cerrar:hover {
-        color: #C30E2E;
-        transition: color 0.3s ease;
-    }
-
-    .username {
-        text-align: center;
-        padding-right: 10px;
-        color: #235B4E;
-        font-weight: bold;
-        font-size: 30px;
-        margin-bottom: 10px;
-    }
-
-    .flex {
-        display: flex;
-    }
-
-    .flex-col {
-        flex-direction: column;
-    }
-
-    .items-center {
-        align-items: center;
-    }
-
-    .justify-center {
-        justify-content: center;
-    }
-
-    .space-y-2>*+* {
-        margin-top: 0.5rem;
-    }
-
-    .w-full {
-        width: 100%;
-    }
-
-    .text-center {
-        text-align: center;
-    }
-
-    .h-full {
-        height: 100%;
-    }
-
-    .flex-container {
-        display: flex;
-        align-items: center;
-    }
-
-    .flex-container>div {
-        margin: 10px;
-        text-align: center;
-        line-height: 20px;
-        font-size: 15px;
-        height: 100%;
-    }
-
-
-    td {
-        text-align: justify;
-        vertical-align: middle;
-    }
-
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    .modal-content {
-        background-color: white;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 60%;
-        max-width: 600px;
-        border-radius: 5px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .modal-content p {
-        margin-bottom: 15px;
-    }
-
-    .modal-content button {
-        display: block;
-        margin-top: 10px;
-        padding: 10px 20px;
-        background-color: #C30E2E;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .modal-content button:hover {
-        background-color: #a90b28;
-    }
-
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-
-
-    .search-container input {
-        flex: 1;
-        padding: 10px;
-        font-size: 16px;
-        margin-right: 10px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        box-sizing: border-box;
-    }
-
-    .search-container {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-        margin-left: 10%;
-        max-width: 80%;
-        /*overflow: auto;*/
-    }
-
-
-
-
-    .notification-bell {
-        position: relative;
-        display: inline-block;
-        cursor: pointer;
-    }
-
-    .bell-icon {
-        width: 24px;
-        height: 24px;
-    }
-
-    .notification-count {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        background-color: red;
-        color: white;
-        border-radius: 50%;
-        padding: 5px 10px;
-        font-size: 12px;
-    }
-
-
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        justify-content: center;
-        align-items: center;
-    }
-
-    .modal-content {
-        background-color: white;
-        padding: 20px;
-        border: 1px solid #888;
-        border-radius: 10px;
-        max-width: 500px;
-        width: 80%;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        animation: fadeIn 0.3s ease;
-        max-height: 80vh;
-        overflow-y: auto;
-    }
-
-    .modal-content h4 {
-        margin-top: 0;
-    }
-
-    .modal-content ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    .modal-content li {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .modal-content li:last-child {
-        border-bottom: none;
-    }
-
-
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-    }
-
-    .notification-link {
-        display: inline-block;
-        margin-top: 10px;
-        padding: 8px 16px;
-        background-color: #235B4E;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-        font-size: 14px;
-        transition: background-color 0.3s ease;
-    }
-
-    .notification-link:hover {
-        background-color: #1a4331;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-
-        to {
-            opacity: 1;
-        }
-    }
-
-
-
-
-    .bdtable {
-        border: 2px solid #b4b4b4;
-        border-radius: 15px;
-        box-shadow: 0px 1px;
-        margin-left: 100px;
-        margin-right: 100px;
-    }
-
-    th,
-    td {
-        text-align: justify;
-        padding: 8px;
-
-        word-wrap: break-word;
-    }
-
-    th.descripcion,
-    td.descripcion {
-        width: 60%;
-    }
-
-    th.areas-responsables,
-    td.areas-responsables {
-        width: 15%;
-    }
-
-    th.rubro,
-    td.rubro {
-        width: 15%;
-    }
-
-
-    .descripcion {
-        width: 40%;
-    }
-
-    input::placeholder {
-        color: #999;
-    }
-
-
-    input[type="text"] {
-        padding: 5px;
-        margin: 5px;
-        width: 250px;
-        box-sizing: border-box;
-    }
-
-
-    input::placeholder {
-        color: #999;
-        white-space: normal;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .search-container select {
-        height: auto;
-        min-width: 200px;
-    }
-
-
-    td.actions-column {
-        white-space: nowrap;
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    td.actions-column form {
-        display: inline-block;
-        margin-right: 5px;
-    }
-
-    td.actions-column {
-        white-space: nowrap;
-        display: flex;
-        justify-content: space-between;
-    }
-
-    td.actions-column form {
-        display: inline-block;
-        margin-right: 5px;
-    }
-
-    .action-link {
-        display: inline-block;
-        width: 100px;
-        text-align: center;
-        margin-bottom: 10px;
-        padding: 5px 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-
-    .action-link+.action-link {
-        margin-left: 10px;
-    }
-
-    .action-link,
-    .other-button-class {
-        display: inline-block;
-        vertical-align: middle;
-    }
-
-
-    .action-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-    }
-
-    .action-link,
-    .action-button {
-        display: inline-block;
-        width: 100px;
-        text-align: center;
-        margin-bottom: 10px;
-        padding: 5px 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-
-    .action-link+.action-link,
-    .action-link+.action-button {
-        margin-left: 0;
-    }
-
-
-
-
-
-    
-</style>
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 {% endblock styles %}
 
 {% block content %}
@@ -587,12 +14,17 @@
 <p class="username">Usuario: {{ dataU.0.nombre }}</p>
 <input type="hidden" id="logged-in-user" value="{{ user.id }}">
 
-<div id="notification-bell" class="notification-bell" onclick="toggleModal()">
-    <img src="{% static bell.jpg %}" alt="">
-    {% if notificaciones %}
-    <span class="notification-count">{{ notificaciones|length }}</span>
-    {% endif %}
+<div class="notification-container">
+    <div id="notification-bell" class="notification-icon" onclick="toggleModal()">
+        <img src="{% static 'icons/bell-red.png' %}" alt="">
+        {% if notificaciones %}
+        <span class="notification-count">{{ notificaciones|length }}</span>
+        {% endif %}
+    </div>
 </div>
+
+
+
 <div id="notificationModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="toggleModal()">&times;</span>
@@ -602,7 +34,8 @@
             <li>
                 Nuevo acuerdo creado: <strong>{{ notificacion.registro.claveAcuerdo }}</strong>
                 <br>
-                <a href="{% url 'marcar_notificacion_leida' notificacion.id %}" class="notification-link">Ir al acuerdo</a>
+                <a href="{% url 'marcar_notificacion_leida' notificacion.id %}" class="notification-link">Ir al
+                    acuerdo</a>
             </li>
             {% endfor %}
         </ul>
@@ -692,23 +125,13 @@
     </select>
 </div>
 
-
-
-
-<!-- <div class="search-container">
-    <input type="text" id="searchStatus" placeholder="Buscar por Estatus" onkeyup="filterTable()">
-    <input type="text" id="searchClave" placeholder="Buscar por Clave de Acuerdo" onkeyup="filterTable()">
-    <input type="text" id="searchArea" placeholder="Buscar por Áreas Responsables" onkeyup="filterTable()">
-</div> -->
-
-
-<div class="bdtable bg-inm-marron-100">
+<div class="bdtable bg-inm-marron-100 table-container">
 
     <table id="myTable">
         <tr class="header">
-            <th class="text-center">Clave de Acuerdo</th>
-            <th class="text-center">Fecha Inicio</th>
-            <th class="text-center">Fecha Término</th>
+            <th id="claveAcuerdo" class="text-center claveAcuerdo">Clave de Acuerdo</th>
+            <th class="text-center fechaInicio">Fecha Inicio</th>
+            <th class="text-center fechaTermino">Fecha Término</th>
             <th class="text-center">Rubro</th>
             <th class="text-center descripcion">Descripción</th>
             <th class="text-center">Áreas Responsables</th>
@@ -718,9 +141,9 @@
 
         {% for data in registrosConFechas %}
         <tr>
-            <td>{{ data.registro.claveAcuerdo }}</td>
-            <td>{{ data.fecha_inicio }}</td>
-            <td>{{ data.fecha_termino }}</td>
+            <td id="claveAcuerdo" class="claveAcuerdo">{{ data.registro.claveAcuerdo }}</td>
+            <td class="fechaInicio">{{ data.fecha_inicio }}</td>
+            <td class="fechaTermino">{{ data.fecha_termino }}</td>
             <td>
                 {% for rubro in data.registro.rubro.all %}
                 {{ rubro.tipo }}{% if not forloop.last %}, {% endif %}
@@ -730,36 +153,38 @@
                 {% for accion in data.registro.accionR.all %}
                 {{ accion.descripcion }}
                 <div class="text-right">
-                    <a href="#popup{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
-                        class="text-inm-rojo-200 hover:text-inm-marron-200 font-bold ml-2">Ver más</a>
+                    <button class="text-inm-rojo-200 hover:text-inm-marron-200 font-bold ml-2"
+                        onclick="openModal('{{ forloop.parentloop.counter }}_{{ forloop.counter }}')">Ver más</a>
                 </div>
 
-                <div id="popup{{ forloop.parentloop.counter }}_{{ forloop.counter }}" class="overlay">
-                    <div id="popupBody" class="popupBody">
-                        <a href="#" id="cerrar" class="cerrar">&times;</a>
-                        <div class="popupContent">
-                            <h2 class="popupTitle verde">Detalles del Registro</h2>
-                            <div class="popupSection">
-                                <h3 class="marron">OR:</h3>
-                                <ul>
-                                    <li>{{ data.areas_name }}</li>
-                                </ul>
-                            </div>
-                            <div class="popupSection">
-                                <h3 class="marron">Áreas Responsables:</h3>
-                                <ul>
-                                    {% for area2 in accion.area2.all %}
-                                    <li>{{ area2.name }}</li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                            <div class="popupSection" style="text-align: justify;">
-                                <h3 class="marron">Descripción:</h3>
-                                <p style="text-align: justify;">{{ accion.descripcion }}</p>
-                            </div>
+
+
+                <div id="modal{{ forloop.parentloop.counter }}_{{ forloop.counter }}" class="modal">
+                    <div class="modal-content">
+                        <span class="close"
+                            onclick="closeModal('{{ forloop.parentloop.counter }}_{{ forloop.counter }}')">&times;</span>
+                        <h2 class="popupTitle verde">Acuerdo {{ data.registro.claveAcuerdo }}</h2>
+                        <div class="popupSection">
+                            <h3 class="marron">OR:</h3>
+                            <ul>
+                                <li>{{ data.areas_name }}</li>
+                            </ul>
+                        </div>
+                        <div class="popupSection">
+                            <h3 class="marron">Áreas Responsables:</h3>
+                            <ul>
+                                {% for area2 in accion.area2.all %}
+                                <li>{{ area2.name }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="popupSection" style="text-align: justify;">
+                            <h3 class="marron">Descripción:</h3>
+                            <p style="text-align: justify;">{{ accion.descripcion }}</p>
                         </div>
                     </div>
                 </div>
+
                 {% endfor %}
             </td>
 
@@ -940,6 +365,30 @@
         }
 
         filterTable();
+    });
+
+
+    function openModal(id) {
+        document.getElementById('modal' + id).style.display = 'block';
+    }
+
+    function closeModal(id) {
+        document.getElementById('modal' + id).style.display = 'none';
+    }
+
+
+    window.onclick = function (event) {
+        var modals = document.getElementsByClassName('modal');
+        for (var i = 0; i < modals.length; i++) {
+            if (event.target == modals[i]) {
+                modals[i].style.display = "none";
+            }
+        }
+    }
+
+
+    document.getElementById('pop').addEventListener('click', function (event) {
+        event.preventDefault();
     });
 
 </script>

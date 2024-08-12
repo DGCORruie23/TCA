@@ -166,12 +166,17 @@ def detalles(request, registro_id):
 def editar_registro(request, id):
     registro = get_object_or_404(Registro, idRegistro=id)
     accion = registro.accionR.first()
+    userDataI = UsuarioP.objects.filter(user__username=request.user)
 
     if request.method == 'POST':
         registro_form = RegistroConAccionesFORM(request.POST, instance=registro)
         accion_form = AccionesForm(request.POST, instance=accion)
 
         if registro_form.is_valid() and accion_form.is_valid():
+            if registro.estado == 1:
+                registro.fecha_finalizacion = "1970-01-01"
+            else:
+                registro.fecha_finalizacion = datetime.now().strftime("%Y-%m-%d")
             registro = registro_form.save()
             accion = accion_form.save(commit=False)
             accion.registro = registro
@@ -181,10 +186,12 @@ def editar_registro(request, id):
             return render(request, 'dashboard/editar_registro.html', {
                 'registro_form': registro_form,
                 'accion_form': accion_form,
+                'dataU': userDataI,
+
             })
 
         else:
-            # Collect all field errors and display them in messages
+
             for field, errors in registro_form.errors.items():
                 for error in errors:
                     messages.error(request, f"Error en {field}: {error}")
@@ -198,6 +205,7 @@ def editar_registro(request, id):
     return render(request, 'dashboard/editar_registro.html', {
         'registro_form': registro_form,
         'accion_form': accion_form,
+        'dataU': userDataI,
     })
 
 
@@ -205,8 +213,9 @@ def editar_registro(request, id):
 def eliminar_registro(request, idRegistro):
     registro = get_object_or_404(Registro, idRegistro=idRegistro)
     accion = registro.accionR.first()
+    userDataI = UsuarioP.objects.filter(user__username=request.user)
 
-    if request.method == 'POST':
+    if userDataI[0].tipo == "1" and request.method == 'POST':
         registro.delete()
         accion.delete()
         return redirect('dashboard')

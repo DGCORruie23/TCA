@@ -36,7 +36,9 @@ class RegistroConAccionesFORM(forms.ModelForm):
 
     def clean_claveAcuerdo(self):
         claveAcuerdo = self.cleaned_data.get('claveAcuerdo')
-        pattern = r'^\d{2}/[A-Z]{3}/\d{2}/\d{4}$'
+        print(claveAcuerdo)
+        pattern = r'^\d{2}/[A-Z]{1,4}/\d{2}/\d{4}$'
+
         if not re.match(pattern, claveAcuerdo):
             raise ValidationError("La clave del acuerdo debe tener el formato 00/AREA/MES/AÑO.")
 

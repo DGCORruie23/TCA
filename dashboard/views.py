@@ -47,17 +47,26 @@ def dashboard(request):
         registros_ordenados = list(registros_en_proceso) + list(registros_atendidos)
 
         for registro in registros_ordenados:
-            fecha_inicio = registro.fecha_inicio.strftime('%d-%m-%Y')
-            fecha_termino = registro.fecha_termino.strftime('%d-%m-%Y')
-            fecha_inicio_dt = datetime.strptime(fecha_inicio, '%d-%m-%Y')
-            fecha_termino_dt = datetime.strptime(fecha_termino, '%d-%m-%Y')
+            fecha_inicio_str = registro.fecha_inicio.strftime('%d-%m-%Y')
+            fecha_inicio = fecha_inicio_str.split('-')
+
+            fecha_termino_str = registro.fecha_termino.strftime('%d-%m-%Y')
+            fecha_termino = fecha_termino_str.split('-')
+
+            fecha_inicio_dt = datetime.strptime(fecha_inicio_str, '%d-%m-%Y')
+            fecha_termino_dt = datetime.strptime(fecha_termino_str, '%d-%m-%Y')
             diferencia = datetime.now() - fecha_termino_dt
+
             fecha_finalizacion = registro.fecha_finalizacion
+
             areas = registro.area.all()
             areas_str = ', '.join(area.nickname for area in areas)
             areas_name = ', '.join(area.name for area in areas)
+            
             dias = diferencia.days
             porcentaje = registro.porcentaje_avance
+            clave_acuerdo_partes = registro.claveAcuerdo.split('/')
+
 
             registrosConFechas.append({
                 'registro': registro,
@@ -67,7 +76,8 @@ def dashboard(request):
                 'areas_str': areas_str,
                 'areas_name': areas_name,
                 'fecha_finalizacion': fecha_finalizacion,
-                'porcentaje': porcentaje
+                'porcentaje': porcentaje,
+                'clave_acuerdo_partes': clave_acuerdo_partes
             })
 
         now = datetime.now()

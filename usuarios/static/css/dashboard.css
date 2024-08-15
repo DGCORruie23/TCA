@@ -703,8 +703,9 @@ td {
 
 th#claveAcuerdo,
 td#claveAcuerdo {
-    max-width: 75px;
+    max-width: 100px;
     overflow: hidden;
+    text-align: center;
 }
 
 th#fechaInicio,
@@ -718,3 +719,22 @@ td#fechaTermino {
     max-width: 75px;
     overflow: hidden;
 }
+
+
+
+
+
+
+.elegant-label {
+    display: block;
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 5px;
+    text-align: center;
+    color: white;
+    background-color: #691C32;;
+
+    border-radius: 5px;
+}
+
+

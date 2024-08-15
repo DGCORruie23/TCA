@@ -99,6 +99,7 @@
 </div>
 {% endif %}
 
+<label class="elegant-label" id="totales"> </label>
 
 
 <div class="search-container">
@@ -123,11 +124,14 @@
         {% endfor %}
         {% endif %}
     </select>
+
+
 </div>
 
 <div class="bdtable bg-inm-marron-100 table-container">
 
-    <table id="myTable">
+    <table id="myTable" >
+
         <tr class="header">
             <th id="claveAcuerdo" class="text-center claveAcuerdo">Clave de Acuerdo</th>
             <th class="text-center fechaInicio">Fecha Inicio</th>
@@ -141,9 +145,24 @@
 
         {% for data in registrosConFechas %}
         <tr>
-            <td id="claveAcuerdo" class="claveAcuerdo">{{ data.registro.claveAcuerdo }}</td>
-            <td class="fechaInicio">{{ data.fecha_inicio }}</td>
-            <td class="fechaTermino">{{ data.fecha_termino }}</td>
+            <td id="claveAcuerdo" class="text-center claveAcuerdo">
+                {% for part in data.clave_acuerdo_partes %}
+                    {{part}}<br>
+                {% endfor %}
+            </td>
+            
+            <td class="text-center fechaInicio">
+                {% for part in data.fecha_inicio %}
+                    {{part}}<br>
+                {% endfor %}
+            </td>
+
+            <td class="text-center fechaTermino">
+                {% for part in data.fecha_termino %}
+                    {{part}}<br>
+                {% endfor %}
+            </td>
+
             <td>
                 {% for rubro in data.registro.rubro.all %}
                 {{ rubro.tipo }}{% if not forloop.last %}, {% endif %}
@@ -273,6 +292,28 @@
 <br><br><br>
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 <script>
+        function myFunction(idInput) {
+            x1 = 0
+          var input, filter, table, tr, td, i, txtValue, conteo;
+          input = document.getElementById(idInput);
+          table = document.getElementById("myTable");
+          tr = table.getElementsByTagName("tr");
+        
+          conteo = 0
+
+
+          for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[x1];
+            if (td) {
+              txtValue = td.textContent || td.innerText;
+              if (tr[i].style.display == "") {
+                conteo++
+              } 
+            } 
+          }
+          
+          document.getElementById("totales").innerHTML = "Acuerdos: " + conteo
+        }
     function filterTable() {
         var inputStatus = document.getElementById("searchStatus1").value.toUpperCase();
         var inputClave = document.getElementById("searchClave1").value.toUpperCase();
@@ -282,6 +323,8 @@
         var inputDescripcion = document.getElementById("searchDescripcion").value.toUpperCase();
         var table = document.getElementById("myTable");
         var tr = table.getElementsByTagName("tr");
+
+        
 
         for (var i = 1; i < tr.length; i++) {
             var tdStatus = tr[i].getElementsByTagName("td")[6];
@@ -293,17 +336,17 @@
 
             if (tdStatus && tdClave && tdArea && tdFechaInicio && tdFechaTermino && tdDescripcion) {
                 var txtValueStatus = tdStatus.textContent || tdStatus.innerText;
-                var txtValueClave = tdClave.textContent || tdClave.innerText;
+                var txtValueClave = (tdClave.textContent || tdClave.innerText).replace(/\s+/g,' ');
                 var txtValueArea = tdArea.textContent || tdArea.innerText;
-                var txtValueFechaInicio = tdFechaInicio.textContent || tdFechaInicio.innerText;
-                var txtValueFechaTermino = tdFechaTermino.textContent || tdFechaTermino.innerText;
+                var txtValueFechaInicio = (tdFechaInicio.textContent || tdFechaInicio.innerText).replace(/\s+/g, ' ').trim();
+                var txtValueFechaTermino = (tdFechaTermino.textContent || tdFechaTermino.innerText).replace(/\s+/g,' ').trim();
                 var txtValueDescripcion = tdDescripcion.textContent || tdDescripcion.innerText;
 
                 var matchesStatus = txtValueStatus.toUpperCase().indexOf(inputStatus) > -1;
                 var matchesClave = txtValueClave.toUpperCase().indexOf(inputClave) > -1;
                 var matchesArea = selectedAreas.length === 0 || selectedAreas.some(area => txtValueArea.toUpperCase().indexOf(area) > -1);
 
-                var matchesFechaInicio = !inputFechaInicio || (inputFechaInicio === txtValueFechaInicio);
+                var matchesFechaInicio = !inputFechaInicio || (inputFechaInicio == txtValueFechaInicio);
                 var matchesFechaTermino = !inputFechaTermino || (inputFechaTermino === txtValueFechaTermino);
                 var matchesDescripcion = txtValueDescripcion.toUpperCase().indexOf(inputDescripcion) > -1;
 
@@ -314,6 +357,7 @@
                 }
             }
         }
+        myFunction("searchStatus1")
     }
 
 
@@ -365,6 +409,7 @@
         }
 
         filterTable();
+
     });
 
 

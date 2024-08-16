@@ -62,7 +62,7 @@ def dashboard(request):
             areas = registro.area.all()
             areas_str = ', '.join(area.nickname for area in areas)
             areas_name = ', '.join(area.name for area in areas)
-            
+
             dias = diferencia.days
             porcentaje = registro.porcentaje_avance
             clave_acuerdo_partes = registro.claveAcuerdo.split('/')
@@ -81,7 +81,7 @@ def dashboard(request):
             })
 
         now = datetime.now()
-        nuevos_registros = registros.filter(fecha_creacion__gte=now - timedelta(days=7))
+        nuevos_registros = registros.filter(fecha_creacion__gte=now - timedelta(days=365))
 
 
         for registro in nuevos_registros:
@@ -108,36 +108,6 @@ def marcar_notificacion_leida(request, notificacion_id):
 
     registro_id = notificacion.registro.idRegistro
     return redirect('detalles', registro_id=registro_id)
-
-def crear_registro(request):
-    if request.method == 'POST':
-        registro_form = RegistroConAccionesYPruebasForm(request.POST)
-        if registro_form.is_valid():
-            registro = registro_form.save()
-
-            areas2 = registro_form.cleaned_data['accion1_area2']
-
-            accion = Acciones.objects.create(
-                descripcion=request.POST['accion1_descripcion']
-            )
-            accion.area2.set(areas2)
-            accion.save()
-            registro.accionR.add(accion)
-
-            # prueba = Pruebas.objects.create(
-            #     nom_archivo=request.POST['prueba1_nom_archivo'],
-            #     tipo=request.POST['prueba1_tipo'],
-            #     archivo_url=request.POST['prueba1_archivo_url']
-            # )
-            # prueba.acciones.add(accion)
-
-            return redirect('dashboard')
-    else:
-        registro_form = RegistroConAccionesYPruebasForm()
-
-    return render(request, 'dashboard/crear_registro.html', {
-        'registro_form': registro_form,
-    })
 
 
 
@@ -171,6 +141,36 @@ def detalles(request, registro_id):
 
     return render(request, 'dashboard/detalles.html', context)
 
+@login_required
+def crear_registro(request):
+    if request.method == 'POST':
+        registro_form = RegistroConAccionesYPruebasForm(request.POST)
+        if registro_form.is_valid():
+            registro = registro_form.save()
+
+            areas2 = registro_form.cleaned_data['accion1_area2']
+
+            accion = Acciones.objects.create(
+                descripcion=request.POST['accion1_descripcion']
+            )
+            accion.area2.set(areas2)
+            accion.save()
+            registro.accionR.add(accion)
+
+            # prueba = Pruebas.objects.create(
+            #     nom_archivo=request.POST['prueba1_nom_archivo'],
+            #     tipo=request.POST['prueba1_tipo'],
+            #     archivo_url=request.POST['prueba1_archivo_url']
+            # )
+            # prueba.acciones.add(accion)
+
+            return redirect('dashboard')
+    else:
+        registro_form = RegistroConAccionesYPruebasForm()
+
+    return render(request, 'dashboard/crear_registro.html', {
+        'registro_form': registro_form,
+    })
 
 @login_required
 def editar_registro(request, id):

@@ -105,9 +105,9 @@
 <div class="search-container">
     <input type="text" id="searchStatus1" placeholder="Buscar por Estatus" onkeyup="filterTable()">
     <input type="text" id="searchClave1" placeholder="Buscar por Clave de Acuerdo/OR" onkeyup="filterTable()">
-    <input type="text" id="searchFechaInicio" placeholder="Buscar por Fecha de Inicio (dd-mm-yyyy)"
+    <input type="text" id="searchFechaInicio" placeholder="Buscar por Fecha de Inicio (dd mm yyyy)"
         onkeyup="filterTable()">
-    <input type="text" id="searchFechaTermino" placeholder="Buscar por Fecha de Término (dd-mm-yyyy)"
+    <input type="text" id="searchFechaTermino" placeholder="Buscar por Fecha de Término (dd mm yyyy)"
         onkeyup="filterTable()">
     <input type="text" id="searchDescripcion" placeholder="Buscar por Descripción" onkeyup="filterTable()">
     <select id="searchArea" multiple onchange="filterTable()">
@@ -118,7 +118,7 @@
         {% endfor %}
         {% elif dataU.0.tipo == "2" %}
         {% for area in areas_n %}
-        {% if forloop.counter > 31 %}
+        {% if forloop.counter > 32 %}
         <option value="{{ area }}">{{ area }}</option>
         {% endif %}
         {% endfor %}

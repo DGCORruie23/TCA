@@ -5,3 +5,4 @@ entorno
 db.sqlite3
 migrations
 media/mensajes/
+.env

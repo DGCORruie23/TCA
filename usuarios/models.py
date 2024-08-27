@@ -3,6 +3,11 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User 
 from datetime import date
 from datetime import datetime
+from twilio.rest import Client
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Area(models.Model):
     idArea = models.AutoField(primary_key=True)
@@ -84,9 +89,20 @@ class UsuarioP(models.Model):
     # password = models.CharField(max_length=250)
     OR = models.CharField(max_length=2, choices=types_ORS, default="9")
     tipo = models.CharField(max_length=1, choices=types_user, default="3")
+    Ntelefono = models.CharField(max_length=13, default="+525637792161")
     
     def save(self, *args, **kwargs):
-        # self.password = make_password(self.password)
+        # print(self.Ntelefono)
+        account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+        auth_token = os.getenv('TWILIO_AUTH_TOKEN')
+        client = Client(account_sid, auth_token)
+        message = client.messages.create(
+        from_='whatsapp:+14155238886',
+
+        body = 'DGCOR te ha añadido al TCA, visita tca.dgcor.com',
+        to=f'whatsapp:+52{self.Ntelefono}'
+        
+        )
         super(UsuarioP, self).save(*args, **kwargs)
 
     def __str__(self):

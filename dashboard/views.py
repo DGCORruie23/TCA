@@ -19,6 +19,14 @@ from django.contrib import messages
 
 from django.db import transaction
 from dateutil.parser import parse
+
+from twilio.rest import Client
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 @login_required
 def dashboard(request):
     if request.method == 'GET':
@@ -141,6 +149,10 @@ def detalles(request, registro_id):
 
     return render(request, 'dashboard/detalles.html', context)
 
+
+
+
+
 @login_required
 def crear_registro(request):
     if request.method == 'POST':
@@ -153,9 +165,15 @@ def crear_registro(request):
             accion = Acciones.objects.create(
                 descripcion=request.POST['accion1_descripcion']
             )
+
             accion.area2.set(areas2)
             accion.save()
             registro.accionR.add(accion)
+
+            account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+            auth_token = os.getenv('TWILIO_AUTH_TOKEN')
+            client = Client(account_sid, auth_token)
+
 
             # prueba = Pruebas.objects.create(
             #     nom_archivo=request.POST['prueba1_nom_archivo'],

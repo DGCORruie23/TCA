@@ -161,10 +161,22 @@ def crear_registro(request):
             registro = registro_form.save()
 
             areas2 = registro_form.cleaned_data['accion1_area2']
+            area = registro_form.cleaned_data['area']
 
             accion = Acciones.objects.create(
-                descripcion=request.POST['accion1_descripcion']
+                descripcion=registro_form.cleaned_data['accion1_descripcion']
             )
+
+            users = UsuarioP.objects.filter(OR__in=areas2)
+            users2 = UsuarioP.objects.filter(OR__in=area)
+            print("users")
+            for user in users:
+                
+                print(user.Ntelefono)
+            print("users2")
+            for user in users2:
+                print("users2")
+                print(user.Ntelefono)
 
             accion.area2.set(areas2)
             accion.save()
@@ -172,15 +184,15 @@ def crear_registro(request):
 
             account_sid = os.getenv('TWILIO_ACCOUNT_SID')
             auth_token = os.getenv('TWILIO_AUTH_TOKEN')
+
             client = Client(account_sid, auth_token)
+            message = client.messages.create(
+                from_='whatsapp:+14155238886',
+                body='DGCOR te ha añadido al TCA, visita tca.dgcor.com',
+                to=f'whatsapp:+5215572247394'
+            )
 
-
-            # prueba = Pruebas.objects.create(
-            #     nom_archivo=request.POST['prueba1_nom_archivo'],
-            #     tipo=request.POST['prueba1_tipo'],
-            #     archivo_url=request.POST['prueba1_archivo_url']
-            # )
-            # prueba.acciones.add(accion)
+            print(message.sid)
 
             return redirect('dashboard')
     else:
@@ -189,6 +201,7 @@ def crear_registro(request):
     return render(request, 'dashboard/crear_registro.html', {
         'registro_form': registro_form,
     })
+
 
 @login_required
 def editar_registro(request, id):
@@ -302,7 +315,7 @@ def cargaMasiva(request):
                             areas_responsables = data.cell(i + 1, 6).value
                             fecha_termino = data.cell(i + 1, 7).value
                             estado = data.cell(i + 1, 8).value
-                            if estado in ["Atendido", "atendido", "ATENDIDO", "Completado", "COMPLETADO", "Terminado", "TERMINADO", "Cumplido", "CUMPLIDO", "cumplido"]:
+                            if estado in ["ATENDIDA","Atendida","Atendido", "atendido", "ATENDIDO", "Completado", "COMPLETADO", "Terminado", "TERMINADO", "Cumplido", "CUMPLIDO", "cumplido"]:
                                 estado = 2
                             else:
                                 estado = 1

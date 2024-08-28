@@ -73,7 +73,7 @@ class UsuarioP(models.Model):
         ("16", "OR MICH"), ("17", "OR MOR"), ("18", "OR NAY"), ("19", "OR NL"), ("20", "OR OAX"),
         ("21", "OR PUE"), ("22", "OR QRO"), ("23", "OR QROO"), ("24", "OR SLP"), ("25", "OR SIN"),
         ("26", "OR SON"), ("27", "OR TAB"), ("28", "OR TAMPS"), ("29", "OR TLX"), ("30", "OR VER"),
-        ("31", "OR YUC"), ("32", "OR ZAC"), ("33", "OC"), ("34", "OSCJ"), ("35", "CECC"), ("36", "DCS"), ("37", "DGA"), ("38", "DGCOR"), ("39", "DGCVM"), ("40", "DGPMV"),("41", "DGRAM"),("42", "DGTIC"),
+        ("31", "OR YUC"), ("32", "OR ZAC"), ("33", "OC"), ("34", "OSCJ"), ("35", "CECC"), ("36", "DCS"), ("37", "DGA"), ("38", "DGCOR"), ("39", "DGCVM"), ("40", "DGPMV"),("41", "DGRAM"),("42", "DGTIC"),("43", "AICMX"),("44", "DC"),
     ]
 
 
@@ -89,7 +89,7 @@ class UsuarioP(models.Model):
     # password = models.CharField(max_length=250)
     OR = models.CharField(max_length=2, choices=types_ORS, default="9")
     tipo = models.CharField(max_length=1, choices=types_user, default="3")
-    Ntelefono = models.CharField(max_length=13, default="+525637792161")
+    Ntelefono = models.CharField(max_length=14, default="+5215637792161")
     
     def save(self, *args, **kwargs):
         # print(self.Ntelefono)
@@ -100,9 +100,11 @@ class UsuarioP(models.Model):
         from_='whatsapp:+14155238886',
 
         body = 'DGCOR te ha añadido al TCA, visita tca.dgcor.com',
-        to=f'whatsapp:+52{self.Ntelefono}'
+        to=f'whatsapp:{self.Ntelefono}'
         
         )
+
+        print(message)
         super(UsuarioP, self).save(*args, **kwargs)
 
     def __str__(self):

@@ -3,11 +3,11 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User 
 from datetime import date
 from datetime import datetime
-from twilio.rest import Client
-import os
-from dotenv import load_dotenv
+# from twilio.rest import Client
+# import os
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 class Area(models.Model):
     idArea = models.AutoField(primary_key=True)
@@ -44,6 +44,8 @@ class Registro(models.Model):
     porcentaje_avance = models.IntegerField(default=0)
 
     def __str__(self):
+        # return f"hola"
+        # return f"Registro: {self.idRegistro}, Clave de Acuerdo: {self.claveAcuerdo}, Fecha de inicio: {self.fecha_inicio}, Fecha de término: {self.fecha_termino}, Rubro: , OR: , Estatus: {self.get_estado_display()}"
         return f"Registro: {self.idRegistro}, Clave de Acuerdo: {self.claveAcuerdo}, Fecha de inicio: {self.fecha_inicio}, Fecha de término: {self.fecha_termino}, Rubro: {', '.join([rubro.tipo for rubro in self.rubro.all()])}, OR: {', '.join([area.nickname for area in self.area.all()])}, Estatus: {self.get_estado_display()}"
 
 class Notificacion(models.Model):
@@ -89,22 +91,22 @@ class UsuarioP(models.Model):
     # password = models.CharField(max_length=250)
     OR = models.CharField(max_length=2, choices=types_ORS, default="9")
     tipo = models.CharField(max_length=1, choices=types_user, default="3")
-    Ntelefono = models.CharField(max_length=14, default="+5215637792161")
+    # Ntelefono = models.CharField(max_length=14, default="+5215637792161")
     
     def save(self, *args, **kwargs):
         # print(self.Ntelefono)
-        account_sid = os.getenv('TWILIO_ACCOUNT_SID')
-        auth_token = os.getenv('TWILIO_AUTH_TOKEN')
-        client = Client(account_sid, auth_token)
-        message = client.messages.create(
-        from_='whatsapp:+14155238886',
+        # account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+        # auth_token = os.getenv('TWILIO_AUTH_TOKEN')
+        # client = Client(account_sid, auth_token)
+        # message = client.messages.create(
+        # from_='whatsapp:+14155238886',
 
-        body = 'DGCOR te ha añadido al TCA, visita tca.dgcor.com',
-        to=f'whatsapp:{self.Ntelefono}'
+        # body = 'DGCOR te ha añadido al TCA, visita tca.dgcor.com',
+        # to=f'whatsapp:{self.Ntelefono}'
         
-        )
+        # )
 
-        print(message)
+        # print(message)
         super(UsuarioP, self).save(*args, **kwargs)
 
     def __str__(self):

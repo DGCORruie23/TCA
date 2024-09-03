@@ -295,90 +295,219 @@ def cargaMasiva(request):
                 dataWB = opxl.load_workbook(excel_file, data_only=True)
                 data = dataWB.worksheets[0]
 
-                total_rows = data.max_row - 1
-                chunk_size = 20
+                claveAcuerdoL = []
+                fecha_inicioL = []
+                fecha_terminoL = []
+                rubroL = []
+                areaL = []
 
-                for start_row in range(1, total_rows + 1, chunk_size):
-                    end_row = min(start_row + chunk_size, total_rows + 1)
-                    
-                    with transaction.atomic():
-                        for i in range(start_row, end_row):
-                            if data.cell(i + 1, 3).value is None:
-                                break
-                            fecha_inicio = data.cell(i + 1, 1).value
-                            fecha_inicio = convert_spanish_date(fecha_inicio) if isinstance(fecha_inicio, str) else fecha_inicio
+                errores = ""
+                i = 1
+                while not(i == 0):
+                    if(data.cell(i+2,2).value == None):
+                        i = 0
+                    else:
+                        
+                        claveAcuerdo=data.cell(i+2,3).value
+                        print(claveAcuerdo)
+                        fecha_inicio= data.cell(i+2,5).value
+                        fecha_termino=data.cell(i+2,4).value
+                        estadoA = data.cell(i+2,12).value
+                        porcentajeA = data.cell(i+2,13).value
+                        try:
+                            rubroAux = (data.cell(i+2,8).value)
+                            print(f"rubro {rubroAux}")
+                            rubro = Rubro.objects.get(tipo = rubroAux.strip())
+                            # rubroL.append(Rubro.objects.get(tipo=rubroAux))
+                        except Rubro.DoesNotExist:
+                            errores += f"No existe el Rubro {rubroAux}\n"
 
-                            area_celda = data.cell(i + 1, 2).value
-                            clave_acuerdo = data.cell(i + 1, 3).value
-                            rubro = data.cell(i + 1, 4).value
-                            descripcion = data.cell(i + 1, 5).value
-                            areas_responsables = data.cell(i + 1, 6).value
-                            fecha_termino = data.cell(i + 1, 7).value
-                            estado = data.cell(i + 1, 8).value
-                            if estado in ["ATENDIDA","Atendida","Atendido", "atendido", "ATENDIDO", "Completado", "COMPLETADO", "Terminado", "TERMINADO", "Cumplido", "CUMPLIDO", "cumplido"]:
-                                estado = 2
+                        try:
+                            areaAux = (data.cell(i+2,6).value)
+                            areaL = Area.objects.get(nickname=areaAux)
+                        except Area.DoesNotExist:
+                            errores += f"Área '{areaAux}' no encontrada"
+
+                        descripcionAux = data.cell(i+2,9).value
+
+                        areas_responsables = data.cell(i+2,10).value
+                        print(areas_responsables)
+
+                        areas_responsables_list = areas_responsables.split('-')
+                        areas_objs = []
+                        for area in areas_responsables_list:
+                            print(f"responsables {area}")
+                            if area.strip() in ["OR", "or", "Or", "OR "]:
+                                areas_objs.append(areaL)
                             else:
-                                estado = 1
-                            fecha_finalizacion = data.cell(i + 1, 9).value
-                            if fecha_finalizacion is None:
-                                fecha_finalizacion = datetime(1970, 1, 1).date()
-                            if not isinstance(fecha_termino, date):
-                                fecha_termino = fecha_inicio
-
-                            try:
-                                rubro_obj = Rubro.objects.get(tipo=rubro)
-                            except Rubro.DoesNotExist:
-                                errores += 1
-
-                            try:
-                                area_obj = Area.objects.get(nickname=area_celda)
-                            except Area.DoesNotExist:
-                                pass
-                                print(f"Área '{area_celda}' no encontrada")
-
-                            areas_responsables_list = areas_responsables.split('-')
-                            areas_objs = []
-                            for area in areas_responsables_list:
                                 try:
-                                    if area == "OR":
-                                        area_responsable_obj = Area.objects.get(nickname=area_celda)
-                                    else:
-                                        area_responsable_obj = Area.objects.get(nickname=area.strip())
-                                    print(f"Área responsable seteada '{area_responsable_obj}'")
+                                    areaAux1 = Area.objects.get(nickname=area.strip())
+                                    areas_objs.append(areaAux1)
                                 except Area.DoesNotExist:
-                                    errArea += 1
-                                    print(f"Área responsable '{area_responsable_obj}' no encontrada")
-                                    pass
-                                areas_objs.append(area_responsable_obj)
+                                    errores += f"Área '{area}' no encontrada"
+                        
 
-                            ultimo_clave_acuerdo = Registro.objects.filter(area=area_obj).aggregate(Max('claveAcuerdo'))['claveAcuerdo__max']
-                            if ultimo_clave_acuerdo:
-                                ultimo_indice = int(ultimo_clave_acuerdo.split('/')[0])
-                            else:
-                                ultimo_indice = 0
-                            nuevo_indice = ultimo_indice + 1
-                            clave_acuerdo = f"{nuevo_indice:02}/{area_celda.split(' ')[1]}/{fecha_inicio.strftime('%m/%Y')}"
-
-                            registro, created = Registro.objects.update_or_create(
-                                claveAcuerdo=clave_acuerdo,
+                        registro, created = Registro.objects.update_or_create(
+                                claveAcuerdo=claveAcuerdo,
                                 defaults={
                                     "fecha_inicio": fecha_inicio,
                                     "fecha_termino": fecha_termino,
-                                    "estado": estado,
-                                    "fecha_finalizacion": fecha_finalizacion,
+                                    "estado": str(estadoA),
+                                    "porcentaje_avance": porcentajeA,
                                 }
                             )
-                            registro.rubro.set([rubro_obj])
-                            registro.area.set([area_obj])
+                        
+                        registro.area.add(areaL)
+                        registro.rubro.add(rubro)
+                        registro.save()
 
-                            accion, created = Acciones.objects.update_or_create(
-                                descripcion=descripcion,
+                        try:
+                            accionesB = Acciones.objects.get(idRegistro=registro)
+                            accionesB.area2.aclear()
+                            accionesB.descripcion = descripcionAux
+                            for area in areas_objs:
+                                accionesB.area2.add(area)
+                            accionesB.save()
+
+                        except:
+                            errores += f"accion '{registro.claveAcuerdo}' no encontrada"
+
+                            accionNueva = Acciones.objects.create(
+                                descripcion = descripcionAux
                             )
-                            accion.idRegistro.add(registro)
-                            accion.area2.set(areas_objs)
+                            for area in areas_objs:
+                                accionNueva.area2.add(area)
 
-                            print(f"Registro {i}: {clave_acuerdo} procesado correctamente")
-                            print('Errores de area', errArea)
+                            accionNueva.idRegistro.add(registro)
+                            accionNueva.save()
+
+                        # accionNueva = Acciones.objects.create(
+                        #     descripcion = descripcionAux
+                        # )
+                        # for area in areas_objs:
+                        #     accionNueva.area2.add(area)
+
+                        # accionNueva.idRegistro.add(registro)
+                        # accionNueva.save()
+
+
+                        i+=1
+                        # i=0
+
+
+
+                # accion, created = Acciones.objects.update_or_create(
+                #                 descripcion=descripcion,
+                #             )
+                #             accion.idRegistro.add(registro)
+                #             accion.area2.set(areas_objs)
+
+                        # paises.append([data.cell(i+3,2).value, data.cell(i+3,3).value])
+
+                        
+                #-----------------------------------
+
+                #Eliminar todos los registros de Paises
+                # Paises.objects.all().delete()
+                #------------------------
+
+                # Se agrega a la DB los paises y se crea un string de ellos
+                # paisesStr = "{"    
+                # for num, nac in enumerate(paises):
+                #     paisesStr += f'\n\t"{nac}",' 
+                #     Paises.objects.create(idPais = num + 1, nombre_pais = nac[0], iso3 = nac[1])
+                #     # print(nac)
+                # paisesStr += "\n}" 
+                #----------------------------
+
+                # pasar string de las nacionalidades 
+                # print(paisesStr) 
+                #------------------------
+
+                # total_rows = data.max_row - 1
+                # chunk_size = 20
+
+                # for start_row in range(1, total_rows + 1, chunk_size):
+                #     end_row = min(start_row + chunk_size, total_rows + 1)
+                    
+                #     with transaction.atomic():
+                #         for i in range(start_row, end_row):
+                #             if data.cell(i + 1, 3).value is None:
+                #                 break
+                #             fecha_inicio = data.cell(i + 1, 1).value
+                #             fecha_inicio = convert_spanish_date(fecha_inicio) if isinstance(fecha_inicio, str) else fecha_inicio
+
+                #             area_celda = data.cell(i + 1, 2).value
+                #             clave_acuerdo = data.cell(i + 1, 3).value
+                #             rubro = data.cell(i + 1, 4).value
+                #             descripcion = data.cell(i + 1, 5).value
+                #             areas_responsables = data.cell(i + 1, 6).value
+                #             fecha_termino = data.cell(i + 1, 7).value
+                #             estado = data.cell(i + 1, 8).value
+                #             if estado in ["ATENDIDA","Atendida","Atendido", "atendido", "ATENDIDO", "Completado", "COMPLETADO", "Terminado", "TERMINADO", "Cumplido", "CUMPLIDO", "cumplido"]:
+                #                 estado = 2
+                #             else:
+                #                 estado = 1
+                #             fecha_finalizacion = data.cell(i + 1, 9).value
+                #             if fecha_finalizacion is None:
+                #                 fecha_finalizacion = datetime(1970, 1, 1).date()
+                #             if not isinstance(fecha_termino, date):
+                #                 fecha_termino = fecha_inicio
+
+                #             try:
+                #                 rubro_obj = Rubro.objects.get(tipo=rubro)
+                #             except Rubro.DoesNotExist:
+                #                 errores += 1
+
+                #             try:
+                #                 area_obj = Area.objects.get(nickname=area_celda)
+                #             except Area.DoesNotExist:
+                #                 pass
+                #                 print(f"Área '{area_celda}' no encontrada")
+
+                #             areas_responsables_list = areas_responsables.split('-')
+                #             areas_objs = []
+                #             for area in areas_responsables_list:
+                #                 try:
+                #                     if area == "OR":
+                #                         area_responsable_obj = Area.objects.get(nickname=area_celda)
+                #                     else:
+                #                         area_responsable_obj = Area.objects.get(nickname=area.strip())
+                #                     print(f"Área responsable seteada '{area_responsable_obj}'")
+                #                 except Area.DoesNotExist:
+                #                     errArea += 1
+                #                     print(f"Área responsable '{area_responsable_obj}' no encontrada")
+                #                     pass
+                #                 areas_objs.append(area_responsable_obj)
+
+                #             ultimo_clave_acuerdo = Registro.objects.filter(area=area_obj).aggregate(Max('claveAcuerdo'))['claveAcuerdo__max']
+                #             if ultimo_clave_acuerdo:
+                #                 ultimo_indice = int(ultimo_clave_acuerdo.split('/')[0])
+                #             else:
+                #                 ultimo_indice = 0
+                #             nuevo_indice = ultimo_indice + 1
+                #             clave_acuerdo = f"{nuevo_indice:02}/{area_celda.split(' ')[1]}/{fecha_inicio.strftime('%m/%Y')}"
+
+                #             registro, created = Registro.objects.update_or_create(
+                #                 claveAcuerdo=clave_acuerdo,
+                #                 defaults={
+                #                     "fecha_inicio": fecha_inicio,
+                #                     "fecha_termino": fecha_termino,
+                #                     "estado": estado,
+                #                     "fecha_finalizacion": fecha_finalizacion,
+                #                 }
+                #             )
+                #             registro.rubro.set([rubro_obj])
+                #             registro.area.set([area_obj])
+
+                #             accion, created = Acciones.objects.update_or_create(
+                #                 descripcion=descripcion,
+                #             )
+                #             accion.idRegistro.add(registro)
+                #             accion.area2.set(areas_objs)
+
+                #             print(f"Registro {i}: {clave_acuerdo} procesado correctamente")
+                #             print('Errores de area', errArea)
 
             return redirect('dashboard')
         else:
@@ -386,3 +515,14 @@ def cargaMasiva(request):
     else:
         form = CargarArchivoForm()
     return render(request, "dashboard/dashboard.html", {"form": form})
+
+
+from django.core.paginator import Paginator
+def paginarRegistros(request):
+    registros = Registro.objects.all().order_by('fecha_termino')
+    paginator = Paginator(registros, 200)  # Show 25 contacts per page.
+
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    return render(request, "dashboard/list.html", {"page_obj": page_obj})
+

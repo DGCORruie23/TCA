@@ -43,6 +43,8 @@ urlpatterns = [
     path('editar_registro/<int:id>/', vDash.editar_registro, name='editar_registro'),
 
     path('eliminar/<int:idRegistro>/', vDash.eliminar_registro, name='eliminar_registro'),
+
+    path("listas", vDash.paginarRegistros, name="article-list"),
 ]
 
 

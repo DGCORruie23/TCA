@@ -4,6 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 import re
 from datetime import datetime
+
 class RegistroConAccionesYPruebasForm(forms.ModelForm):
     class Meta:
         model = Registro

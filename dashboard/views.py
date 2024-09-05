@@ -214,32 +214,32 @@ def crear_registro(request):
                 descripcion=registro_form.cleaned_data['accion1_descripcion']
             )
 
-            users = UsuarioP.objects.filter(OR__in=areas2)
-            users2 = UsuarioP.objects.filter(OR__in=area)
-            print("users")
-            for user in users:
+            # users = UsuarioP.objects.filter(OR__in=areas2)
+            # users2 = UsuarioP.objects.filter(OR__in=area)
+            # print("users")
+            # for user in users:
                 
-                print(user.Ntelefono)
-            print("users2")
-            for user in users2:
-                print("users2")
-                print(user.Ntelefono)
+            #     print(user.Ntelefono)
+            # print("users2")
+            # for user in users2:
+            #     print("users2")
+            #     print(user.Ntelefono)
 
             accion.area2.set(areas2)
             accion.save()
             registro.accionR.add(accion)
 
-            account_sid = os.getenv('TWILIO_ACCOUNT_SID')
-            auth_token = os.getenv('TWILIO_AUTH_TOKEN')
+            # account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+            # auth_token = os.getenv('TWILIO_AUTH_TOKEN')
 
-            client = Client(account_sid, auth_token)
-            message = client.messages.create(
-                from_='whatsapp:+14155238886',
-                body='DGCOR te ha añadido al TCA, visita tca.dgcor.com',
-                to=f'whatsapp:+5215572247394'
-            )
+            # client = Client(account_sid, auth_token)
+            # message = client.messages.create(
+            #     from_='whatsapp:+14155238886',
+            #     body='DGCOR te ha añadido al TCA, visita tca.dgcor.com',
+            #     to=f'whatsapp:+5215572247394'
+            # )
 
-            print(message.sid)
+            # print(message.sid)
 
             return redirect('dashboard')
     else:
@@ -261,12 +261,13 @@ def editar_registro(request, id):
         accion_form = AccionesForm(request.POST, instance=accion)
 
         if registro_form.is_valid() and accion_form.is_valid():
+            print(accion_form)
             if registro.estado == 1:
                 registro.fecha_finalizacion = "1970-01-01"
             else:
                 registro.fecha_finalizacion = datetime.now().strftime("%Y-%m-%d")
             registro = registro_form.save()
-            accion = accion_form.save(commit=False)
+            accion = accion_form.save()
             accion.registro = registro
             accion.save()
 
@@ -279,7 +280,6 @@ def editar_registro(request, id):
             })
 
         else:
-
             for field, errors in registro_form.errors.items():
                 for error in errors:
                     messages.error(request, f"Error en {field}: {error}")

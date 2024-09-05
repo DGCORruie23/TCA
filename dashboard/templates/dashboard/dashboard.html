@@ -110,8 +110,11 @@
     <input type="text" id="searchFechaTermino" placeholder="Buscar por Fecha de Término (dd mm yyyy)"
         onkeyup="filterTable()">
     <input type="text" id="searchDescripcion" placeholder="Buscar por Descripción" onkeyup="filterTable()">
-    <select id="searchArea" multiple onchange="filterTable()">
-        <option value="show_all">Mostrar todos</option>
+
+    
+
+    <select id="filtroArea" multiple {% if dataU.0.tipo == "2" %}hidden{% endif %}>
+        <option value="">Mostrar todos</option>
         {% if dataU.0.tipo == "1" %}
         {% for area in areas_n %}
         <option value="{{ area }}">{{ area }}</option>
@@ -123,6 +126,23 @@
         {% endif %}
         {% endfor %}
         {% endif %}
+    </select>
+    
+
+    <select id="filtroAnual" multiple>
+        <option value="">Mostrar todos</option>
+        {% for diaA in lista_años %}
+        <option value="{{ diaA }}">{{ diaA }}</option>
+        {% endfor %}
+    </select>
+
+    <select id="filtroArea2" multiple>
+        <option value="">Mostrar todos</option>
+        {% for area in areas_n %}
+        {% if forloop.counter > 32 %}
+        <option value="{{ area }}">{{ area }}</option>
+        {% endif %}
+        {% endfor %}
     </select>
 
 
@@ -289,35 +309,55 @@
         {% endfor %}
     </table>
 </div>
+
+<div class="pagination">
+        <span class="step-links">
+            {% if registrosConFechas.has_previous %}
+                <a href="?page=1&filtro={{ filtroOR }}&año={{ filtroAño }}&resp={{ filtroResp }}">&laquo; Pagina 1</a>
+                <a href="?page={{ page_obj.previous_page_number }}&filtro={{ filtroOR }}&año={{ filtroAño }}&resp={{ filtroResp }}">Anterior</a>
+            {% endif %}
+    
+            <span class="current">
+                Pagina {{ registrosConFechas.number }} de {{ registrosConFechas.paginator.num_pages }}.
+            </span>
+    
+            {% if registrosConFechas.has_next %}
+                <a href="?page={{ registrosConFechas.next_page_number }}&filtro={{ filtroOR }}&año={{ filtroAño }}&resp={{ filtroResp }}">Siguiente</a>
+                <a href="?page={{ registrosConFechas.paginator.num_pages }}&filtro={{ filtroOR }}&año={{ filtroAño }}&resp={{ filtroResp }}">Ultima &raquo;</a>
+            {% endif %}
+        </span>
+</div>
+
 <br><br><br>
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 <script>
-        function myFunction(idInput) {
-            x1 = 0
-          var input, filter, table, tr, td, i, txtValue, conteo;
-          input = document.getElementById(idInput);
-          table = document.getElementById("myTable");
-          tr = table.getElementsByTagName("tr");
         
-          conteo = 0
+    function myFunction(idInput) {
+        x1 = 0
+        var input, filter, table, tr, td, i, txtValue, conteo;
+        input = document.getElementById(idInput);
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+        
+        conteo = 0
 
 
-          for (i = 0; i < tr.length; i++) {
+        for (i = 0; i < tr.length; i++) {
             td = tr[i].getElementsByTagName("td")[x1];
             if (td) {
-              txtValue = td.textContent || td.innerText;
-              if (tr[i].style.display == "") {
-                conteo++
-              } 
+                txtValue = td.textContent || td.innerText;
+                if (tr[i].style.display == "") {
+                    conteo++
+                } 
             } 
-          }
-          
-          document.getElementById("totales").innerHTML = "Acuerdos: " + conteo
         }
+        
+        document.getElementById("totales").innerHTML = "Acuerdos: " + conteo
+    }
+
     function filterTable() {
         var inputStatus = document.getElementById("searchStatus1").value.toUpperCase();
         var inputClave = document.getElementById("searchClave1").value.toUpperCase();
-        var selectedAreas = Array.from(document.getElementById("searchArea").selectedOptions).map(option => option.value.toUpperCase());
         var inputFechaInicio = document.getElementById("searchFechaInicio").value;
         var inputFechaTermino = document.getElementById("searchFechaTermino").value;
         var inputDescripcion = document.getElementById("searchDescripcion").value.toUpperCase();
@@ -344,13 +384,12 @@
 
                 var matchesStatus = txtValueStatus.toUpperCase().indexOf(inputStatus) > -1;
                 var matchesClave = txtValueClave.toUpperCase().indexOf(inputClave) > -1;
-                var matchesArea = selectedAreas.length === 0 || selectedAreas.some(area => txtValueArea.toUpperCase().indexOf(area) > -1);
-
+            
                 var matchesFechaInicio = !inputFechaInicio || (inputFechaInicio == txtValueFechaInicio);
                 var matchesFechaTermino = !inputFechaTermino || (inputFechaTermino === txtValueFechaTermino);
                 var matchesDescripcion = txtValueDescripcion.toUpperCase().indexOf(inputDescripcion) > -1;
 
-                if (matchesStatus && matchesClave && matchesArea && matchesFechaInicio && matchesFechaTermino && matchesDescripcion) {
+                if (matchesStatus && matchesClave && matchesFechaInicio && matchesFechaTermino && matchesDescripcion) {
                     tr[i].style.display = "";
                 } else {
                     tr[i].style.display = "none";
@@ -360,10 +399,51 @@
         myFunction("searchStatus1")
     }
 
+    function aplicarFiltros() {
+        var filtro1 = document.getElementById('filtroArea').value;
+        var filtro2 = document.getElementById('filtroAnual').value;
+        var filtro3 = document.getElementById('filtroArea2').value;
+        var currentUrl = window.location.href.split('?')[0]; // Obtener la URL base sin parámetros
+        var newUrl = currentUrl + '?';
 
+        if (filtro1) {
+            if (newUrl !== currentUrl + '?') {
+                newUrl += '&';
+            }
+            newUrl += 'filtro=' + filtro1;
+        }
+        if (filtro2) {
+            if (newUrl !== currentUrl + '?') {
+                newUrl += '&';
+            }
+            newUrl += 'año=' + filtro2;
+        }
+        if (filtro3) {
+            if (newUrl !== currentUrl + '?') {
+                newUrl += '&';
+            }
+            newUrl += 'resp=' + filtro3;
+        }
+        // Redirigir a la nueva URL con ambos filtros
+        window.location.href = newUrl;
+    }
 
+    document.getElementById('filtroArea').addEventListener('change', aplicarFiltros);
+    document.getElementById('filtroArea2').addEventListener('change', aplicarFiltros);
+    document.getElementById('filtroAnual').addEventListener('change', aplicarFiltros);
+    //document.getElementById('searchStatus1').addEventListener('input', myFunction("searchStatus1"));
+    document.getElementById('searchStatus1').addEventListener('input', filterTable());
 
+    {% comment %} function filtroOR(){
+        var valorSeleccionado = Array.from(document.getElementById("filtroArea").selectedOptions).map(option => option.value.toUpperCase());
+        var currentUrl = window.location.href.split('?')[0];
 
+        if (valorSeleccionado) {
+            window.location.href = currentUrl + '?filtro=' + selectedValue;
+        } else {
+            window.location.href = currentUrl; // Si no se selecciona nada, redirigir a la URL base
+        }
+    } {% endcomment %}
 
     function openAreaModal() {
         document.getElementById("areaModal").style.display = "block";
@@ -391,6 +471,7 @@
         closeAreaModal();
     }
 
+/*
     document.getElementById('searchArea').addEventListener('change', function () {
         var select = this;
         var options = select.options;
@@ -411,7 +492,7 @@
         filterTable();
 
     });
-
+*/
 
     function openModal(id) {
         document.getElementById('modal' + id).style.display = 'block';

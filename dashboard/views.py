@@ -10,6 +10,7 @@ from datetime import datetime, timedelta, timezone
 from .forms import RegistroConAccionesYPruebasForm, MensajeForm, AccionesForm, RegistroConAccionesFORM, CargarArchivoForm
 from django.forms import inlineformset_factory
 import openpyxl as opxl
+from django.core.paginator import Paginator
 
 import locale
 from datetime import date
@@ -30,16 +31,40 @@ load_dotenv()
 @login_required
 def dashboard(request):
     if request.method == 'GET':
+
+        filtro = request.GET.get('filtro')
+        tiempo = request.GET.get('año')
+        respA = request.GET.get('resp')
+        
+        # print(f"filtro {filtro}")
+        print(f"filtro {tiempo}")
+
+        consultarAreas = Area.objects.all()
+        lista_años = [str(año) for año in range(2020, datetime.now().year + 1)]
+
         userDataI = UsuarioP.objects.filter(user__username=request.user)
         registrosConFechas = []
-        nombres_areas = [area.nickname for area in Area.objects.all()]
+        nombres_areas = [area.nickname for area in consultarAreas]
         areas_n = nombres_areas if len(nombres_areas) > 1 else None
-    
+
+        registros = Registro.objects.all().order_by('fecha_termino')
 
         # print(areas_n)
         formCargar1 = CargarArchivoForm()
         if userDataI[0].tipo == "1":
-            registros = Registro.objects.all().order_by('fecha_termino')
+            if filtro in nombres_areas:
+                filtroB = Area.objects.get(nickname = filtro)
+                registros = registros.filter(area=filtroB.idArea).order_by('fecha_termino')
+
+            if tiempo in lista_años:
+                print(f"filtro {tiempo}")
+                registros = registros.filter(fecha_inicio__year=tiempo).order_by('fecha_termino')
+
+            if respA in nombres_areas:
+                filtroC = Area.objects.get(nickname = respA)
+                registros = registros.filter(accionR__area2=filtroC).order_by('fecha_termino')
+            
+            print(f"registros {registros.count()}")
         else:
             registros_area = Registro.objects.filter(area=userDataI[0].OR).order_by('fecha_termino')
             registros_acciones_area2 = Registro.objects.filter(
@@ -48,6 +73,20 @@ def dashboard(request):
 
             registros = registros_area | registros_acciones_area2
             registros = registros.distinct().order_by('fecha_termino')
+
+            if filtro in nombres_areas:
+                filtroB = Area.objects.get(nickname = filtro)
+                registros = registros.filter(area=filtroB.idArea).order_by('fecha_termino')
+
+            if tiempo in lista_años:
+                print(f"filtro {tiempo}")
+                registros = registros.filter(fecha_inicio__year=tiempo).order_by('fecha_termino')
+
+            if respA in nombres_areas:
+                filtroC = Area.objects.get(nickname = respA)
+                registros = registros.filter(accionR__area2=filtroC).order_by('fecha_termino')
+            
+            print(f"registros {registros.count()}")
 
         registros_en_proceso = registros.filter(estado="1")
         registros_atendidos = registros.filter(estado="2")
@@ -85,7 +124,7 @@ def dashboard(request):
                 'areas_name': areas_name,
                 'fecha_finalizacion': fecha_finalizacion,
                 'porcentaje': porcentaje,
-                'clave_acuerdo_partes': clave_acuerdo_partes
+                'clave_acuerdo_partes': clave_acuerdo_partes,
             })
 
         now = datetime.now()
@@ -97,12 +136,20 @@ def dashboard(request):
 
         notificaciones = Notificacion.objects.filter(user=request.user, leido=False)
 
+        paginator = Paginator(registrosConFechas, 100)  # Show 200 contacts per page.
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
         context = {
-            'registrosConFechas': registrosConFechas,
+            'registrosConFechas': page_obj,
             'dataU': userDataI,
             'notificaciones': notificaciones,
             'formCargar1': formCargar1,
-            'areas_n': areas_n
+            'areas_n': areas_n,
+            'lista_años': lista_años,
+            'filtroOR': filtro,
+            'filtroAño': tiempo,
+            'filtroResp': respA,
         }
 
         return render(request, "dashboard/dashboard.html", context)
@@ -517,12 +564,144 @@ def cargaMasiva(request):
     return render(request, "dashboard/dashboard.html", {"form": form})
 
 
-from django.core.paginator import Paginator
 def paginarRegistros(request):
-    registros = Registro.objects.all().order_by('fecha_termino')
-    paginator = Paginator(registros, 200)  # Show 25 contacts per page.
 
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-    return render(request, "dashboard/list.html", {"page_obj": page_obj})
+    if request.method == 'GET':
+        userDataI = UsuarioP.objects.filter(user__username=request.user)
+        registrosConFechas = []
+        nombres_areas = [area.nickname for area in Area.objects.all()]
+        areas_n = nombres_areas if len(nombres_areas) > 1 else None
+    
+
+        # print(areas_n)
+        formCargar1 = CargarArchivoForm()
+        if userDataI[0].tipo == "1":
+            registros = Registro.objects.all().order_by('fecha_termino')
+        else:
+            registros_area = Registro.objects.filter(area=userDataI[0].OR).order_by('fecha_termino')
+            registros_acciones_area2 = Registro.objects.filter(
+                accionR__area2=userDataI[0].OR
+            ).order_by('fecha_termino')
+
+            registros = registros_area | registros_acciones_area2
+            registros = registros.distinct().order_by('fecha_termino')
+
+        registros_en_proceso = registros.filter(estado="1")
+        registros_atendidos = registros.filter(estado="2")
+
+        registros_ordenados = list(registros_en_proceso) + list(registros_atendidos)
+
+        for registro in registros_ordenados:
+            fecha_inicio_str = registro.fecha_inicio.strftime('%d-%m-%Y')
+            fecha_inicio = fecha_inicio_str.split('-')
+
+            fecha_termino_str = registro.fecha_termino.strftime('%d-%m-%Y')
+            fecha_termino = fecha_termino_str.split('-')
+
+            fecha_inicio_dt = datetime.strptime(fecha_inicio_str, '%d-%m-%Y')
+            fecha_termino_dt = datetime.strptime(fecha_termino_str, '%d-%m-%Y')
+            diferencia = datetime.now() - fecha_termino_dt
+
+            fecha_finalizacion = registro.fecha_finalizacion
+
+            areas = registro.area.all()
+            areas_str = ', '.join(area.nickname for area in areas)
+            areas_name = ', '.join(area.name for area in areas)
+
+            dias = diferencia.days
+            porcentaje = registro.porcentaje_avance
+            clave_acuerdo_partes = registro.claveAcuerdo.split('/')
+
+
+            registrosConFechas.append({
+                'registro': registro,
+                'fecha_inicio': fecha_inicio,
+                'fecha_termino': fecha_termino,
+                'diferencia': dias,
+                'areas_str': areas_str,
+                'areas_name': areas_name,
+                'fecha_finalizacion': fecha_finalizacion,
+                'porcentaje': porcentaje,
+                'clave_acuerdo_partes': clave_acuerdo_partes
+            })
+
+        now = datetime.now()
+        nuevos_registros = registros.filter(fecha_creacion__gte=now - timedelta(days=365))
+
+
+        for registro in nuevos_registros:
+            Notificacion.objects.get_or_create(user=request.user, registro=registro)
+
+        notificaciones = Notificacion.objects.filter(user=request.user, leido=False)
+
+        paginator = Paginator(registrosConFechas, 150)  # Show 200 contacts per page.
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
+        context = {
+            'registrosConFechas': page_obj,
+            'dataU': userDataI,
+            'notificaciones': notificaciones,
+            'formCargar1': formCargar1,
+            'areas_n': areas_n
+        }
+
+        return render(request, "dashboard/list.html", context=context)
+
+    # userDataI = UsuarioP.objects.filter(user__username=request.user)
+    # registrosConFechas = []
+    # nombres_areas = [area.nickname for area in Area.objects.all()]
+    # areas_n = nombres_areas if len(nombres_areas) > 1 else None
+
+    # registros = Registro.objects.all().order_by('fecha_termino')
+
+    # registros_en_proceso = registros.filter(estado="1")
+    # registros_atendidos = registros.filter(estado="2")
+
+    # registros_ordenados = list(registros_en_proceso) + list(registros_atendidos)
+
+    # for registro in registros_ordenados:
+    #     fecha_inicio_str = registro.fecha_inicio.strftime('%d-%m-%Y')
+    #     fecha_inicio = fecha_inicio_str.split('-')
+
+    #     fecha_termino_str = registro.fecha_termino.strftime('%d-%m-%Y')
+    #     fecha_termino = fecha_termino_str.split('-')
+
+    #     fecha_inicio_dt = datetime.strptime(fecha_inicio_str, '%d-%m-%Y')
+    #     fecha_termino_dt = datetime.strptime(fecha_termino_str, '%d-%m-%Y')
+    #     diferencia = datetime.now() - fecha_termino_dt
+
+    #     fecha_finalizacion = registro.fecha_finalizacion
+
+    #     areas = registro.area.all()
+    #     areas_str = ', '.join(area.nickname for area in areas)
+    #     areas_name = ', '.join(area.name for area in areas)
+
+    #     dias = diferencia.days
+    #     porcentaje = registro.porcentaje_avance
+    #     clave_acuerdo_partes = registro.claveAcuerdo.split('/')
+
+
+    #     registrosConFechas.append({
+    #         'registro': registro,
+    #         'fecha_inicio': fecha_inicio,
+    #         'fecha_termino': fecha_termino,
+    #         'diferencia': dias,
+    #         'areas_str': areas_str,
+    #         'areas_name': areas_name,
+    #         'fecha_finalizacion': fecha_finalizacion,
+    #         'porcentaje': porcentaje,
+    #         'clave_acuerdo_partes': clave_acuerdo_partes
+    #     })
+
+    # paginator = Paginator(registrosConFechas, 150)  # Show 200 contacts per page.
+
+    # page_number = request.GET.get("page")
+    # page_obj = paginator.get_page(page_number)
+
+    # context = {
+    #         'registrosConFechas': page_obj,
+    #     }
+    
+    # return render(request, "dashboard/list.html", context=context)
 

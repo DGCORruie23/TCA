@@ -37,7 +37,7 @@ def dashboard(request):
         respA = request.GET.get('resp')
         
         # print(f"filtro {filtro}")
-        print(f"filtro {tiempo}")
+        # print(f"filtro {tiempo}")
 
         consultarAreas = Area.objects.all()
         lista_años = [str(año) for año in range(2020, datetime.now().year + 1)]
@@ -64,7 +64,7 @@ def dashboard(request):
                 filtroC = Area.objects.get(nickname = respA)
                 registros = registros.filter(accionR__area2=filtroC).order_by('fecha_termino')
             
-            print(f"registros {registros.count()}")
+            # print(f"registros {registros.count()}")
         else:
             registros_area = Registro.objects.filter(area=userDataI[0].OR).order_by('fecha_termino')
             registros_acciones_area2 = Registro.objects.filter(
@@ -79,14 +79,14 @@ def dashboard(request):
                 registros = registros.filter(area=filtroB.idArea).order_by('fecha_termino')
 
             if tiempo in lista_años:
-                print(f"filtro {tiempo}")
+                # print(f"filtro {tiempo}")
                 registros = registros.filter(fecha_inicio__year=tiempo).order_by('fecha_termino')
 
             if respA in nombres_areas:
                 filtroC = Area.objects.get(nickname = respA)
                 registros = registros.filter(accionR__area2=filtroC).order_by('fecha_termino')
             
-            print(f"registros {registros.count()}")
+            # print(f"registros {registros.count()}")
 
         registros_en_proceso = registros.filter(estado="1")
         registros_atendidos = registros.filter(estado="2")
@@ -335,7 +335,7 @@ def cargaMasiva(request):
             nombreA = str(excel_file.name)
             extensionA = (nombreA.split(".")[-1]).lower()
 
-            print(f"Archivo recibido: {nombreA}")
+            # print(f"Archivo recibido: {nombreA}")
             errores = 0
             errArea = 0
             if extensionA in ["xlsx", "xlsm", "xlsb", "xltx", "xltm", "xls"]:
@@ -356,14 +356,14 @@ def cargaMasiva(request):
                     else:
                         
                         claveAcuerdo=data.cell(i+2,3).value
-                        print(claveAcuerdo)
+                        # print(claveAcuerdo)
                         fecha_inicio= data.cell(i+2,5).value
                         fecha_termino=data.cell(i+2,4).value
                         estadoA = data.cell(i+2,12).value
                         porcentajeA = data.cell(i+2,13).value
                         try:
                             rubroAux = (data.cell(i+2,8).value)
-                            print(f"rubro {rubroAux}")
+                            # print(f"rubro {rubroAux}")
                             rubro = Rubro.objects.get(tipo = rubroAux.strip())
                             # rubroL.append(Rubro.objects.get(tipo=rubroAux))
                         except Rubro.DoesNotExist:
@@ -383,7 +383,7 @@ def cargaMasiva(request):
                         areas_responsables_list = areas_responsables.split('-')
                         areas_objs = []
                         for area in areas_responsables_list:
-                            print(f"responsables {area}")
+                            # print(f"responsables {area}")
                             if area.strip() in ["OR", "or", "Or", "OR "]:
                                 areas_objs.append(areaL)
                             else:

@@ -40,7 +40,7 @@ class Registro(models.Model):
     area = models.ManyToManyField(Area, related_name='registroA')
     estado = models.CharField(max_length=1, choices=types_estado, default="1")
     fecha_finalizacion = models.DateField(default="1970-01-01")
-    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True, default="2020-01-01" )
     porcentaje_avance = models.IntegerField(default=0)
 
     def __str__(self):

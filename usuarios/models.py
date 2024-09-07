@@ -33,7 +33,7 @@ class Registro(models.Model):
     ]
 
     idRegistro = models.AutoField(primary_key=True)
-    claveAcuerdo = models.CharField(default="Clave de Acuerdo", max_length=16)
+    claveAcuerdo = models.CharField(default="Clave de Acuerdo", max_length=20)
     fecha_inicio = models.DateField()
     fecha_termino = models.DateField()
     rubro = models.ManyToManyField(Rubro, related_name='registroR')

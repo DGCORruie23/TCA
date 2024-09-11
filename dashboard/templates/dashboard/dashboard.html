@@ -167,7 +167,11 @@
         <tr>
             <td id="claveAcuerdo" class="text-center claveAcuerdo">
                 {% for part in data.clave_acuerdo_partes %}
-                    {{part}}<br>
+                    {% if forloop.first %}
+                        <strong class="text-xl">{{part}}</strong><br>
+                    {% else %}
+                        {{part}}<br>
+                    {% endif %}
                 {% endfor %}
             </td>
             

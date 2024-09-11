@@ -26,6 +26,9 @@ from twilio.rest import Client
 import os
 from dotenv import load_dotenv
 
+from django.db.models.functions import Substr, StrIndex, Reverse, Length
+from django.db.models import Value, F
+
 load_dotenv()
 
 @login_required
@@ -47,51 +50,73 @@ def dashboard(request):
         nombres_areas = [area.nickname for area in consultarAreas]
         areas_n = nombres_areas if len(nombres_areas) > 1 else None
 
-        registros = Registro.objects.all().order_by('fecha_termino')
+        registros = Registro.objects.all()
 
         # print(areas_n)
         formCargar1 = CargarArchivoForm()
         if userDataI[0].tipo == "1":
             if filtro in nombres_areas:
                 filtroB = Area.objects.get(nickname = filtro)
-                registros = registros.filter(area=filtroB.idArea).order_by('fecha_termino')
+                registros = registros.filter(area=filtroB.idArea)
 
             if tiempo in lista_años:
                 print(f"filtro {tiempo}")
-                registros = registros.filter(fecha_inicio__year=tiempo).order_by('fecha_termino')
+                registros = registros.filter(fecha_inicio__year=tiempo)
 
             if respA in nombres_areas:
                 filtroC = Area.objects.get(nickname = respA)
-                registros = registros.filter(accionR__area2=filtroC).order_by('fecha_termino')
+                registros = registros.filter(accionR__area2=filtroC)
             
             # print(f"registros {registros.count()}")
         else:
-            registros_area = Registro.objects.filter(area=userDataI[0].OR).order_by('fecha_termino')
+            registros_area = Registro.objects.filter(area=userDataI[0].OR)
             registros_acciones_area2 = Registro.objects.filter(
                 accionR__area2=userDataI[0].OR
-            ).order_by('fecha_termino')
+            )
 
             registros = registros_area | registros_acciones_area2
-            registros = registros.distinct().order_by('fecha_termino')
+            registros = registros.distinct()
 
             if filtro in nombres_areas:
                 filtroB = Area.objects.get(nickname = filtro)
-                registros = registros.filter(area=filtroB.idArea).order_by('fecha_termino')
+                registros = registros.filter(area=filtroB.idArea)
 
             if tiempo in lista_años:
                 # print(f"filtro {tiempo}")
-                registros = registros.filter(fecha_inicio__year=tiempo).order_by('fecha_termino')
+                registros = registros.filter(fecha_inicio__year=tiempo)
 
             if respA in nombres_areas:
                 filtroC = Area.objects.get(nickname = respA)
-                registros = registros.filter(accionR__area2=filtroC).order_by('fecha_termino')
+                registros = registros.filter(accionR__area2=filtroC)
             
             # print(f"registros {registros.count()}")
 
-        registros_en_proceso = registros.filter(estado="1")
-        registros_atendidos = registros.filter(estado="2")
+        # filtrar por registros atendidos y no atendidos
+        # registros_en_proceso = registros.filter(estado="1")
+        # registros_atendidos = registros.filter(estado="2")
 
-        registros_ordenados = list(registros_en_proceso) + list(registros_atendidos)
+        # registros_ordenados = list(registros_en_proceso) + list(registros_atendidos)
+
+        registros_en_proceso = registros.annotate(
+            year = Substr('claveAcuerdo', Length('claveAcuerdo') - 4, 4),
+            oficina = Substr("claveAcuerdo", 4, 4),
+            mes=Substr('claveAcuerdo', Length('claveAcuerdo') - 6, 2),  # Extrae el mes (asumiendo que está en la posición 10-11)
+            numero=Substr('claveAcuerdo', 1, 3)  # Extrae el número (001, 002, etc.)
+        ).order_by('oficina', 'year', 'mes', 'numero')
+
+        # registros_ordenados = registros.annotate(
+        #     segundo_slash=StrIndex('claveAcuerdo', Value('/', 2)),
+        #     mes=Substr('claveAcuerdo', F('segundo_slash') + 1, 2),  # Extrae el mes (asumiendo que está en la posición 10-11)
+        #     numero=Substr('claveAcuerdo', 1, 3)  # Extrae el número (001, 002, etc.)
+        # ).order_by('mes', 'numero')
+
+        # registros_en_proceso = registros.annotate(
+        #     # segundo_slash=StrIndex('/20', "claveAcuerdo"),  # Busca la posición del segundo '/'
+        #     mes=Substr('claveAcuerdo', Length("claveAcuerdo") - 7 , 2),  # Extrae el mes basándose en el segundo '/'
+        #     numero=Substr('claveAcuerdo', 1, 3)  # Extrae el número al principio
+        # ).order_by('mes', 'numero')
+
+        registros_ordenados = list(registros_en_proceso)
 
         for registro in registros_ordenados:
             fecha_inicio_str = registro.fecha_inicio.strftime('%d-%m-%Y')

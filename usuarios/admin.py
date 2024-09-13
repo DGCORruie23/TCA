@@ -2,7 +2,12 @@ from django.contrib import admin
 
 from .models import Registro, Area, Rubro,  Acciones, UsuarioP, Mensaje, Notificacion
 
-admin.site.register(Registro)
+class RegistroAdmin(admin.ModelAdmin):
+    list_display = ["idRegistro" ,"claveAcuerdo","fecha_inicio", "porcentaje_avance", "estado"]
+    list_editable = ["claveAcuerdo", "fecha_inicio", "porcentaje_avance", "estado"]
+    list_filter = ["area", "estado"]
+
+admin.site.register(Registro, RegistroAdmin)
 admin.site.register(Area)
 admin.site.register(Rubro)
 admin.site.register(UsuarioP)

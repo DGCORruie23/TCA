@@ -8,6 +8,12 @@
 <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 {% endblock styles %}
 
+{% block estadistica %}
+    {% if dataU.0.tipo == "1" %}
+        <a href="{% url 'estadistica_p' %}" class="bg-inm-verde-100 text-white px-6 py-3 rounded-xl hover:bg-inm-marron-200">Estadistica</a>
+    {% endif %}
+{% endblock estadistica %}
+
 {% block content %}
 {% if user.is_authenticated %}
 <br>
@@ -22,7 +28,6 @@
         {% endif %}
     </div>
 </div>
-
 
 
 <div id="notificationModal" class="modal">
@@ -199,8 +204,6 @@
                     <button class="text-inm-rojo-200 hover:text-inm-marron-200 font-bold ml-2"
                         onclick="openModal('{{ forloop.parentloop.counter }}_{{ forloop.counter }}')">Ver más</a>
                 </div>
-
-
 
                 <div id="modal{{ forloop.parentloop.counter }}_{{ forloop.counter }}" class="modal">
                     <div class="modal-content">

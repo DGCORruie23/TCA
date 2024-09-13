@@ -1,0 +1,81 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+
+{% block title %}Estadisticas{% endblock title %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock styles %}
+
+{% block content %}
+
+    <!-- Contenedor Principal para centrar vertical y horizontal -->
+    <div class="min-h-screen flex flex-col justify-center items-center space-y-8">
+        
+        <!-- Texto centrado -->
+        <h1 class="text-3xl font-bold text-gray-700">Visitas Realizadas: <strong> {{ visitas }} </strong></h1>
+        <h1 class="text-3xl font-bold text-gray-700">Acuerdos: <strong>{{ acuerdos }} </strong></h1>
+
+        <div class="flex flex-row space-x-8">
+            <table class="table-auto border-collapse border border-gray-300">
+                <thead>
+                    <tr>
+                        <th class="bg-black border border-gray-300 px-4 py-2 text text-center">Año</th>
+                        <th class="bg-gray-500 border border-gray-300 px-4 py-2 text-center"># Visitas</th>
+                        <th class="bg-black border border-gray-300 px-4 py-2 text text-center"># Acuerdos</th>
+                        <th class="bg-gray-500 border border-gray-300 px-4 py-2 text-center">% Avance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dato in tabla2 %}
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2 text-center">{{ dato.year }}</td>
+                        <td class="border border-gray-300 px-4 py-2 text-center">{{ dato.total_fechas_unicas }}</td>
+                        <td class="border border-gray-300 px-4 py-2 text-center">{{ dato.total_registros }}</td>
+                        <td class="border border-gray-300 px-4 py-2 text-center">{% widthratio dato.total_aten dato.total_registros 100 %}%</td>
+                    </tr>
+                    {% endfor %}
+                    {% comment %} <tr>
+                        <td class="border border-gray-300 px-4 py-2">Dato C</td>
+                        <td class="border border-gray-300 px-4 py-2">Dato D</td>
+                    </tr> {% endcomment %}
+                </tbody>
+            </table>
+        </div>   
+
+        <!-- Flex container para las tablas -->
+        <div class="flex flex-row space-x-8">
+            <!-- Tabla 1 -->
+            <table class="table-auto border-collapse border border-gray-300">
+                <thead>
+                    <tr class="">
+                        <th class="bg-black border border-gray-300 px-4 py-2 text text-center">ORs</th>
+                        <th class="bg-gray-500 border border-gray-300 px-4 py-2 text-center"># Visitas</th>
+                        <th class="bg-black border border-gray-300 px-4 py-2 text">Fechas</th>
+                        <th class="bg-gray-500 border border-gray-300 px-4 py-2 text-center"># Acuerdos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dato in tabla1 %}
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2 text-center">{{ dato.area }}</td>
+                        <td class="border border-gray-300 px-4 py-2 text-center">1</td>
+                        <td class="border border-gray-300 px-4 py-2 text-center">{{ dato.fecha }}</td>
+                        <td class="border border-gray-300 px-4 py-2 text-center">{{ dato.total }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% comment %} <tr>
+                        <td class="border border-gray-300 px-4 py-2">Dato 3</td>
+                        <td class="border border-gray-300 px-4 py-2">Dato 4</td>
+                    </tr> {% endcomment %}
+                </tbody>
+            </table>
+
+            <!-- Tabla 2 -->
+            
+        </div> 
+
+    </div>
+
+{% endblock content %}

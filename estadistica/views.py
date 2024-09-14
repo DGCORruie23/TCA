@@ -11,8 +11,10 @@ def general(request):
         userDataI = UsuarioP.objects.filter(user__username=request.user)
         registros = Registro.objects.all()
         consultarAreas = Area.objects.all()
+        consultarRubros = Rubro.objects.all()
         nombres_areas = [area.nickname for area in consultarAreas]
-        lista_años = [str(año) for año in range(2020, datetime.now().year + 1)]
+        # lista_años = [str(año) for año in range(2020, datetime.now().year + 1)]
+        lista_años = range(2020, datetime.now().year + 1)
 
         # registros_OR = registros.values('area').annotate(total= Count('idRegistro'))
         # registros_OR_year = registros.values('area', year=ExtractYear('fecha_inicio')).annotate(total= Count('idRegistro')).order_by('area', 'year')
@@ -50,6 +52,33 @@ def general(request):
             total_pendi=Count('idRegistro', filter=Q(estado="1")), 
             total_aten=Count('idRegistro', filter=Q(estado="2")), 
             ).order_by('year')
+        
+
+        #tabla 3
+        registros_rubros = (registros.values("rubro", year=ExtractYear('fecha_inicio'))
+             .annotate(total_unico=Count('rubro'))
+             .order_by("rubro", 'year'))
+        # registros_rubros = registros.values( "rubro",year=ExtractYear('fecha_inicio')).annotate(
+        #     total_unico=Count('rubro'),
+        #     ).order_by("rubro",'year')
+
+        data_by_rubro = {}
+        for registro in registros_rubros:
+            # rubro = registro['rubro']
+            rubro = consultarRubros.filter(idRubro=registro["rubro"]).first().tipo
+            yearT = registro['year']
+            total = registro['total_unico']
+            
+            if rubro not in data_by_rubro:
+                data_by_rubro[rubro] = {year: 0 for year in lista_años}
+            
+            # Actualizar el año con el total correcto
+            data_by_rubro[rubro][yearT] = total
+
+        # print(data_by_rubro)
+
+        # for registro in registros_rubros:
+        #     print(f"Año: {registro["year"]}, Rubro: {consultarRubros.filter(idRubro=registro["rubro"]).first().tipo }, Acuerdos: {registro["total_unico"]}")
 
         for registro in registros_years:
             visitasT += registro['total_fechas_unicas']
@@ -57,16 +86,15 @@ def general(request):
             pendientesT += registro['total_pendi']
             atenditosT += registro['total_aten']
             
-
-            print(
-                "Año: {year}, Visitas: {visitas}, Pendientes: {pendientes}, Atendidos: {atendidos}, Totales: {totales}".format(
-                    year= registro['year'],
-                    visitas= registro['total_fechas_unicas'],
-                    pendientes= registro['total_pendi'],
-                    atendidos= registro['total_aten'],
-                    totales= registro['total_registros'],
-                )
-            )
+            # print(
+            #     "Año: {year}, Visitas: {visitas}, Pendientes: {pendientes}, Atendidos: {atendidos}, Totales: {totales}".format(
+            #         year= registro['year'],
+            #         visitas= registro['total_fechas_unicas'],
+            #         pendientes= registro['total_pendi'],
+            #         atendidos= registro['total_aten'],
+            #         totales= registro['total_registros'],
+            #     )
+            # )
             # print(f"Año: {registro['year']}, visitas: {registro['total_fechas_unicas']} Pendientes: {registro['total_atendidos']}, ,  Total acuerdos: {registro['total_registros']}")
         
 
@@ -75,8 +103,10 @@ def general(request):
         context = {
             "tabla1" : registro_V_A,
             "tabla2" : registros_years,
+            "tabla3" : data_by_rubro,
             "visitas": visitasT,
-            "acuerdos": acuerdosT
+            "acuerdos": acuerdosT,
+            "years": lista_años,
         }
         return render(request, "estadistica/informacion.html", context)
 

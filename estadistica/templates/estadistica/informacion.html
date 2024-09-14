@@ -18,6 +18,7 @@
         <h1 class="text-3xl font-bold text-gray-700">Acuerdos: <strong>{{ acuerdos }} </strong></h1>
 
         <div class="flex flex-row space-x-8">
+            <!-- Tabla 1 -->
             <table class="table-auto border-collapse border border-gray-300">
                 <thead>
                     <tr>
@@ -42,9 +43,40 @@
                     </tr> {% endcomment %}
                 </tbody>
             </table>
-        </div>   
+        </div> 
+
+        <div class="flex flex-row space-x-8">
+                    <!-- Tabla 3 -->
+            <table id="miTabla" class="table-auto border-collapse border border-gray-300">
+                <thead>
+                    <tr>
+                        <th class="bg-black border border-gray-300 px-4 py-2 text text-center">Rubro</th>
+                        {% for year in years %}
+                        <th class="bg-gray-500 border border-gray-300 px-4 py-2 text-center">{{ year }}</th>
+                        {% endfor %}
+                
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, nested_dict in tabla3.items %}
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2 text-center">{{ key }}</td>
+                        
+                        {% for year, total in nested_dict.items %}
+                        <td class="border border-gray-300 px-4 py-2 text-center cantidad">{{ total }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                    {% comment %} <tr>
+                        <td class="border border-gray-300 px-4 py-2">Dato C</td>
+                        <td class="border border-gray-300 px-4 py-2">Dato D</td>
+                    </tr> {% endcomment %}
+                </tbody>
+            </table>  
+        </div>
 
         <!-- Flex container para las tablas -->
+        <!-- Tabla 2 -->
         <div class="flex flex-row space-x-8">
             <!-- Tabla 1 -->
             <table class="table-auto border-collapse border border-gray-300">
@@ -77,5 +109,43 @@
         </div> 
 
     </div>
+
+    <script>
+    
+        function agregarColumnaTotales() {
+        // Obtén todas las filas del tbody de la tabla
+        const filas = document.querySelectorAll("#miTabla tbody tr");
+
+        // Itera sobre cada fila
+        filas.forEach((fila) => {
+            // Obtén todas las celdas con la clase 'cantidad' en la fila
+            const celdas = fila.querySelectorAll(".cantidad");
+            
+            let total = 0;
+
+            // Suma los valores de las celdas
+            celdas.forEach((celda) => {
+                total += parseFloat(celda.textContent);
+            });
+
+            // Crea una nueva celda para mostrar el total
+            const celdaTotal = document.createElement("td");
+            celdaTotal.textContent = total; // Muestra el total en la nueva celda
+            celdaTotal.classList.add("bg-gray-300", "text-black", "text-center");
+            fila.appendChild(celdaTotal); // Agrega la celda al final de la fila
+        });
+
+        // Agrega un encabezado 'Total' a la tabla en el <thead>
+        const encabezado = document.querySelector("#miTabla thead tr");
+        const nuevoEncabezado = document.createElement("th");
+        nuevoEncabezado.textContent = "Total";
+        nuevoEncabezado.classList.add("bg-gray-500", "text-white", "text-center");
+        //nuevoEncabezado.style.backgroundColor = "#4CAF50";
+        encabezado.appendChild(nuevoEncabezado);
+    }
+
+    // Llama a la función para agregar la columna de Totales
+    agregarColumnaTotales();
+    </script>
 
 {% endblock content %}

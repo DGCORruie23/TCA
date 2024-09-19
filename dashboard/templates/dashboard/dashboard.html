@@ -37,6 +37,8 @@
         <ul>
             {% for notificacion in notificaciones %}
                 <li>{{ notificacion.mensaje }} - {{ notificacion.fecha_creacion }}</li>
+                <a href="{% url 'marcar_notificacion_leida' notificacion.id %}" class="notification-link">Ir al
+                    acuerdo</a>
             {% empty %}
                 <li>No tienes notificaciones nuevas.</li>
             {% endfor %}

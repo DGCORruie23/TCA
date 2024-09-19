@@ -52,6 +52,7 @@ class Registro(models.Model):
 class Notificacion(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     # registro = models.ForeignKey(Registro, on_delete=models.CASCADE)
+    registro_id = models.IntegerField(default=1)
     mensaje = models.TextField(null=True, blank=True)
     leido = models.BooleanField(default=False)
     fecha_leido = models.DateTimeField(auto_now_add=True, null=True, blank=True)

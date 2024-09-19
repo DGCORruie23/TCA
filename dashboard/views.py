@@ -139,7 +139,6 @@ def dashboard(request):
             porcentaje = registro.porcentaje_avance
             clave_acuerdo_partes = registro.claveAcuerdo.split('/')
 
-
             registrosConFechas.append({
                 'registro': registro,
                 'fecha_inicio': fecha_inicio,
@@ -186,7 +185,10 @@ def marcar_notificacion_leida(request, notificacion_id):
     notificacion.fecha_leido = datetime.now()
     notificacion.save()
 
-    registro_id = notificacion.registro.idRegistro
+    registro_id = 1
+    if notificacion.registro_id != 0 and notificacion.registro_id != None :
+        registro_id = notificacion.registro_id
+
     return redirect('detalles', registro_id=registro_id)
 
 
@@ -204,10 +206,52 @@ def detalles(request, registro_id):
     if request.method == 'POST':
         mensaje_form = MensajeForm(request.POST, request.FILES)
         if mensaje_form.is_valid():
+
             nuevo_mensaje = mensaje_form.save(commit=False)
             nuevo_mensaje.registro = registro
             nuevo_mensaje.usuario = request.user
             nuevo_mensaje.save()
+
+
+            filtrarA = []
+            registroI = Registro.objects.filter(idRegistro=registro.idRegistro).first()
+            # print(area)
+            mensaje = f"Tienes una notificacion del acuerdo: {registroI.claveAcuerdo}."
+
+            # Obtener todos los usuarios del área asociada
+            accionAcuerdo = Acciones.objects.filter(idRegistro=registro.idRegistro).first()
+            
+
+            for area in accionAcuerdo.area2.all():
+                auxD = str(area.idArea)
+                if auxD not in filtrarA:
+                    filtrarA.append(auxD)
+
+            # print(areaDGCOR)
+            areaDGCOR = Area.objects.filter(nickname="DGCOR").first()
+            auxDG = str(areaDGCOR.idArea)
+            if auxDG not in filtrarA:
+                filtrarA.append(auxDG)
+            # print(filtrarA)
+
+            for areas_enOR in registroI.area.all():
+                print(areas_enOR)
+                auxOR = str(areas_enOR.idArea)
+                if auxOR not in filtrarA:
+                    filtrarA.append(auxOR)
+
+
+            usuarios_del_area = UsuarioP.objects.filter(OR__in=filtrarA)
+            # print(usuarios_del_area)
+
+            # Crear una notificación para cada usuario del área
+            for usuarioC in usuarios_del_area:
+                Notificacion.objects.create(
+                    user=usuarioC.user,
+                    mensaje=mensaje,
+                    registro_id=registro.idRegistro
+                )
+
             return redirect('detalles', registro_id=registro_id)
     else:
         mensaje_form = MensajeForm()
@@ -250,9 +294,48 @@ def crear_registro(request):
             #     print("users2")
             #     print(user.Ntelefono)
 
+            # nombres_areas = [area.nickname for area in Area.objects.all()]
+            filtrarA = []
+            
             accion.area2.set(areas2)
             accion.save()
             registro.accionR.add(accion)
+
+            registroI = Registro.objects.filter(idRegistro=registro.idRegistro).first()
+            # print(area)
+
+            mensaje = f"Se ha creado un nuevo acuerdo: {registroI.claveAcuerdo} en la {area[0].name}."
+
+            # Obtener todos los usuarios del área asociada
+            # print(areas2)
+
+            for area in areas2:
+                auxD = str(area.idArea)
+                if auxD not in filtrarA:
+                    filtrarA.append(auxD)
+
+            areaDGCOR = Area.objects.filter(nickname="DGCOR").first()
+            auxDG = str(areaDGCOR.idArea)
+            if auxDG not in filtrarA:
+                filtrarA.append(auxDG)
+
+            for areas_enOR in registroI.area.all():
+                print(areas_enOR)
+                auxOR = str(areas_enOR.idArea)
+                if auxOR not in filtrarA:
+                    filtrarA.append(auxOR)
+
+            print(filtrarA)
+            usuarios_del_area = UsuarioP.objects.filter(OR__in=filtrarA)
+            # print(usuarios_del_area)
+
+            # Crear una notificación para cada usuario del área
+            for usuarioC in usuarios_del_area:
+                Notificacion.objects.create(
+                    user=usuarioC.user,
+                    mensaje=mensaje,
+                    registro_id=registro.idRegistro
+                )
 
             # account_sid = os.getenv('TWILIO_ACCOUNT_SID')
             # auth_token = os.getenv('TWILIO_AUTH_TOKEN')
@@ -462,6 +545,42 @@ def cargaMasiva(request):
                         # accionNueva.idRegistro.add(registro)
                         # accionNueva.save()
 
+                        filtrarA = []
+                        registroI = Registro.objects.filter(idRegistro=registro.idRegistro).first()
+                        
+                        mensaje = f"Tienes una notificacion del acuerdo: {registroI.claveAcuerdo}."
+
+                        # Obtener todos los usuarios del área asociada
+                        accionAcuerdo = Acciones.objects.filter(idRegistro=registro.idRegistro).first()
+                        
+                        for area in accionAcuerdo.area2.all():
+                            auxD = str(area.idArea)
+                            if auxD not in filtrarA:
+                                filtrarA.append(auxD)
+
+                        # Agregar a la DGCOR al área asociada
+                        areaDGCOR = Area.objects.filter(nickname="DGCOR").first()
+                        auxDG = str(areaDGCOR.idArea)
+                        if auxDG not in filtrarA:
+                            filtrarA.append(auxDG)
+
+                        # Agregar a la OR al área asociada
+                        for areas_enOR in registroI.area.all():
+                            print(areas_enOR)
+                            auxOR = str(areas_enOR.idArea)
+                            if auxOR not in filtrarA:
+                                filtrarA.append(auxOR)
+
+
+                        usuarios_del_area = UsuarioP.objects.filter(OR__in=filtrarA)
+
+                        # Crear una notificación para cada usuario del área
+                        for usuarioC in usuarios_del_area:
+                            Notificacion.objects.create(
+                                user=usuarioC.user,
+                                mensaje=mensaje,
+                                registro_id=registro.idRegistro
+                            )
 
                         i+=1
                         # i=0

@@ -46,16 +46,18 @@ class Registro(models.Model):
     def __str__(self):
         # return f"hola"
         # return f"Registro: {self.idRegistro}, Clave de Acuerdo: {self.claveAcuerdo}, Fecha de inicio: {self.fecha_inicio}, Fecha de término: {self.fecha_termino}, Rubro: , OR: , Estatus: {self.get_estado_display()}"
-        return f"Registro: {self.idRegistro}, Clave de Acuerdo: {self.claveAcuerdo}, Fecha de inicio: {self.fecha_inicio}, Fecha de término: {self.fecha_termino}, Rubro: {', '.join([rubro.tipo for rubro in self.rubro.all()])}, OR: {', '.join([area.nickname for area in self.area.all()])}, Estatus: {self.get_estado_display()}"
+        # return f"Registro: {self.idRegistro}, Clave de Acuerdo: {self.claveAcuerdo}, Fecha de inicio: {self.fecha_inicio}, Fecha de término: {self.fecha_termino}, Rubro: {', '.join([rubro.tipo for rubro in self.rubro.all()])}, OR: {', '.join([area.nickname for area in self.area.all()])}, Estatus: {self.get_estado_display()}"
+        return f"Registro: {self.idRegistro}, Clave de Acuerdo: {self.claveAcuerdo}"
 
 class Notificacion(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    registro = models.ForeignKey(Registro, on_delete=models.CASCADE)
+    # registro = models.ForeignKey(Registro, on_delete=models.CASCADE)
+    mensaje = models.TextField(null=True, blank=True)
     leido = models.BooleanField(default=False)
-    fecha_leido = models.DateTimeField(null=True, blank=True)
+    fecha_leido = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
-        return f"Notificación para {self.user.username} sobre {self.registro.claveAcuerdo}"
+        return f"Notificación para {self.user.username} sobre {self.mensaje}"
     
 class Acciones(models.Model):
     idAccion = models.AutoField(primary_key=True)

@@ -21,15 +21,15 @@ from django.contrib import messages
 from django.db import transaction
 from dateutil.parser import parse
 
-from twilio.rest import Client
+# from twilio.rest import Client
 
-import os
-from dotenv import load_dotenv
+# import os
+# from dotenv import load_dotenv
 
 from django.db.models.functions import Substr, StrIndex, Reverse, Length
 from django.db.models import Value, F
 
-load_dotenv()
+# load_dotenv()
 
 @login_required
 def dashboard(request):
@@ -152,12 +152,12 @@ def dashboard(request):
                 'clave_acuerdo_partes': clave_acuerdo_partes,
             })
 
-        now = datetime.now()
-        nuevos_registros = registros.filter(fecha_creacion__gte=now - timedelta(days=365))
+        # now = datetime.now()
+        # nuevos_registros = registros.filter(fecha_creacion__gte=now - timedelta(days=365))
 
 
-        for registro in nuevos_registros:
-            Notificacion.objects.get_or_create(user=request.user, registro=registro)
+        # for registro in nuevos_registros:
+        #     Notificacion.objects.get_or_create(user=request.user, registro=registro)
 
         notificaciones = Notificacion.objects.filter(user=request.user, leido=False)
 

@@ -36,13 +36,19 @@
         <h4>Nuevas Notificaciones</h4>
         <ul>
             {% for notificacion in notificaciones %}
+                <li>{{ notificacion.mensaje }} - {{ notificacion.fecha_creacion }}</li>
+            {% empty %}
+                <li>No tienes notificaciones nuevas.</li>
+            {% endfor %}
+
+            {% comment %} {% for notificacion in notificaciones %}
             <li>
                 Nuevo acuerdo creado: <strong>{{ notificacion.registro.claveAcuerdo }}</strong>
                 <br>
                 <a href="{% url 'marcar_notificacion_leida' notificacion.id %}" class="notification-link">Ir al
                     acuerdo</a>
             </li>
-            {% endfor %}
+            {% endfor %} {% endcomment %}
         </ul>
     </div>
 </div>

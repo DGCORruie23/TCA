@@ -104,7 +104,7 @@ def general(request):
             "tabla1" : registro_V_A,
             "tabla2" : registros_years,
             "tabla3" : data_by_rubro,
-            "visitas": visitasT,
+            "visitas": len(registro_V_A),
             "acuerdos": acuerdosT,
             "years": lista_años,
         }

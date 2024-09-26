@@ -25,6 +25,8 @@
                         <th class="bg-black border border-gray-300 px-4 py-2 text text-center">Año</th>
                         <th class="bg-gray-500 border border-gray-300 px-4 py-2 text-center"># Visitas</th>
                         <th class="bg-black border border-gray-300 px-4 py-2 text text-center"># Acuerdos</th>
+                        <th class="bg-gray-500 border border-gray-300 px-4 py-2 text-center"># Atendidos</th>
+                        <th class="bg-gray-500 border border-gray-300 px-4 py-2 text-center"># Pendientes</th>
                         <th class="bg-gray-500 border border-gray-300 px-4 py-2 text-center">% Avance</th>
                     </tr>
                 </thead>
@@ -34,6 +36,8 @@
                         <td class="border border-gray-300 px-4 py-2 text-center">{{ dato.year }}</td>
                         <td class="border border-gray-300 px-4 py-2 text-center">{{ dato.total_fechas_unicas }}</td>
                         <td class="border border-gray-300 px-4 py-2 text-center">{{ dato.total_registros }}</td>
+                        <td class="border border-gray-300 px-4 py-2 text-center">{{ dato.total_aten }}</td>
+                        <td class="border border-gray-300 px-4 py-2 text-center">{{ dato.total_pendi }}</td>
                         <td class="border border-gray-300 px-4 py-2 text-center">{% widthratio dato.total_aten dato.total_registros 100 %}%</td>
                     </tr>
                     {% endfor %}
@@ -85,6 +89,10 @@
                         <th class="bg-gray-500 border border-gray-300 px-4 py-2 text-center"># Visitas</th>
                         <th class="bg-black border border-gray-300 px-4 py-2 text">Fechas</th>
                         <th class="bg-gray-500 border border-gray-300 px-4 py-2 text-center"># Acuerdos</th>
+                        <th class="bg-gray-500 border border-gray-300 px-4 py-2 text-center"># Atendidos</th>
+                        <th class="bg-gray-500 border border-gray-300 px-4 py-2 text-center"># Pendientes</th>
+                        <th class="bg-gray-500 border border-gray-300 px-4 py-2 text-center">% Avance</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -94,6 +102,9 @@
                         <td class="border border-gray-300 px-4 py-2 text-center">1</td>
                         <td class="border border-gray-300 px-4 py-2 text-center">{{ dato.fecha }}</td>
                         <td class="border border-gray-300 px-4 py-2 text-center">{{ dato.total }}</td>
+                        <td class="border border-gray-300 px-4 py-2 text-center">{{ dato.atendido }}</td>
+                        <td class="border border-gray-300 px-4 py-2 text-center">{{ dato.pendiente }}</td>
+                        <td class="border border-gray-300 px-4 py-2 text-center">{% widthratio dato.atendido dato.total 100 %}%</td>
                     </tr>
                     {% endfor %}
                     {% comment %} <tr>

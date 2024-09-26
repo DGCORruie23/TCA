@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from usuarios.models import Registro, Acciones, Notificacion, Area, Rubro, UsuarioP
 from django.db.models import Count, Q
-from django.db.models.functions import ExtractYear
+from django.db.models.functions import ExtractYear, Substr
 
 @login_required
 def general(request):
@@ -32,14 +32,21 @@ def general(request):
         atenditosT = 0
 
         #Tabla 1
-        registros_visitas = registros.values('area', 'fecha_inicio').annotate(total= Count('idRegistro')).order_by('area', 'fecha_inicio')
+        # registros_visitas = registros.values('area', 'fecha_inicio').annotate(total= Count('idRegistro'), ).order_by('area', 'fecha_inicio')
+        registros_visitas = registros.values('area', 'fecha_inicio').annotate(
+            total=Count('idRegistro'),
+            pendiente=Count('idRegistro', filter=Q(estado="1")),
+            atendido=Count('idRegistro', filter=Q(estado="2"))
+        ).order_by('area', 'fecha_inicio')
 
         for registro in registros_visitas:
             # print(f"OR: {consultarAreas.filter(idArea=registro['area']).first().name} Fecha: {registro['fecha_inicio']} TOTAL {registro['total']}")
             registro_V_A.append({
                 'area': str(consultarAreas.filter(idArea=registro['area']).first().name).replace("OR ",""),
                 'fecha': datetime.strftime(registro['fecha_inicio'], "%d/%m/%Y"),
-                'total': registro['total']
+                'total': registro['total'],
+                'pendiente': registro['pendiente'],
+                'atendido': registro['atendido'],
             })
 
 
@@ -48,7 +55,7 @@ def general(request):
         #tabla 2
         registros_years = registros.values(year=ExtractYear('fecha_inicio')).annotate(
             total_registros=Count('idRegistro'),
-            total_fechas_unicas=Count('fecha_inicio', distinct=True),
+            total_fechas_unicas=Count(Substr('claveAcuerdo', 4), distinct=True),
             total_pendi=Count('idRegistro', filter=Q(estado="1")), 
             total_aten=Count('idRegistro', filter=Q(estado="2")), 
             ).order_by('year')

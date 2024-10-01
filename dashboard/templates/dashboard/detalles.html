@@ -111,7 +111,6 @@
     .username {
         text-align: center;
         padding-right: 10px;
-        color: #235B4E;
         font-weight: bold;
         font-size: 30px;
         margin-bottom: 10px;
@@ -157,10 +156,12 @@
 
 {% if user.is_authenticated %}
 <br>
-<p class="username">Usuario: {{ dataU.0.nombre }} {{ dataU.0.apellido }}</p>
+<p class="username text-inm-gris-200">Usuario: {{ dataU.0.nombre }} {{ dataU.0.apellido }}</p>
 <input type="hidden" id="logged-in-user" value="{{ user.id }}">
-<p class="username">Acuerdo: {{ registro.claveAcuerdo }}</p>
-
+<p class="username text-inm-verde-100">Acuerdo: {{ registro.claveAcuerdo }}</p>
+<center>
+<p class="w-1/2 px-2 text-black"> <b>Descripción:</b> {{ registro.accionR.all.first.descripcion }}</p>
+</center>
 
 <div class="msg_container">
     {% for mensaje in mensajes %}

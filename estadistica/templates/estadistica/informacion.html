@@ -19,7 +19,7 @@
 
         <div class="flex flex-row space-x-8">
             <!-- Tabla 2 -->
-            <table class="table-auto border-collapse border border-gray-300">
+            <table id="tabla2" class="table-auto border-collapse border border-gray-300">
                 <thead>
                     <tr>
                         <th class="bg-black border border-gray-300 px-4 py-2 text text-center">Año</th>
@@ -51,7 +51,7 @@
 
         <div class="flex flex-row space-x-8">
                     <!-- Tabla 3 -->
-            <table id="miTabla" class="table-auto border-collapse border border-gray-300">
+            <table id="miTabla3" class="table-auto border-collapse border border-gray-300">
                 <thead>
                     <tr>
                         <th class="bg-black border border-gray-300 px-4 py-2 text text-center">Rubro</th>
@@ -123,39 +123,133 @@
     <script>
     
         function agregarColumnaTotales() {
-        // Obtén todas las filas del tbody de la tabla
-        const filas = document.querySelectorAll("#miTabla tbody tr");
+            // Obtén todas las filas del tbody de la tabla
+            const filas = document.querySelectorAll("#miTabla3 tbody tr");
 
-        // Itera sobre cada fila
-        filas.forEach((fila) => {
-            // Obtén todas las celdas con la clase 'cantidad' en la fila
-            const celdas = fila.querySelectorAll(".cantidad");
-            
-            let total = 0;
+            // Itera sobre cada fila
+            filas.forEach((fila) => {
+                // Obtén todas las celdas con la clase 'cantidad' en la fila
+                const celdas = fila.querySelectorAll(".cantidad");
+                
+                let total = 0;
 
-            // Suma los valores de las celdas
-            celdas.forEach((celda) => {
-                total += parseFloat(celda.textContent);
+                // Suma los valores de las celdas
+                celdas.forEach((celda) => {
+                    total += parseFloat(celda.textContent);
+                });
+
+                // Crea una nueva celda para mostrar el total
+                const celdaTotal = document.createElement("td");
+                celdaTotal.textContent = total; // Muestra el total en la nueva celda
+                celdaTotal.classList.add("bg-gray-300", "text-black", "text-center");
+                fila.appendChild(celdaTotal); // Agrega la celda al final de la fila
             });
 
-            // Crea una nueva celda para mostrar el total
-            const celdaTotal = document.createElement("td");
-            celdaTotal.textContent = total; // Muestra el total en la nueva celda
-            celdaTotal.classList.add("bg-gray-300", "text-black", "text-center");
-            fila.appendChild(celdaTotal); // Agrega la celda al final de la fila
-        });
+            // Agrega un encabezado 'Total' a la tabla en el <thead>
+            const encabezado = document.querySelector("#miTabla3 thead tr");
+            const nuevoEncabezado = document.createElement("th");
+            nuevoEncabezado.textContent = "Total";
+            nuevoEncabezado.classList.add("bg-gray-500", "text-white", "text-center");
+            //nuevoEncabezado.style.backgroundColor = "#4CAF50";
+            encabezado.appendChild(nuevoEncabezado);
+        }
 
-        // Agrega un encabezado 'Total' a la tabla en el <thead>
-        const encabezado = document.querySelector("#miTabla thead tr");
-        const nuevoEncabezado = document.createElement("th");
-        nuevoEncabezado.textContent = "Total";
-        nuevoEncabezado.classList.add("bg-gray-500", "text-white", "text-center");
-        //nuevoEncabezado.style.backgroundColor = "#4CAF50";
-        encabezado.appendChild(nuevoEncabezado);
-    }
+        function addSumTabla1() {
+            // Obtener la tabla y su cuerpo
+            const table = document.getElementById('tabla2');
+            const tbody = table.getElementsByTagName('tbody')[0];
+            const rows = tbody.getElementsByTagName('tr');
 
-    // Llama a la función para agregar la columna de Totales
-    agregarColumnaTotales();
+            // Crear una nueva fila para la suma
+            const newRow = document.createElement('tr');
+
+            // Inicializar array para la suma de las columnas 2 a 5 (índices 1 a 4)
+            const sums = [null, 0, 0, 0, 0, null];
+
+            // Iterar sobre cada fila y sumar los valores de las columnas 2 a 5
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                for (let j = 1; j < cells.length - 1; j++) {  // Empieza en columna 2 (índice 1) y termina en columna 5 (índice 4)
+                    sums[j] += parseFloat(cells[j].innerText) || 0;
+                }
+            }
+
+            // Crear las celdas de la nueva fila
+            for (let i = 0; i < sums.length; i++) {
+                const newCell = document.createElement('td');
+                newCell.classList.add("bg-gray-500", "text-white", "text-center");
+
+                if (sums[i] !== null) {  // Solo mostrar sumas para columnas 2 a 5
+                    newCell.innerText = sums[i];
+                } else if (i == 0) {
+                    newCell.innerText = 'TOTAL';
+                } else if (i == 5) {
+                    newCell.innerText = (sums[3] / sums[2] * 100).toFixed(2) + "%";
+                } else {
+                    newCell.innerText = ''; // Dejar la columna 1 vacía
+                }
+
+                //No funciona
+                //newRow.classList.add("text-center");
+
+                newRow.appendChild(newCell);
+            }
+
+            // Añadir la nueva fila con las sumas al final de la tabla
+            tbody.appendChild(newRow);
+        }
+
+        function addSumTabla3() {
+            // Obtener la tabla y su cuerpo
+            const table = document.getElementById('miTabla3');
+            const tbody = table.getElementsByTagName('tbody')[0];
+            const rows = tbody.getElementsByTagName('tr');
+
+            // Crear una nueva fila para la suma
+            const newRow = document.createElement('tr');
+
+            // Inicializar array para la suma de las columnas 2 a 5 (índices 1 a 4)
+            const sums = Array((rows[0].getElementsByTagName('td')).length).fill(0);
+            sums[0] = null;
+
+            // Iterar sobre cada fila y sumar los valores de las columnas 2 a 5
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                for (let j = 1; j < cells.length; j++) {  // Empieza en columna 2 (índice 1) y termina en columna 5 (índice 4)
+                    sums[j] += parseFloat(cells[j].innerText) || 0;
+                }
+            }
+
+            // Crear las celdas de la nueva fila
+            for (let i = 0; i < sums.length; i++) {
+                const newCell = document.createElement('td');
+                newCell.classList.add("bg-gray-500", "text-white", "text-center");
+
+                if (sums[i] !== null) {  // Solo mostrar sumas para columnas 2 a 5
+                    newCell.innerText = sums[i];
+                } else {
+                    newCell.innerText = 'TOTAL'; // Dejar la columna 1 vacía
+                }
+
+                //No funciona
+                //newRow.classList.add("text-center");
+
+                newRow.appendChild(newCell);
+            }
+
+            // Añadir la nueva fila con las sumas al final de la tabla
+            tbody.appendChild(newRow);
+        }
+
+        agregarColumnaTotales();
+
+        addSumTabla1();
+        setTimeout(() => {
+            addSumTabla3();
+        }, 100);
+        
+        
+
     </script>
 
 {% endblock content %}

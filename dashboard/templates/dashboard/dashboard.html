@@ -9,9 +9,9 @@
 {% endblock styles %}
 
 {% block estadistica %}
-    {% if dataU.0.tipo == "1" %}
+    
         <a href="{% url 'estadistica_p' %}" class="bg-inm-verde-100 text-white px-6 py-3 rounded-xl hover:bg-inm-marron-200">Estadistica</a>
-    {% endif %}
+    
 {% endblock estadistica %}
 
 {% block content %}
@@ -326,10 +326,11 @@
 </div>
 
 <div class="pagination">
+    <br>
         <span class="step-links">
             {% if registrosConFechas.has_previous %}
-                <a href="?page=1&filtro={{ filtroOR }}&año={{ filtroAño }}&resp={{ filtroResp }}">&laquo; Pagina 1</a>
-                <a href="?page={{ page_obj.previous_page_number }}&filtro={{ filtroOR }}&año={{ filtroAño }}&resp={{ filtroResp }}">Anterior</a>
+                <a href="?page=1&filtro={{ filtroOR }}&año={{ filtroAño }}&resp={{ filtroResp }}" role="button" class="bg-inm-gris-100 hover:bg-inm-gris-200 text-white py-1 px-3 rounded">&laquo; Pagina 1</a>
+                <a href="?page={{ page_obj.previous_page_number }}&filtro={{ filtroOR }}&año={{ filtroAño }}&resp={{ filtroResp }}" role="button" class="bg-inm-marron-200 hover:bg-inm-marron-100 text-white py-1 px-3 rounded">Anterior</a>
             {% endif %}
     
             <span class="current">
@@ -337,8 +338,8 @@
             </span>
     
             {% if registrosConFechas.has_next %}
-                <a href="?page={{ registrosConFechas.next_page_number }}&filtro={{ filtroOR }}&año={{ filtroAño }}&resp={{ filtroResp }}">Siguiente</a>
-                <a href="?page={{ registrosConFechas.paginator.num_pages }}&filtro={{ filtroOR }}&año={{ filtroAño }}&resp={{ filtroResp }}">Ultima &raquo;</a>
+                <a href="?page={{ registrosConFechas.next_page_number }}&filtro={{ filtroOR }}&año={{ filtroAño }}&resp={{ filtroResp }}" role="button" class="bg-inm-verde-100 hover:bg-inm-verde-200 text-white py-1 px-3 rounded">Siguiente</a>
+                <a href="?page={{ registrosConFechas.paginator.num_pages }}&filtro={{ filtroOR }}&año={{ filtroAño }}&resp={{ filtroResp }}" role="button" class="bg-inm-rojo-200 hover:bg-inm-rojo-300 text-white py-1 px-3 rounded">Ultima &raquo;</a>
             {% endif %}
         </span>
 </div>

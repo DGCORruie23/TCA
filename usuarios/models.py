@@ -67,7 +67,13 @@ class Acciones(models.Model):
     descripcion = models.TextField()
 
     def __str__(self):
-        return f"Acción: {self.idAccion}, Registros: {', '.join([str(registro.idRegistro) for registro in self.idRegistro.all()])}, Área 2: {', '.join([area.nickname for area in self.area2.all()])}, Descripción: {self.descripcion}"
+        return "Acción: {accion}, Registros: {datosRegistro}, Área 2: {area2}, Descripción: {descripcionI}".format(
+            accion= self.idAccion,
+            datosRegistro= ', '.join([ str([registro.idRegistro, registro.claveAcuerdo ,  registro.rubro.all()[0].tipo])  for registro in self.idRegistro.all()]),
+            area2= ', '.join([area.nickname for area in self.area2.all()]),
+            descripcionI= self.descripcion,
+        )
+        # return f"Acción: {self.idAccion}, Registros: {', '.join([ str([registro.idRegistro, str(registro.rubro.all()[0].tipo)])  for registro in self.idRegistro.all()])}, Área 2: {', '.join([area.nickname for area in self.area2.all()])}, Descripción: {self.descripcion}"
 
 
 class UsuarioP(models.Model):

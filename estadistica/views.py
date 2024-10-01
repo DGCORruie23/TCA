@@ -8,8 +8,13 @@ from django.db.models.functions import ExtractYear, Substr
 @login_required
 def general(request):
     if request.method == 'GET':
-        userDataI = UsuarioP.objects.filter(user__username=request.user)
-        registros = Registro.objects.all()
+        userDataI = UsuarioP.objects.filter(user__username=request.user).first()
+
+        registros = Registro.objects.filter(area=userDataI.OR)
+
+        if userDataI.tipo == "1":
+            registros = Registro.objects.all()
+        
         consultarAreas = Area.objects.all()
         consultarRubros = Rubro.objects.all()
         nombres_areas = [area.nickname for area in consultarAreas]
@@ -48,8 +53,6 @@ def general(request):
                 'pendiente': registro['pendiente'],
                 'atendido': registro['atendido'],
             })
-
-
 
         # registros_years = registros.values( "fecha_inicio", year=ExtractYear('fecha_inicio')).annotate(
         #tabla 2
@@ -92,20 +95,6 @@ def general(request):
             acuerdosT += registro['total_registros']
             pendientesT += registro['total_pendi']
             atenditosT += registro['total_aten']
-            
-            # print(
-            #     "Año: {year}, Visitas: {visitas}, Pendientes: {pendientes}, Atendidos: {atendidos}, Totales: {totales}".format(
-            #         year= registro['year'],
-            #         visitas= registro['total_fechas_unicas'],
-            #         pendientes= registro['total_pendi'],
-            #         atendidos= registro['total_aten'],
-            #         totales= registro['total_registros'],
-            #     )
-            # )
-            # print(f"Año: {registro['year']}, visitas: {registro['total_fechas_unicas']} Pendientes: {registro['total_atendidos']}, ,  Total acuerdos: {registro['total_registros']}")
-        
-
-        infoTabla= []
         
         context = {
             "tabla1" : registro_V_A,
@@ -115,5 +104,6 @@ def general(request):
             "acuerdos": acuerdosT,
             "years": lista_años,
         }
+
         return render(request, "estadistica/informacion.html", context)
 

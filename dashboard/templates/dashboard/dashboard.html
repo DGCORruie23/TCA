@@ -285,11 +285,12 @@
             <td class="actions-column text-center">
                 <div class="action-container">
                     <a href="{% url 'detalles' data.registro.idRegistro %}" style="background-color: #6F7271;"
-                        class="action-link  hover:bg-inm-rojo-300 rounded-xl text-white ">Detalles</a>
+                        class="action-link  hover:bg-inm-rojo-100 rounded-xl text-white ">Detalles</a>
                     {% if dataU.0.tipo == "1" %}
                     <a href="{% url 'editar_registro' data.registro.idRegistro %}"
-                        class="action-link bg-inm-verde-200 hover:bg-inm-verde-300 rounded-xl text-white text-center ">Editar</a>
-                    <br><br>
+                        class="action-link bg-inm-verde-200 hover:bg-inm-verde-100 rounded-xl text-white text-center ">Editar</a>
+                    <a href="{% url 'archivos_acuerdo' data.registro.idRegistro %}"
+                        class="action-link bg-inm-marron-200 hover:bg-inm-verde-200 rounded-xl text-white text-center ">Descargar</a>
                     <div id="confirmDeleteModal{{ forloop.counter }}" class="modal">
                         <div class="modal-content">
                             <span class="close">&times;</span>

@@ -47,6 +47,8 @@ urlpatterns = [
     path("listas", vDash.paginarRegistros, name="article-list"),
 
     path('estadistica/', include('estadistica.urls')),
+
+    path('descargas/<int:registro_id>/', vDash.descargar_archivos_acuerdo, name='archivos_acuerdo')
 ]
 
 

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
@@ -20,6 +20,10 @@ from django.contrib import messages
 
 from django.db import transaction
 from dateutil.parser import parse
+
+import os
+import zipfile
+from io import BytesIO
 
 # from twilio.rest import Client
 
@@ -231,8 +235,26 @@ def detalles(request, registro_id):
     return render(request, 'dashboard/detalles.html', context)
 
 
+@login_required
+def descargar_archivos_acuerdo(request, registro_id):
+    registro = Registro.objects.get(pk=registro_id)
+    claveA = registro.claveAcuerdo
+    claveA = claveA.replace('/','-')
+    mensajes = registro.mensajes.all().order_by('fecha_envio')
+    
+    zip_buffer = BytesIO()
 
-
+    with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+        for mensaje in mensajes:
+            if mensaje.archivo:
+                archivo_path = mensaje.archivo.path
+                # Agregar el archivo al ZIP, usando el nombre base del archivo
+                zip_file.write(archivo_path, os.path.basename(archivo_path))
+                
+    zip_buffer.seek(0)
+    response = HttpResponse(zip_buffer, content_type='application/zip')
+    response['Content-Disposition'] = f'attachment; filename={claveA}.zip'
+    return response
 
 @login_required
 def crear_registro(request):

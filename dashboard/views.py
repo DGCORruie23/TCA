@@ -202,7 +202,7 @@ def marcar_notificacion_leida(request, notificacion_id):
 def detalles(request, registro_id):
     registro = Registro.objects.get(pk=registro_id)
     mensajes = registro.mensajes.all().order_by('fecha_envio')
-    userDataI = UsuarioP.objects.filter(user__username=request.user)
+    userDataI = UsuarioP.objects.filter(user__username=request.user).first()
 
     for mensaje in mensajes:
         if mensaje.archivo:
@@ -219,7 +219,7 @@ def detalles(request, registro_id):
 
             mensaje = f"Tienes una notificacion del acuerdo: {registro.claveAcuerdo}."
             
-            generarNotificacion(registro.idRegistro, mensaje)
+            generarNotificacion(registro.idRegistro, mensaje, userDataI.idUser)
 
             return redirect('detalles', registro_id=registro_id)
     else:
@@ -259,6 +259,7 @@ def descargar_archivos_acuerdo(request, registro_id):
 @login_required
 def crear_registro(request):
     if request.method == 'POST':
+        userDataI = UsuarioP.objects.filter(user__username=request.user).first()
         registro_form = RegistroConAccionesYPruebasForm(request.POST)
         if registro_form.is_valid():
             registro = registro_form.save()
@@ -289,7 +290,7 @@ def crear_registro(request):
             registro.accionR.add(accion)
 
             mensaje = f"Se ha creado un nuevo acuerdo: {claveA} en la {area[0].name}."
-            generarNotificacion(registro.idRegistro, mensaje)
+            generarNotificacion(registro.idRegistro, mensaje, userDataI.idUser)
             # print(area)
             # Obtener todos los usuarios del área asociada
             # print(areas2)
@@ -393,6 +394,7 @@ def convert_spanish_date(date_str):
 @csrf_exempt
 def cargaMasiva(request):
     if request.method == "POST":
+        userDataI = UsuarioP.objects.filter(user__username=request.user).first()
         form = CargarArchivoForm(request.POST, request.FILES)
         if form.is_valid():
             excel_file = request.FILES["archivo"]
@@ -501,7 +503,7 @@ def cargaMasiva(request):
                         # accionNueva.save()
 
                         mensaje = f"Tienes una notificacion del acuerdo: {claveAcuerdo}."
-                        generarNotificacion(registro.idRegistro, mensaje)
+                        generarNotificacion(registro.idRegistro, mensaje, userDataI.idUser)
 
                         i+=1
                         # i=0
@@ -712,7 +714,7 @@ def paginarRegistros(request):
 
         return render(request, "dashboard/list.html", context=context)
 
-def generarNotificacion(idRegistro, mensaje):
+def generarNotificacion(idRegistro, mensaje, idUser):
     # mensaje = f"Tienes una notificacion del acuerdo: {registroI.claveAcuerdo}."
     filtrarA = []
     registroI = Registro.objects.filter(idRegistro=idRegistro).first()
@@ -740,6 +742,8 @@ def generarNotificacion(idRegistro, mensaje):
 
     usuarios_del_area = UsuarioP.objects.filter(OR__in=filtrarA)
     # print(usuarios_del_area)
+
+    usuarios_del_area = usuarios_del_area.exclude(idUser=idUser)
 
     # Crear una notificación para cada usuario del área
     for usuarioC in usuarios_del_area:

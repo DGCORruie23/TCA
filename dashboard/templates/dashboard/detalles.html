@@ -158,7 +158,12 @@
 <br>
 <p class="username text-inm-gris-200">Usuario: {{ dataU.0.nombre }} {{ dataU.0.apellido }}</p>
 <input type="hidden" id="logged-in-user" value="{{ user.id }}">
+{% if dataU.0.tipo == "1" %}
+<a href="{% url 'editar_registro' registro.idRegistro %}" 
+    class="username text-inm-verde-100">Acuerdo: {{ registro.claveAcuerdo }}</a>
+                        {% else %}
 <p class="username text-inm-verde-100">Acuerdo: {{ registro.claveAcuerdo }}</p>
+{% endif %}
 <center>
 <p class="w-1/2 px-2 text-black"> <b>Descripción:</b> {{ registro.accionR.all.first.descripcion }}</p>
 </center>

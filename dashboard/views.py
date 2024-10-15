@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models import Max
 # from usuarios.models import usuarioL
 from usuarios.models import UsuarioP
-from usuarios.models import Registro, Acciones, Notificacion,Area, Rubro
+from usuarios.models import Registro, Acciones, Notificacion,Area, Rubro, Mensaje
 from datetime import datetime, timedelta, timezone
 from .forms import RegistroConAccionesYPruebasForm, MensajeForm, AccionesForm, RegistroConAccionesFORM, CargarArchivoForm
 from django.forms import inlineformset_factory
@@ -326,7 +326,7 @@ def editar_registro(request, id):
         accion_form = AccionesForm(request.POST, instance=accion)
 
         if registro_form.is_valid() and accion_form.is_valid():
-            print(accion_form)
+            # print(accion_form)
             if registro.estado == 1:
                 registro.fecha_finalizacion = "1970-01-01"
             else:
@@ -376,6 +376,18 @@ def eliminar_registro(request, idRegistro):
     return render(request, 'dashboard/eliminar_registro.html', {'registro': registro})
 
 
+@login_required
+def eliminar_mensaje(request, idMensaje):
+    mensajeI = get_object_or_404(Mensaje, id=idMensaje)
+    userDataI = UsuarioP.objects.filter(user__username=request.user).first()
+
+    if userDataI.tipo == "1" and request.method == 'POST':
+        mensajeI.delete()
+        return redirect('detalles', mensajeI.registro.idRegistro)
+    else:
+        return redirect('detalles', mensajeI.registro.idRegistro)
+
+    # return render(request, 'dashboard/eliminar_registro.html', {'registro': registro})
 
 
 locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')

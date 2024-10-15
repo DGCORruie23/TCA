@@ -44,6 +44,8 @@ urlpatterns = [
 
     path('eliminar/<int:idRegistro>/', vDash.eliminar_registro, name='eliminar_registro'),
 
+    path('eliminarM/<int:idMensaje>/', vDash.eliminar_mensaje, name='eliminar_mensaje'),
+
     path("listas", vDash.paginarRegistros, name="article-list"),
 
     path('estadistica/', include('estadistica.urls')),

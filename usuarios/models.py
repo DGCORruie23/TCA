@@ -9,6 +9,11 @@ from datetime import datetime
 
 # load_dotenv()
 
+import os
+from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+
 class Area(models.Model):
     idArea = models.AutoField(primary_key=True)
     nickname = models.CharField(max_length=150)
@@ -131,3 +136,9 @@ class Mensaje(models.Model):
 
     def __str__(self):
         return f"{self.usuario.username} - {self.fecha_envio} - {self.registro} - {self.texto} - {self.archivo}"
+    
+@receiver(post_delete, sender=Mensaje)
+def eliminar_archivo_mensaje(sender, instance, **kwargs):
+    if instance.archivo:
+        if os.path.isfile(instance.archivo.path):
+            os.remove(instance.archivo.path)

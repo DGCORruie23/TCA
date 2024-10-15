@@ -5,6 +5,22 @@
 
 {% block styles %}
 <style>
+
+    .close-buttonX1 {
+        position: absolute; /* Posiciona el botón respecto al contenedor */
+        top: 10px;          /* Ajusta la posición vertical en la parte superior */
+        right: 10px;        /* Ajusta la posición horizontal en la esquina derecha */
+        background: none;   /* Elimina el fondo del botón */
+        border: none;       /* Elimina el borde */
+        font-size: 24px;    /* Aumenta el tamaño de la "X" */
+        cursor: pointer;    /* Cambia el cursor cuando pases sobre el botón */
+        color: #ff0000;     /* Cambia el color de la "X" */
+    }
+    
+    .close-buttonX1:hover {
+        color: #cc0000;     /* Cambia el color al hacer hover */
+    }
+
     .msg_container {
         margin-top: 20px;
         padding: 20px;
@@ -150,15 +166,16 @@
         color: #2e383e;
     }
 </style>
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 {% endblock styles %}
 
 {% block content %}
 
 {% if user.is_authenticated %}
 <br>
-<p class="username text-inm-gris-200">Usuario: {{ dataU.0.nombre }} {{ dataU.0.apellido }}</p>
+<p class="username text-inm-gris-200">Usuario: {{ dataU.nombre }} {{ dataU.apellido }}</p>
 <input type="hidden" id="logged-in-user" value="{{ user.id }}">
-{% if dataU.0.tipo == "1" %}
+{% if dataU.tipo == "1" %}
 <a href="{% url 'editar_registro' registro.idRegistro %}" 
     class="username text-inm-verde-100">Acuerdo: {{ registro.claveAcuerdo }}</a>
                         {% else %}
@@ -177,6 +194,36 @@
         {% if mensaje.archivo %}
         <p><a href="{{ mensaje.archivo.url }}">Descargar archivo adjunto {{ mensaje.archivo_nombre }}</a></p>
         {% endif %}
+
+        {% if dataU.tipo == "1" %}
+            <div id="confirmDeleteModal{{ forloop.counter }}" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <p>¿Está seguro que desea eliminar este mensaje?</p>
+                    <form id="eliminarForm{{ forloop.counter }}" method="post"
+                        action="{% url 'eliminar_mensaje' mensaje.id %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="action-button bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white">Eliminar</button>
+                    </form>
+                </div>
+            </div>
+
+            <button
+                onclick="document.getElementById('confirmDeleteModal{{ forloop.counter }}').style.display='block'"
+                class="close-buttonX1 py-2 px-3 bg-inm-rojo-300 hover:bg-inm-rojo-100 hover:text-inm-marron-100 rounded-xl text-white text-sm">X</button>
+            <script>
+
+                var closeButtons = document.getElementsByClassName("close");
+                for (var i = 0; i < closeButtons.length; i++) {
+                    closeButtons[i].onclick = function () {
+                        var modal = this.parentElement.parentElement;
+                        modal.style.display = "none";
+                    }
+                }
+            </script>
+        {% endif %}
+
     </div>
     {% endfor %}
 </div>

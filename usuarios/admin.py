@@ -9,7 +9,7 @@ class RegistroAdmin(admin.ModelAdmin):
 
 class NotificacionAdmin(admin.ModelAdmin):
     list_display = ["user" ,"leido","fecha_leido"]
-    list_filter = ["leido"]
+    list_filter = ["leido", "user"]
 
 admin.site.register(Registro, RegistroAdmin)
 admin.site.register(Area)

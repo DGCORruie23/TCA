@@ -25,6 +25,8 @@ import os
 import zipfile
 from io import BytesIO
 
+from django.http import JsonResponse
+
 # from twilio.rest import Client
 
 # import os
@@ -208,20 +210,32 @@ def detalles(request, registro_id):
         if mensaje.archivo:
             mensaje.archivo_nombre = mensaje.archivo.name.split('/')[-1]
 
-    if request.method == 'POST':
-        mensaje_form = MensajeForm(request.POST, request.FILES)
-        if mensaje_form.is_valid():
-
-            nuevo_mensaje = mensaje_form.save(commit=False)
+    
+    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        form = MensajeForm(request.POST, request.FILES)
+        if form.is_valid():
+            nuevo_mensaje = form.save(commit=False)
             nuevo_mensaje.registro = registro
             nuevo_mensaje.usuario = request.user
-            nuevo_mensaje.save()
+            form.save()
+            return JsonResponse({'message': 'Archivo subido con éxito'}, status=200)
+        else:
+            return JsonResponse({'error': form.errors}, status=400)
+        
+    # if request.method == 'POST':
+    #     mensaje_form = MensajeForm(request.POST, request.FILES)
+    #     if mensaje_form.is_valid():
 
-            mensaje = f"Tienes una notificacion del acuerdo: {registro.claveAcuerdo}."
+    #         nuevo_mensaje = mensaje_form.save(commit=False)
+    #         nuevo_mensaje.registro = registro
+    #         nuevo_mensaje.usuario = request.user
+    #         nuevo_mensaje.save()
+
+    #         mensaje = f"Tienes una notificacion del acuerdo: {registro.claveAcuerdo}."
             
-            generarNotificacion(registro.idRegistro, mensaje, userDataI.idUser)
+    #         generarNotificacion(registro.idRegistro, mensaje, userDataI.idUser)
 
-            return redirect('detalles', registro_id=registro_id)
+    #         return redirect('detalles', registro_id=registro_id)
     else:
         mensaje_form = MensajeForm()
 

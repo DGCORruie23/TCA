@@ -228,7 +228,7 @@
     {% endfor %}
 </div>
 
-<form class="form1" method="post" enctype="multipart/form-data">
+<form id="uploadForm" class="form1" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <label for="id_texto">Mensaje:</label>
     <textarea id="id_texto" name="texto" rows="4" placeholder="Escribe tu mensaje aquí..." required></textarea>
@@ -239,6 +239,40 @@
     </div>
     <button type="submit">Enviar</button>
 </form>
+
+<div id="resultMessage"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Función que maneja la subida asíncrona del archivo usando jQuery AJAX
+    $(document).ready(function(){
+        $('#uploadForm').on('submit', function(e){
+            e.preventDefault();  // Evitar que el formulario se envíe de forma normal
+            
+            var formData = new FormData(this);  // Crear objeto FormData con los datos del formulario
+
+            // Realizar la solicitud AJAX
+            $.ajax({
+                url: "{% url 'detalles' registro.idRegistro %}",  // URL de la vista que maneja la subida
+                type: "POST",
+                data: formData,
+                contentType: false,  // Necesario para procesar datos de archivo
+                processData: false,  // Evita que jQuery procese los datos
+                success: function(response){
+                    // Mostrar mensaje de éxito
+                    $('#resultMessage').html('<p style="color:green;">' + response.message + '</p>');
+                    setTimeout(function(){
+                        location.reload();
+                    }, 1000);
+                },
+                error: function(response){
+                    // Mostrar mensaje de error
+                    $('#resultMessage').html('<p style="color:red;">Error: ' + response.responseJSON.error + '</p>');
+                }
+            });
+        });
+    });
+</script>
 
 {% endif %}
 {% endblock content %}
